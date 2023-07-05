@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "license": "Apache-2.0",
   "dependencies": {
     "@types/node": "20.3.3",
     "@types/react": "18.2.14",
