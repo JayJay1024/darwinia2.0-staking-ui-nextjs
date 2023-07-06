@@ -1,3 +1,4 @@
+import { RainbowProvider } from "@/providers";
 import "./globals.css";
 import { JetBrains_Mono } from "next/font/google";
 
@@ -11,7 +12,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="bg-app-black text-white">
-      <body className={fontJetBrainsMono.className}>{children}</body>
+      <body className={fontJetBrainsMono.className}>
+        <RainbowProvider>{children}</RainbowProvider>
+      </body>
     </html>
   );
 }
