@@ -12,6 +12,11 @@ module.exports = {
         component: "#242A2E",
         "app-black": "#1A1D1F",
       },
+      spacing: {
+        small: "0.3125rem", // 5px
+        middle: "0.625rem", // 10px
+        large: "0.9375rem", // 15px
+      },
     },
   },
   plugins: [],
