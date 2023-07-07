@@ -11,6 +11,7 @@ import {
   size,
   useDismiss,
 } from "@floating-ui/react";
+import Image from "next/image";
 
 interface Props {
   label: ReactElement;
@@ -43,8 +44,20 @@ export default function Popper({ label, className, children, isOpen, setIsOpen }
 
   return (
     <>
-      <Button className="flex items-center gap-middle" ref={refs.setReference} {...getReferenceProps()}>
+      <Button
+        className="flex items-center justify-between gap-middle min-w-[126px]"
+        ref={refs.setReference}
+        {...getReferenceProps()}
+      >
         {label}
+        <Image
+          src="/images/caret-down.svg"
+          alt="Account profiles icon"
+          width={16}
+          height={16}
+          className="transition-transform duration-300 translate-y-3"
+          style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
+        />
       </Button>
       {isMounted && (
         <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()}>
