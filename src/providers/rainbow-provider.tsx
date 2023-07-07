@@ -9,6 +9,7 @@ import { publicProvider } from "wagmi/providers/public";
 import { APP_NAME_CONF } from "@/config";
 import { getChainConfigs } from "@/utils";
 import { PropsWithChildren, useEffect, useState } from "react";
+import { useApp } from "@/hooks";
 
 const { chains, publicClient } = configureChains(
   getChainConfigs().map(({ chainId, name, nativeToken, rpcMetas, explorer }) => ({
@@ -70,12 +71,13 @@ const wagmiConfig = createConfig({
 
 export function RainbowProvider({ children }: PropsWithChildren<unknown>) {
   const [mounted, setMounted] = useState(true); // temporarity set to true
+  const { activeChain } = useApp();
 
   useEffect(() => setMounted(true), []);
 
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} appInfo={{ appName: APP_NAME_CONF }}>
+      <RainbowKitProvider chains={chains} appInfo={{ appName: APP_NAME_CONF }} initialChain={activeChain}>
         {mounted && children}
       </RainbowKitProvider>
     </WagmiConfig>
