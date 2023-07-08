@@ -1,7 +1,7 @@
+import dynamic from "next/dynamic";
+
+const StakingDashboard = dynamic(() => import("@/components/staking-dashboard"), { ssr: false });
+
 export default function Staking() {
-  return (
-    <main>
-      <p>Staking Page</p>
-    </main>
-  );
+  return <StakingDashboard />;
 }
