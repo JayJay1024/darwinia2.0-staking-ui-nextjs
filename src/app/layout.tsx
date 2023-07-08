@@ -17,11 +17,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={fontJetBrainsMono.className}>
         <AppProvider>
           <RainbowProvider>
-            <Header />
-            {children}
+            <Header className="app-header" />
+            <main className="app-main">{children}</main>
+            <Footer className="app-footer" />
           </RainbowProvider>
         </AppProvider>
-        <Footer />
       </body>
     </html>
   );

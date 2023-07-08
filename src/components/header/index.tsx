@@ -3,9 +3,9 @@ import NetworkSelector from "./network-selector";
 
 const User = dynamic(() => import("./user"), { ssr: false });
 
-export default function Header() {
+export default function Header({ className }: { className: string }) {
   return (
-    <div className="p-large">
+    <div className={`${className} flex items-center px-large`}>
       <div className="container mx-auto flex items-center justify-between">
         <div>
           <User />

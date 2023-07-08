@@ -39,9 +39,9 @@ const socialConfig: { url: string; name: string; iconPath: string }[] = [
   },
 ];
 
-export default function Footer() {
+export default function Footer({ className }: { className: string }) {
   return (
-    <div className="hidden lg:block py-5">
+    <div className={`${className} hidden lg:flex items-center`}>
       <div className="container mx-auto flex justify-between items-center">
         {/* copyright */}
         <span className="text-white/50 text-sm font-light capitalize">
