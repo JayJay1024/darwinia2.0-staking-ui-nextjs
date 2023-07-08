@@ -1,11 +1,15 @@
+import dynamic from "next/dynamic";
 import NetworkSelector from "./network-selector";
-import User from "./user";
+
+const User = dynamic(() => import("./user"), { ssr: false });
 
 export default function Header() {
   return (
     <div className="p-large">
       <div className="container mx-auto flex items-center justify-between">
-        <User />
+        <div>
+          <User />
+        </div>
         <NetworkSelector />
       </div>
     </div>

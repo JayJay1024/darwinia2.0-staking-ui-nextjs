@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useAccount, useDisconnect } from "wagmi";
-import Identicon from "@polkadot/react-identicon";
 import Button from "./button";
 import { toShortAdrress } from "@/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Popper from "./popper";
 import ActionButton from "./action-button";
+import Jazzicon from "../jazzicon";
 
 export default function User() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +22,7 @@ export default function User() {
         className="border border-primary p-large flex flex-col items-start gap-large bg-app-black"
         label={
           <>
-            <Identicon value={address} theme="ethereum" size={24} className="identicon" />
+            <Jazzicon size={24} address={address} />
             <span className="text-sm font-light uppercase">{toShortAdrress(address)}</span>
           </>
         }
