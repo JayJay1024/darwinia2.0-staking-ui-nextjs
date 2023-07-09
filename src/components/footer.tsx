@@ -41,15 +41,15 @@ const socialConfig: { url: string; name: string; iconPath: string }[] = [
 
 export default function Footer({ className }: { className: string }) {
   return (
-    <div className={`${className} hidden lg:flex items-center`}>
-      <div className="container mx-auto flex justify-between items-center">
+    <div className={`${className} flex items-center`}>
+      <div className="container mx-auto flex justify-center lg:justify-between items-center">
         {/* copyright */}
         <span className="text-white/50 text-sm font-light capitalize">
           &copy; {new Date().getUTCFullYear()} Darwinia Network
         </span>
 
         {/* social */}
-        <div className="flex items-center gap-5">
+        <div className="hidden lg:flex items-center gap-5">
           {socialConfig.map(({ url, name, iconPath }, index) => (
             <a
               key={index}
