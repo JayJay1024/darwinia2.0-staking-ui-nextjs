@@ -1,7 +1,6 @@
 "use client";
 
-import { Dispatch, PropsWithChildren, ReactElement, SetStateAction } from "react";
-import Button from "./header/button";
+import { Dispatch, PropsWithChildren, ReactElement, SetStateAction, forwardRef, ButtonHTMLAttributes } from "react";
 import {
   useClick,
   useFloating,
@@ -69,3 +68,19 @@ export default function Popper({ label, className, children, isOpen, setIsOpen }
     </>
   );
 }
+
+export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(function Button(
+  { children, className, ...rest },
+  ref
+) {
+  return (
+    <button
+      {...rest}
+      type="button"
+      ref={ref}
+      className={`text-sm font-light text-white h-10 px-large flex items-center border border-primary transition-opacity hover:opacity-80 active:opacity-60 ${className}`}
+    >
+      {children}
+    </button>
+  );
+});
