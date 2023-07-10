@@ -40,7 +40,7 @@ export default function Delegate() {
 
       <button
         disabled
-        className="px-large py-middle bg-primary transition-opacity hover:opacity-80 active:opacity-60 disabled:opacity-80 disabled:cursor-not-allowed text-xs font-bold text-white"
+        className="px-large py-middle bg-primary transition-opacity hover:opacity-80 active:opacity-60 disabled:opacity-80 disabled:cursor-not-allowed text-sm font-bold text-white"
       >
         Stake
       </button>
