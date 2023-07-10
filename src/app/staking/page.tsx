@@ -4,7 +4,7 @@ const StakingDashboard = dynamic(() => import("@/components/staking-dashboard"),
 
 export default function Staking() {
   return (
-    <div className="p-large flex flex-col gap-5">
+    <div className="p-large flex flex-col gap-10">
       <StakingDashboard />
     </div>
   );

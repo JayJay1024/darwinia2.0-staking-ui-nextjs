@@ -4,7 +4,7 @@ import Image from "next/image";
 
 const { nativeToken, ktonToken } = getChainConfig(ChainID.DARWINIA);
 
-export default function StakingReserved() {
+export default function ReservedInStaking() {
   return (
     <div className="p-5 bg-component flex flex-col gap-5">
       <span className="font-bold text-lg text-white">Reserved in Staking</span>
