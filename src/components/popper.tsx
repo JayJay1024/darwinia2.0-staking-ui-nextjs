@@ -60,7 +60,7 @@ export default function Popper({ label, className, children, isOpen, setIsOpen }
         />
       </Button>
       {isMounted && (
-        <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()}>
+        <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
           <div style={styles} className={className}>
             {children}
           </div>
