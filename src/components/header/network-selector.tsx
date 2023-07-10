@@ -1,7 +1,7 @@
 "use client";
 
 import { useApp } from "@/hooks";
-import Popper from "./popper";
+import Popper from "../popper";
 import { getChainConfig, getChainConfigs } from "@/utils";
 import { useState } from "react";
 import ActionButton from "./action-button";

@@ -5,7 +5,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import Button from "./button";
 import { toShortAdrress } from "@/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import Popper from "./popper";
+import Popper from "../popper";
 import ActionButton from "./action-button";
 import Jazzicon from "../jazzicon";
 
