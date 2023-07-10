@@ -17,6 +17,10 @@
   height: 60px;
 }
 
+.home-page {
+  height: calc(100vh - 70px - 60px);
+}
+
 .tabs-fade-enter {
   opacity: 0;
 }
