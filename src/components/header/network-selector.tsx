@@ -1,7 +1,7 @@
 "use client";
 
 import { useApp } from "@/hooks";
-import Popper from "../popper";
+import Selector from "../selector";
 import { getChainConfig, getChainConfigs } from "@/utils";
 import { useState } from "react";
 import ActionButton from "./action-button";
@@ -15,9 +15,9 @@ export default function NetworkSelector() {
   const chainConfig = getChainConfig(activeChain);
 
   return (
-    <Popper
+    <Selector
       label={<span className="text-sm font-light">{chainConfig.name}</span>}
-      className="border border-primary p-large flex flex-col items-start gap-large bg-app-black"
+      menuClassName="border border-primary p-large flex flex-col items-start gap-large bg-app-black"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
@@ -33,6 +33,6 @@ export default function NetworkSelector() {
           {name}
         </ActionButton>
       ))}
-    </Popper>
+    </Selector>
   );
 }

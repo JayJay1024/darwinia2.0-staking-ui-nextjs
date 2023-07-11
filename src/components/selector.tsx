@@ -14,12 +14,20 @@ import Image from "next/image";
 
 interface Props {
   label: ReactElement;
-  className: string;
+  labelClassName?: string;
+  menuClassName?: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function Popper({ label, className, children, isOpen, setIsOpen }: PropsWithChildren<Props>) {
+export default function Selector({
+  label,
+  labelClassName,
+  menuClassName,
+  children,
+  isOpen,
+  setIsOpen,
+}: PropsWithChildren<Props>) {
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
@@ -44,7 +52,7 @@ export default function Popper({ label, className, children, isOpen, setIsOpen }
   return (
     <>
       <Button
-        className="flex items-center justify-between gap-middle min-w-[126px]"
+        className={`flex items-center justify-between gap-middle min-w-[126px] ${labelClassName}`}
         ref={refs.setReference}
         {...getReferenceProps()}
       >
@@ -60,7 +68,7 @@ export default function Popper({ label, className, children, isOpen, setIsOpen }
       </Button>
       {isMounted && (
         <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
-          <div style={styles} className={className}>
+          <div style={styles} className={menuClassName}>
             {children}
           </div>
         </div>

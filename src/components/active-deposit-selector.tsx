@@ -1,17 +1,18 @@
 import { useState } from "react";
-import Popper from "./popper";
+import Selector from "./selector";
 
-export default function ActiveDeposit() {
+export default function ActiveDepositSelector() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Popper
-      className="border border-primary p-large bg-app-black max-h-32 overflow-y-auto"
+    <Selector
+      labelClassName="border-white px-middle"
+      menuClassName="border border-white p-middle bg-app-black max-h-32 overflow-y-auto"
       label={<span className="text-sm font-bold text-white">Use A Deposit</span>}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
       <span className="text-sm font-normal text-white/50">No active deposit</span>
-    </Popper>
+    </Selector>
   );
 }

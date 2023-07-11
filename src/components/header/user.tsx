@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { toShortAdrress } from "@/utils";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import Popper, { Button } from "../popper";
+import Selector, { Button } from "../selector";
 import ActionButton from "./action-button";
 import Jazzicon from "../jazzicon";
 
@@ -17,8 +17,8 @@ export default function User() {
 
   return address ? (
     <>
-      <Popper
-        className="border border-primary p-large flex flex-col items-start gap-large bg-app-black"
+      <Selector
+        menuClassName="border border-primary p-large flex flex-col items-start gap-large bg-app-black"
         label={
           <>
             <Jazzicon size={24} address={address} />
@@ -40,7 +40,7 @@ export default function User() {
         >
           Disconnect
         </ActionButton>
-      </Popper>
+      </Selector>
     </>
   ) : (
     <Button className="capitalize" onClick={() => openConnectModal && openConnectModal()}>

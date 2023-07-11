@@ -1,6 +1,6 @@
 import { ChainID } from "@/types";
 import { getChainConfig } from "@/utils";
-import ActiveDeposit from "./active-deposit";
+import ActiveDepositSelector from "./active-deposit-selector";
 import CollatorSelector from "./collator-selector";
 import BalanceInput from "./balance-input";
 
@@ -33,7 +33,7 @@ export default function Delegate() {
       )}
 
       {/* active deposit */}
-      <ActiveDeposit />
+      <ActiveDepositSelector />
       <ExtraPower />
 
       <div className="h-[1px] bg-white/20" />
