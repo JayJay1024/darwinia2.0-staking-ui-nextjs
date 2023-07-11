@@ -1,5 +1,6 @@
 import { Key, useEffect, useState } from "react";
 import Table, { ColumnType } from "./table";
+import { formatTime } from "@/utils";
 
 interface DataSource {
   key: Key;
@@ -22,12 +23,14 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "duration",
     dataIndex: "duration",
+    width: "28%",
     title: <span>Duration</span>,
     render: (row) => (
       <div className="flex flex-col">
-        <div className="flex items-center justify-between">
-          <span>{row.duration.start}</span>
-          <span>{row.duration.end}</span>
+        <div className="flex items-center gap-small text-sm font-light text-white">
+          <span>{formatTime(row.duration.start)}</span>
+          <span>-</span>
+          <span>{formatTime(row.duration.end)}</span>
         </div>
         <div>Progress</div>
       </div>
