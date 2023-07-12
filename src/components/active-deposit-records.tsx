@@ -1,6 +1,7 @@
 import { Key, useEffect, useState } from "react";
 import Table, { ColumnType } from "./table";
 import { formatTime } from "@/utils";
+import Progress from "./progress";
 
 interface DataSource {
   key: Key;
@@ -9,8 +10,8 @@ interface DataSource {
     start: number;
     end: number;
   };
-  amount: BigInt;
-  reward: BigInt;
+  amount: bigint;
+  reward: bigint;
   action: true;
 }
 
@@ -19,6 +20,7 @@ const columns: ColumnType<DataSource>[] = [
     key: "id",
     dataIndex: "id",
     title: <span>No.</span>,
+    render: (row) => <span className="text-sm font-light text-primary">{`ID #${row.id}`}</span>,
   },
   {
     key: "duration",
@@ -26,13 +28,13 @@ const columns: ColumnType<DataSource>[] = [
     width: "28%",
     title: <span>Duration</span>,
     render: (row) => (
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-small w-fit">
         <div className="flex items-center gap-small text-sm font-light text-white">
           <span>{formatTime(row.duration.start)}</span>
           <span>-</span>
           <span>{formatTime(row.duration.end)}</span>
         </div>
-        <div>Progress</div>
+        <Progress start={row.duration.start} end={row.duration.end} />
       </div>
     ),
   },
@@ -72,7 +74,7 @@ export default function ActiveDepositRecords() {
       new Array(10).fill(0).map((_, index) => ({
         key: index,
         id: index + 100,
-        duration: { start: now - index * 30, end: now + index * 5 },
+        duration: { start: now - 80000000, end: now + index * 80000000 },
         amount: BigInt(150 * index),
         reward: BigInt(79 * index),
         action: true,

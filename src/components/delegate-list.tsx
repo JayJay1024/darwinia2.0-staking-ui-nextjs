@@ -4,8 +4,8 @@ import Table, { ColumnType } from "./table";
 interface DataSource {
   key: Key;
   collator: string;
-  stakedPower: BigInt;
-  bondedTokens: BigInt;
+  stakedPower: bigint;
+  bondedTokens: bigint;
   action: true;
 }
 
