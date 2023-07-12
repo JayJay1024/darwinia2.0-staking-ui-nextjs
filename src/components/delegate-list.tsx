@@ -1,9 +1,11 @@
-import { Key, useEffect, useState } from "react";
+import { ButtonHTMLAttributes, Key, useEffect, useState } from "react";
 import Table, { ColumnType } from "./table";
 import EllipsisText from "./ellipsis-text";
-import { prettyNumber } from "@/utils";
+import { formatBlanace, getChainConfig, prettyNumber } from "@/utils";
 import Jazzicon from "./jazzicon";
 import Image from "next/image";
+import { parseEther } from "viem";
+import { ChainID } from "@/types";
 
 interface DataSource {
   key: Key;
@@ -12,6 +14,8 @@ interface DataSource {
   bondedTokens: bigint;
   action: true;
 }
+
+const { nativeToken, ktonToken } = getChainConfig(ChainID.DARWINIA);
 
 const columns: ColumnType<DataSource>[] = [
   {
@@ -37,13 +41,37 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "bondedTokens",
     dataIndex: "bondedTokens",
+    width: "30%",
     title: <span>Your bonded tokens</span>,
-    render: (row) => <span>{row.bondedTokens.toString()}</span>,
+    render: (row) => (
+      <div className="flex flex-col">
+        <div className="flex items-center gap-small">
+          <span className="truncate">
+            {formatBlanace(parseEther("570.5"), nativeToken.decimals, { keepZero: false })} RING
+          </span>
+          <ActionButton action="bond" />
+          <ActionButton action="unbond" />
+        </div>
+        <div className="flex items-center gap-small">
+          <span className="truncate">
+            {formatBlanace(parseEther("80098765987642.172653"), nativeToken.decimals, { keepZero: false })} Deposit RING
+          </span>
+          <ActionButton action="bond" />
+          <ActionButton action="unbond" />
+        </div>
+        <div className="flex items-center gap-small">
+          <span className="truncate">
+            {formatBlanace(parseEther("0"), ktonToken?.decimals, { keepZero: false })} KTON
+          </span>
+          <ActionButton action="bond" />
+          <ActionButton action="unbond" />
+        </div>
+      </div>
+    ),
   },
   {
     key: "action",
     dataIndex: "action",
-    width: "28%",
     title: <span>Action</span>,
     render: (row) => (
       <div className="flex items-center gap-middle">
@@ -74,5 +102,17 @@ export default function DelegateList() {
       <h5 className="text-sm font-bold text-white">Staking Delegations</h5>
       <Table columns={columns} dataSource={dataSource} />
     </div>
+  );
+}
+
+function ActionButton({ action, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { action: "bond" | "unbond" }) {
+  return (
+    <button
+      type="button"
+      {...rest}
+      className="inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center border border-white/40"
+    >
+      <span className="text-xs">{action === "bond" ? "+" : "-"}</span>
+    </button>
   );
 }
