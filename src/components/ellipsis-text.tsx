@@ -1,8 +1,11 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+"use client";
 
-export default function EllipsisText({ text, className }: { text: string; className?: string }) {
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { timer } from "rxjs";
+
+export default function EllipsisText({ text, textClassName }: { text: string; textClassName?: string }) {
   const [content, setContent] = useState<ReactNode>(text);
-  const ref = useRef<HTMLSpanElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const listener = () => {
@@ -11,12 +14,12 @@ export default function EllipsisText({ text, className }: { text: string; classN
         setContent(
           <>
             <div
-              className="inline-block overflow-hidden whitespace-nowrap"
-              style={{ width: ref.current.clientWidth / 2 }}
+              className="-mr-large inline-block truncate"
+              style={{ width: ref.current.clientWidth / 2 - 12, color: "transparent" }}
             >
-              {text}
+              <span className={textClassName}>{text}</span>
             </div>
-            <div dir="rtl" className="inline-block truncate" style={{ width: ref.current.clientWidth / 2 }}>
+            <div className="inline-block truncate" style={{ width: ref.current.clientWidth / 2 }} dir="rtl">
               {text}
             </div>
           </>
@@ -26,16 +29,18 @@ export default function EllipsisText({ text, className }: { text: string; classN
       }
     };
 
-    listener();
-
+    const sub$$ = timer(200).subscribe(() => listener());
     window.addEventListener("resize", listener, false);
 
-    return () => window.removeEventListener("resize", listener, false);
-  }, [text]);
+    return () => {
+      window.removeEventListener("resize", listener, false);
+      sub$$.unsubscribe();
+    };
+  }, [text, textClassName]);
 
   return (
-    <span ref={ref} className={`truncate ${className}`}>
+    <div className={`inline truncate ${textClassName}`} ref={ref}>
       {content}
-    </span>
+    </div>
   );
 }

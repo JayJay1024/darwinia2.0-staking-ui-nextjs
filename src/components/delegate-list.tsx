@@ -3,6 +3,7 @@ import Table, { ColumnType } from "./table";
 import EllipsisText from "./ellipsis-text";
 import { prettyNumber } from "@/utils";
 import Jazzicon from "./jazzicon";
+import Image from "next/image";
 
 interface DataSource {
   key: Key;
@@ -16,38 +17,38 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "collator",
     dataIndex: "collator",
-    width: "30%",
+    width: "22%",
     title: <span>Collator</span>,
     render: (row) => (
       <div className="flex items-center gap-small">
         <Jazzicon address={row.collator} size={30} className="hidden lg:flex" />
-        <EllipsisText text={row.collator} />
+        <EllipsisText text={row.collator} textClassName="text-white" />
+        <Image alt="Collator tooltip" width={20} height={20} src="/images/warning.svg" />
       </div>
     ),
   },
   {
     key: "stakedPower",
     dataIndex: "stakedPower",
-    width: "20%",
+    width: "14%",
     title: <span>Your staked (Power)</span>,
     render: (row) => <span className="truncate">{prettyNumber(row.stakedPower)}</span>,
   },
   {
     key: "bondedTokens",
     dataIndex: "bondedTokens",
-    width: "20%",
     title: <span>Your bonded tokens</span>,
     render: (row) => <span>{row.bondedTokens.toString()}</span>,
   },
   {
     key: "action",
     dataIndex: "action",
-    width: "30%",
+    width: "28%",
     title: <span>Action</span>,
     render: (row) => (
       <div className="flex items-center gap-middle">
-        <button className="border border-primary">One</button>
-        <button className="border border-primary">Two</button>
+        <button className="border border-primary px-middle py-small">Change collator</button>
+        <button className="border border-primary px-middle py-small">...</button>
       </div>
     ),
   },
