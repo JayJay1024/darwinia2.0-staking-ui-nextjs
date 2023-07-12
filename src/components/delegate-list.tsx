@@ -1,5 +1,7 @@
 import { Key, useEffect, useState } from "react";
 import Table, { ColumnType } from "./table";
+import { toShortAdrress } from "@/utils";
+import EllipsisText from "./ellipsis-text";
 
 interface DataSource {
   key: Key;
@@ -15,6 +17,7 @@ const columns: ColumnType<DataSource>[] = [
     dataIndex: "collator",
     width: "30%",
     title: <span>Collator</span>,
+    render: (row) => <EllipsisText text={row.collator} />,
   },
   {
     key: "stakedPower",
