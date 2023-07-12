@@ -1,6 +1,5 @@
 import { Key, useEffect, useState } from "react";
 import Table, { ColumnType } from "./table";
-import { toShortAdrress } from "@/utils";
 import EllipsisText from "./ellipsis-text";
 
 interface DataSource {
