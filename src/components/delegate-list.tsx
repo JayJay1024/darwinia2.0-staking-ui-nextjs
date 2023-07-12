@@ -1,6 +1,8 @@
 import { Key, useEffect, useState } from "react";
 import Table, { ColumnType } from "./table";
 import EllipsisText from "./ellipsis-text";
+import { prettyNumber } from "@/utils";
+import Jazzicon from "./jazzicon";
 
 interface DataSource {
   key: Key;
@@ -16,14 +18,19 @@ const columns: ColumnType<DataSource>[] = [
     dataIndex: "collator",
     width: "30%",
     title: <span>Collator</span>,
-    render: (row) => <EllipsisText text={row.collator} />,
+    render: (row) => (
+      <div className="flex items-center gap-small">
+        <Jazzicon address={row.collator} size={30} className="hidden lg:flex" />
+        <EllipsisText text={row.collator} />
+      </div>
+    ),
   },
   {
     key: "stakedPower",
     dataIndex: "stakedPower",
     width: "20%",
     title: <span>Your staked (Power)</span>,
-    render: (row) => <span>{row.stakedPower.toString()}</span>,
+    render: (row) => <span className="truncate">{prettyNumber(row.stakedPower)}</span>,
   },
   {
     key: "bondedTokens",
@@ -54,7 +61,7 @@ export default function DelegateList() {
       new Array(10).fill(0).map((_, index) => ({
         key: index,
         collator: "0xf422673CB7a673f595852f7B00906408A0b073db",
-        stakedPower: BigInt(0),
+        stakedPower: BigInt(index * 1928768765),
         bondedTokens: BigInt(0),
         action: true,
       }))

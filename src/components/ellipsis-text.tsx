@@ -6,11 +6,12 @@ export default function EllipsisText({ text, className }: { text: string; classN
 
   useEffect(() => {
     const listener = () => {
+      console.log(ref.current?.scrollWidth, ref.current?.clientWidth);
       if (ref.current && ref.current.scrollWidth > ref.current.clientWidth) {
         setContent(
           <>
             <div
-              className="-mr-[6px] inline-block overflow-hidden whitespace-nowrap"
+              className="inline-block overflow-hidden whitespace-nowrap"
               style={{ width: ref.current.clientWidth / 2 }}
             >
               {text}
@@ -33,7 +34,7 @@ export default function EllipsisText({ text, className }: { text: string; classN
   }, [text]);
 
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={`truncate ${className}`}>
       {content}
     </span>
   );
