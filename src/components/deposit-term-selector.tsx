@@ -23,7 +23,7 @@ export default function DepositTermSelector() {
             setActiveTerm(term);
             setIsOpen(false);
           }}
-          className={`py-2 w-full transition-colors px-middle text-start hover:bg-app-black/50 ${
+          className={`w-full px-middle py-2 text-start transition-colors hover:bg-app-black/50 ${
             activeTerm === term ? "bg-app-black" : ""
           }`}
         >

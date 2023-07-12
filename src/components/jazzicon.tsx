@@ -22,7 +22,7 @@ export default function Jazzicon({ address, size = 24, onCopy = () => undefined 
 
   return (
     <div
-      className="cursor-copy flex items-center transition-transform hover:scale-105 active:scale-95"
+      className="flex cursor-copy items-center transition-transform hover:scale-105 active:scale-95"
       onClick={handleClick}
     >
       <Icon diameter={size} seed={jsNumberForAddress(address)} />

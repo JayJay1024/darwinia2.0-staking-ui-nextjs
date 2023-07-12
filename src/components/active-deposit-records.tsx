@@ -25,7 +25,7 @@ const columns: ColumnType<DataSource>[] = [
     dataIndex: "id",
     width: "10%",
     title: <span>No.</span>,
-    render: (row) => <span className="text-sm font-light text-primary truncate">{`ID #${row.id}`}</span>,
+    render: (row) => <span className="truncate text-sm font-light text-primary">{`ID #${row.id}`}</span>,
   },
   {
     key: "duration",
@@ -33,7 +33,7 @@ const columns: ColumnType<DataSource>[] = [
     width: "28%",
     title: <span>Duration</span>,
     render: (row) => (
-      <div className="flex flex-col gap-small w-fit">
+      <div className="flex w-fit flex-col gap-small">
         <div className="flex items-center gap-small text-sm font-light text-white">
           <span>{formatTime(row.duration.start)}</span>
           <span>-</span>
@@ -90,7 +90,7 @@ export default function ActiveDepositRecords() {
   }, []);
 
   return (
-    <div className="p-5 bg-component flex flex-col gap-large">
+    <div className="flex flex-col gap-large bg-component p-5">
       <h5 className="text-sm font-bold text-white">Active Deposit Records</h5>
       <Table columns={columns} dataSource={dataSource} />
     </div>

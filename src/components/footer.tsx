@@ -42,21 +42,21 @@ const socialConfig: { url: string; name: string; iconPath: string }[] = [
 export default function Footer({ className }: { className: string }) {
   return (
     <div className={`${className} flex items-center`}>
-      <div className="container mx-auto flex justify-center lg:justify-between items-center">
+      <div className="container mx-auto flex items-center justify-center lg:justify-between">
         {/* copyright */}
-        <span className="text-white/50 text-sm font-light capitalize">
+        <span className="text-sm font-light capitalize text-white/50">
           &copy; {new Date().getUTCFullYear()} Darwinia Network
         </span>
 
         {/* social */}
-        <div className="hidden lg:flex items-center gap-5">
+        <div className="hidden items-center gap-5 lg:flex">
           {socialConfig.map(({ url, name, iconPath }, index) => (
             <a
               key={index}
               href={url}
               rel="noopener"
               target="_blank"
-              className="hover:opacity-80 active:scale-95 transition"
+              className="transition hover:opacity-80 active:scale-95"
             >
               <Image src={iconPath} width={20} height={20} alt={`Icon of ${name}`} />
             </a>

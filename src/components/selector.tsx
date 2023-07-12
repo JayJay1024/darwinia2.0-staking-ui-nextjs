@@ -52,7 +52,7 @@ export default function Selector({
   return (
     <>
       <Button
-        className={`flex items-center justify-between gap-middle min-w-[126px] ${labelClassName}`}
+        className={`flex min-w-[126px] items-center justify-between gap-middle ${labelClassName}`}
         ref={refs.setReference}
         {...getReferenceProps()}
       >
@@ -62,7 +62,7 @@ export default function Selector({
           alt="Account profiles icon"
           width={16}
           height={16}
-          className="transition-transform duration-300 translate-y-3"
+          className="translate-y-3 transition-transform duration-300"
           style={{ transform: isOpen ? "rotateX(180deg)" : "rotateX(0)" }}
         />
       </Button>
@@ -86,7 +86,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLBut
       {...rest}
       type="button"
       ref={ref}
-      className={`text-sm font-light text-white h-10 px-large flex items-center border border-primary transition-opacity hover:opacity-80 active:opacity-60 ${className}`}
+      className={`flex h-10 items-center border border-primary px-large text-sm font-light text-white transition-opacity hover:opacity-80 active:opacity-60 ${className}`}
     >
       {children}
     </button>

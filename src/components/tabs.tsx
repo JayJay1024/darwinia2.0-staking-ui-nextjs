@@ -42,13 +42,13 @@ export default function Tabs<K extends Key = string | number>({
   return (
     <div className="overflow-x-auto">
       {/* label */}
-      <div className="flex items-center gap-10 relative">
+      <div className="relative flex items-center gap-10">
         {items.map(({ label, key }, index) => (
           <button
             type="button"
             key={key}
             onClick={() => onChange(key)}
-            className={`text-white text-sm transition-all duration-200 hover:opacity-80 active:opacity-60 ${
+            className={`text-sm text-white transition-all duration-200 hover:opacity-80 active:opacity-60 ${
               key === activeKey ? "font-bold" : "font-light"
             }`}
             ref={(node) => (labelRefs.current[index] = node)}
@@ -58,8 +58,8 @@ export default function Tabs<K extends Key = string | number>({
         ))}
       </div>
       {/* divider && rail */}
-      <div className="mt-middle mb-7 relative">
-        <div className="w-6 h-[2px] bg-primary absolute transition-transform duration-200" ref={railRef} />
+      <div className="relative mb-7 mt-middle">
+        <div className="absolute h-[2px] w-6 bg-primary transition-transform duration-200" ref={railRef} />
         <div className="h-[1px] bg-transparent" />
         <div className="h-[1px] bg-white/20" />
       </div>

@@ -30,7 +30,7 @@ export default function Table<T extends { key: Key }>({ columns, dataSource }: P
       <div className="w-full min-w-[800px]">
         {/* table header */}
         <div
-          className="px-middle py-large bg-app-black grid gap-middle text-xs font-bold text-white"
+          className="grid gap-middle bg-app-black px-middle py-large text-xs font-bold text-white"
           style={{ gridTemplateColumns: templateCols }}
         >
           {columns.map(({ key, title }) => (
@@ -43,7 +43,7 @@ export default function Table<T extends { key: Key }>({ columns, dataSource }: P
             dataSource.map((row) => (
               <div
                 key={row.key}
-                className="grid items-center gap-middle px-middle py-middle border-b border-b-white/20 text-sm font-light text-white"
+                className="grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white"
                 style={{ gridTemplateColumns: templateCols }}
               >
                 {columns.map(({ key, dataIndex, render }) => (

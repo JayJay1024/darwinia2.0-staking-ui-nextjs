@@ -14,8 +14,8 @@ export default function Progress({ start, end, style }: { start: number; end: nu
   }, [start, end]);
 
   return (
-    <div className="relative h-1 rounded w-full bg-primary/40" style={style}>
-      <div className="absolute top-0 left-0 h-1 rounded bg-primary" style={{ width: `${percent}%` }} />
+    <div className="relative h-1 w-full rounded bg-primary/40" style={style}>
+      <div className="absolute left-0 top-0 h-1 rounded bg-primary" style={{ width: `${percent}%` }} />
     </div>
   );
 }

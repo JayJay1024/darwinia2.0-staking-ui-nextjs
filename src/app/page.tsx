@@ -4,8 +4,8 @@ const Login = dynamic(() => import("@/components/login"), { ssr: false });
 
 export default function Home() {
   return (
-    <div className="p-large pt-0 home-page">
-      <div className="container mx-auto bg-component h-full flex flex-col justify-center items-center gap-6">
+    <div className="home-page p-large pt-0">
+      <div className="container mx-auto flex h-full flex-col items-center justify-center gap-6 bg-component">
         <Login />
       </div>
     </div>

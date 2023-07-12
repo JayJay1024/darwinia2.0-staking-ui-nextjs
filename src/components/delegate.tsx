@@ -8,7 +8,7 @@ const { nativeToken, ktonToken } = getChainConfig(ChainID.DARWINIA);
 
 export default function Delegate() {
   return (
-    <div className="p-5 bg-component flex flex-col gap-middle">
+    <div className="flex flex-col gap-middle bg-component p-5">
       <h5 className="text-sm font-bold text-white">Delegate</h5>
       <span className="text-xs font-light text-white/50">
         Note that it takes 1 Session(~24 hours) to get rewards if your collator get elected. The delegation locks your
@@ -40,7 +40,7 @@ export default function Delegate() {
 
       <button
         disabled
-        className="px-large py-middle bg-primary transition-opacity hover:opacity-80 active:opacity-60 disabled:opacity-60 disabled:cursor-not-allowed text-sm font-bold text-white"
+        className="bg-primary px-large py-middle text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
       >
         Stake
       </button>
@@ -49,5 +49,5 @@ export default function Delegate() {
 }
 
 function ExtraPower() {
-  return <span className="text-primary text-xs font-bold">+0 Power</span>;
+  return <span className="text-xs font-bold text-primary">+0 Power</span>;
 }

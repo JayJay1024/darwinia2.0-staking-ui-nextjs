@@ -60,7 +60,7 @@ export default function DelegateList() {
   }, []);
 
   return (
-    <div className="p-5 bg-component flex flex-col gap-large">
+    <div className="flex flex-col gap-large bg-component p-5">
       <h5 className="text-sm font-bold text-white">Staking Delegations</h5>
       <Table columns={columns} dataSource={dataSource} />
     </div>

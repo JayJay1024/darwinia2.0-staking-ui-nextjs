@@ -6,7 +6,7 @@ export default function BalanceInput({ symbol, logoPath }: { symbol: string; log
       <input
         type="string"
         placeholder="Balance: 18,422.4"
-        className="bg-transparent text-sm font-light focus-visible:outline-none w-[72%]"
+        className="w-[72%] bg-transparent text-sm font-light focus-visible:outline-none"
       />
       <div className="flex items-center gap-middle">
         <Image alt={symbol} width={20} height={20} src={logoPath} />

@@ -16,11 +16,11 @@ export default function Login() {
     <>
       <button
         onClick={() => openConnectModal && openConnectModal()}
-        className="text-sm font-bold text-white bg-primary py-middle px-large transition-opacity hover:opacity-80 active:opacity-60"
+        className="bg-primary px-large py-middle text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60"
       >
         Connect Wallet
       </button>
-      <p className="text-xs font-light text-[#FFFDFD] text-center">
+      <p className="text-center text-xs font-light text-[#FFFDFD]">
         Connect wallet to participate in staking and deposit in Darwinia.
       </p>
     </>

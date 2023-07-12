@@ -7,7 +7,7 @@ const { nativeToken } = getChainConfig(ChainID.DARWINIA);
 
 export default function TermDeposit() {
   return (
-    <div className="p-5 bg-component flex flex-col gap-middle">
+    <div className="flex flex-col gap-middle bg-component p-5">
       <h5 className="text-sm font-bold text-white">Term Deposit</h5>
       <span className="text-xs font-light text-white/50">
         Deposit RING for a fixed term and earn KTON, and the RING in deposit can used in Staking as Well. Note that if
@@ -26,7 +26,7 @@ export default function TermDeposit() {
 
       {/* reward */}
       <Label text="Reward you'll receive" />
-      <div className="bg-primary flex items-center justify-between h-10 px-middle">
+      <div className="flex h-10 items-center justify-between bg-primary px-middle">
         <span className="text-sm font-bold text-white">7.614213</span>
         <span className="text-sm font-bold text-white">KTON</span>
       </div>
@@ -35,7 +35,7 @@ export default function TermDeposit() {
 
       <button
         disabled
-        className="px-large py-middle bg-primary transition-opacity hover:opacity-80 active:opacity-60 disabled:opacity-60 disabled:cursor-not-allowed text-sm font-bold text-white"
+        className="bg-primary px-large py-middle text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
       >
         Deposit
       </button>
