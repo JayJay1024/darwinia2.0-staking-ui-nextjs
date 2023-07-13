@@ -9,7 +9,7 @@ export default function JoinCollatorModal({ isOpen, onClose }: { isOpen: boolean
       isOpen={isOpen}
       onClose={onClose}
       onOk={onClose}
-      okText="Confiirm"
+      okText="Confirm"
       disabled
       maskClosable={false}
     >
