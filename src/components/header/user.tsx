@@ -8,6 +8,7 @@ import Selector, { Button } from "../selector";
 import ActionButton from "./action-button";
 import Jazzicon from "../jazzicon";
 import JoinCollatorModal from "../join-collator-modal";
+import ManageCollator from "../manage-collator-modal";
 
 export default function User() {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
@@ -44,7 +45,7 @@ export default function User() {
             setIsSelectorOpen(false);
             setIsManageCollatorModalOpen(true);
           }}
-          disabled
+          // disabled
         >
           Manage Collator
         </ActionButton>
@@ -59,6 +60,7 @@ export default function User() {
       </Selector>
 
       <JoinCollatorModal isOpen={isJoinCollatorModalOpen} onClose={() => setIsJoinCollatorModalOpen(false)} />
+      <ManageCollator isOpen={isManageCollatorModalOpen} onClose={() => setIsManageCollatorModalOpen(false)} />
     </>
   ) : (
     <Button className="capitalize" onClick={() => openConnectModal && openConnectModal()}>
