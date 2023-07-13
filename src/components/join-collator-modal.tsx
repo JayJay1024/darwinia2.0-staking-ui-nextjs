@@ -71,7 +71,9 @@ function Input({
       <div className="flex h-10 shrink-0 items-center justify-between border border-white px-middle">
         <input
           placeholder={placeholder}
-          className={`bg-transparent text-sm font-bold focus-visible:outline-none ${suffix ? "w-11/12" : "w-full"}`}
+          className={`h-full bg-transparent text-sm font-bold focus-visible:outline-none ${
+            suffix ? "w-11/12" : "w-full"
+          }`}
         />
         {suffix && <span className="text-xs font-bold text-white">{suffix}</span>}
       </div>
