@@ -2,7 +2,8 @@ import { ChainID } from "@/types";
 import { getChainConfig } from "@/utils";
 import ActiveDepositSelector from "./active-deposit-selector";
 import CollatorSelector from "./collator-selector";
-import BalanceInput from "./balance-input";
+import BalanceInput, { ExtraPower } from "./balance-input";
+import { parseEther } from "viem";
 
 const { nativeToken, ktonToken } = getChainConfig(ChainID.DARWINIA);
 
@@ -21,20 +22,30 @@ export default function Delegate() {
       <CollatorSelector />
 
       {/* ring */}
-      <BalanceInput symbol={nativeToken.symbol} logoPath={nativeToken.logoPath} />
-      <ExtraPower />
+      <BalanceInput
+        balance={parseEther("1876.6354")}
+        symbol={nativeToken.symbol}
+        logoPath={nativeToken.logoPath}
+        decimals={nativeToken.decimals}
+        power={BigInt(0)}
+      />
 
       {/* kton */}
       {ktonToken && (
         <>
-          <BalanceInput symbol={ktonToken.symbol} logoPath={ktonToken.logoPath} />
-          <ExtraPower />
+          <BalanceInput
+            balance={parseEther("1876.6354")}
+            symbol={ktonToken.symbol}
+            logoPath={ktonToken.logoPath}
+            decimals={ktonToken.decimals}
+            power={BigInt(0)}
+          />
         </>
       )}
 
       {/* active deposit */}
       <ActiveDepositSelector />
-      <ExtraPower />
+      <ExtraPower power={BigInt(0)} />
 
       <div className="h-[1px] bg-white/20" />
 
@@ -46,8 +57,4 @@ export default function Delegate() {
       </button>
     </div>
   );
-}
-
-function ExtraPower() {
-  return <span className="text-xs font-bold text-primary">+0 Power</span>;
 }

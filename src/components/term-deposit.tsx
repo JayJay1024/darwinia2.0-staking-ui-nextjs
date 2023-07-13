@@ -2,6 +2,8 @@ import { ChainID } from "@/types";
 import { getChainConfig } from "@/utils";
 import BalanceInput from "./balance-input";
 import DepositTermSelector from "./deposit-term-selector";
+import { parseEther } from "viem";
+import InputLabel from "./input-label";
 
 const { nativeToken } = getChainConfig(ChainID.DARWINIA);
 
@@ -17,15 +19,20 @@ export default function TermDeposit() {
       <div className="h-[1px] bg-white/20" />
 
       {/* amount */}
-      <Label text="Amount" />
-      <BalanceInput symbol={nativeToken.symbol} logoPath={nativeToken.logoPath} />
+      <BalanceInput
+        label="Amount"
+        balance={parseEther("1234.8763")}
+        symbol={nativeToken.symbol}
+        decimals={nativeToken.decimals}
+        logoPath={nativeToken.logoPath}
+      />
 
       {/* deposit term */}
-      <Label text="Deposit term" />
+      <InputLabel label="Deposit term" />
       <DepositTermSelector />
 
       {/* reward */}
-      <Label text="Reward you'll receive" />
+      <InputLabel label="Reward you'll receive" />
       <div className="flex h-10 items-center justify-between bg-primary px-middle">
         <span className="text-sm font-bold text-white">7.614213</span>
         <span className="text-sm font-bold text-white">KTON</span>
@@ -41,8 +48,4 @@ export default function TermDeposit() {
       </button>
     </div>
   );
-}
-
-function Label({ text }: { text: string }) {
-  return <span className="text-xs font-light text-white">{text}</span>;
 }
