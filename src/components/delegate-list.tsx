@@ -8,6 +8,8 @@ import { parseEther } from "viem";
 import { ChainID } from "@/types";
 import BondMoreRingModal from "./bond-more-ring-modal";
 import BondMoreKtonModal from "./bond-more-kton-modal";
+import UnbondRingModal from "./unbond-ring-modal";
+import UnbondKtonModal from "./unbond-kton-modal";
 
 interface DataSource {
   key: Key;
@@ -52,7 +54,7 @@ const columns: ColumnType<DataSource>[] = [
             {formatBlanace(parseEther("570.5"), nativeToken.decimals, { keepZero: false })} RING
           </span>
           <BondMoreRing />
-          <ActionButton action="unbond" />
+          <UnbondRing />
         </div>
         <div className="flex items-center gap-small">
           <span className="truncate">
@@ -66,7 +68,7 @@ const columns: ColumnType<DataSource>[] = [
             {formatBlanace(parseEther("0"), ktonToken?.decimals, { keepZero: false })} KTON
           </span>
           <BondMoreKton />
-          <ActionButton action="unbond" />
+          <UnbondKton />
         </div>
       </div>
     ),
@@ -121,7 +123,6 @@ function ActionButton({ action, ...rest }: ButtonHTMLAttributes<HTMLButtonElemen
 
 function BondMoreRing() {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <>
       <ActionButton action="bond" onClick={() => setIsOpen(true)} />
@@ -132,11 +133,30 @@ function BondMoreRing() {
 
 function BondMoreKton() {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <>
       <ActionButton action="bond" onClick={() => setIsOpen(true)} />
       <BondMoreKtonModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    </>
+  );
+}
+
+function UnbondRing() {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <>
+      <ActionButton action="unbond" onClick={() => setIsOpen(true)} />
+      <UnbondRingModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    </>
+  );
+}
+
+function UnbondKton() {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <>
+      <ActionButton action="unbond" onClick={() => setIsOpen(true)} />
+      <UnbondKtonModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );
 }
