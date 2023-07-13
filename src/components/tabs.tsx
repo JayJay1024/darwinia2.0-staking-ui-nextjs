@@ -11,12 +11,14 @@ export interface TabsProps<K> {
     label: ReactElement;
     children: ReactElement;
   }[];
+  labelClassName?: string;
   onChange?: (key: K) => void;
 }
 
 export default function Tabs<K extends Key = string | number>({
   items,
   activeKey,
+  labelClassName,
   onChange = () => undefined,
 }: TabsProps<K>) {
   const activeItem = items.find(({ key }) => key === activeKey) || items.at(10);
@@ -40,33 +42,40 @@ export default function Tabs<K extends Key = string | number>({
   }, [activeKey, items]);
 
   return (
-    <div className="overflow-x-auto">
-      {/* label */}
-      <div className="relative flex items-center gap-10">
-        {items.map(({ label, key }, index) => (
-          <button
-            type="button"
-            key={key}
-            onClick={() => onChange(key)}
-            className={`text-sm text-white transition-all duration-200 hover:opacity-80 active:opacity-60 ${
-              key === activeKey ? "font-bold" : "font-light"
-            }`}
-            ref={(node) => (labelRefs.current[index] = node)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {/* divider && rail */}
-      <div className="relative mb-7 mt-middle">
-        <div className="absolute h-[2px] w-6 bg-primary transition-transform duration-200" ref={railRef} />
-        <div className="h-[1px] bg-transparent" />
-        <div className="h-[1px] bg-white/20" />
+    <div>
+      <div className="overflow-auto">
+        <div className={labelClassName}>
+          {/* label */}
+          <div className="relative flex items-center gap-10">
+            {items.map(({ label, key }, index) => (
+              <button
+                type="button"
+                key={key}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChange(key);
+                }}
+                className={`text-sm text-white transition-all duration-200 hover:opacity-80 active:opacity-60 ${
+                  key === activeKey ? "font-bold" : "font-light"
+                }`}
+                ref={(node) => (labelRefs.current[index] = node)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {/* divider && rail */}
+          <div className="relative mt-middle">
+            <div className="absolute h-[2px] w-6 bg-primary transition-transform duration-200" ref={railRef} />
+            <div className="h-[1px] bg-transparent" />
+            <div className="h-[1px] bg-white/20" />
+          </div>
+        </div>
       </div>
       {/* content */}
       <SwitchTransition>
         <CSSTransition timeout={200} key={activeKey} nodeRef={nodeRef} classNames="tabs-fade" unmountOnExit>
-          <div ref={nodeRef} className="overflow-x-auto">
+          <div ref={nodeRef} className="mt-7 overflow-x-auto">
             {activeItem ? (
               activeItem.children
             ) : (
