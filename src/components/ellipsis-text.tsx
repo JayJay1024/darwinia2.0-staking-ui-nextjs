@@ -9,7 +9,6 @@ export default function EllipsisText({ text, textClassName }: { text: string; te
 
   useEffect(() => {
     const listener = () => {
-      console.log(ref.current?.scrollWidth, ref.current?.clientWidth);
       if (ref.current && ref.current.scrollWidth > ref.current.clientWidth) {
         setContent(
           <>
