@@ -11,6 +11,7 @@ export default function BalanceInput({
   logoPath,
   power,
   label,
+  boldLabel,
   powerChanges = "more",
 }: {
   balance: bigint;
@@ -20,10 +21,11 @@ export default function BalanceInput({
   power?: bigint;
   powerChanges?: PowerChanges;
   label?: string;
+  boldLabel?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-middle">
-      {label && <InputLabel label={label} />}
+      {label && <InputLabel label={label} bold={boldLabel} />}
       <div className="flex h-10 items-center justify-between gap-middle border border-white px-middle">
         <input
           type="string"

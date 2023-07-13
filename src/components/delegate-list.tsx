@@ -6,6 +6,8 @@ import Jazzicon from "./jazzicon";
 import Image from "next/image";
 import { parseEther } from "viem";
 import { ChainID } from "@/types";
+import BondMoreRingModal from "./bond-more-ring-modal";
+import BondMoreKtonModal from "./bond-more-kton-modal";
 
 interface DataSource {
   key: Key;
@@ -49,7 +51,7 @@ const columns: ColumnType<DataSource>[] = [
           <span className="truncate">
             {formatBlanace(parseEther("570.5"), nativeToken.decimals, { keepZero: false })} RING
           </span>
-          <ActionButton action="bond" />
+          <BondMoreRing />
           <ActionButton action="unbond" />
         </div>
         <div className="flex items-center gap-small">
@@ -63,7 +65,7 @@ const columns: ColumnType<DataSource>[] = [
           <span className="truncate">
             {formatBlanace(parseEther("0"), ktonToken?.decimals, { keepZero: false })} KTON
           </span>
-          <ActionButton action="bond" />
+          <BondMoreKton />
           <ActionButton action="unbond" />
         </div>
       </div>
@@ -114,5 +116,27 @@ function ActionButton({ action, ...rest }: ButtonHTMLAttributes<HTMLButtonElemen
     >
       <span className="text-xs">{action === "bond" ? "+" : "-"}</span>
     </button>
+  );
+}
+
+function BondMoreRing() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <ActionButton action="bond" onClick={() => setIsOpen(true)} />
+      <BondMoreRingModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    </>
+  );
+}
+
+function BondMoreKton() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <ActionButton action="bond" onClick={() => setIsOpen(true)} />
+      <BondMoreKtonModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    </>
   );
 }

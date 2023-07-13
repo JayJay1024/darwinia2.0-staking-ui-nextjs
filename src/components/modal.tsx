@@ -52,7 +52,7 @@ export default function Modal({
           }
         }}
       >
-        <div className="w-full border border-primary">
+        <div className="w-full border border-primary" onClick={(e) => e.stopPropagation()}>
           {/* header */}
           <div className="flex h-11 items-center justify-between bg-primary px-middle">
             <span className="text-sm font-bold text-white">{title}</span>
