@@ -6,12 +6,15 @@ interface Options {
 }
 
 export function formatBlanace(value: bigint, decimals = 18, options: Options = { precision: 3, keepZero: true }) {
+  const precision = options.precision === undefined ? 3 : options.precision;
+  const keepZero = options.keepZero === undefined ? true : options.keepZero;
+
   const [i, d] = formatUnits(value, decimals).split(".");
 
   const _integers = i.replace(/(?=(?!^)(\d{3})+$)/g, ",");
-  let _decimals = Number(`0.${d || 0}`).toFixed(options.precision);
+  let _decimals = Number(`0.${d || 0}`).toFixed(precision);
 
-  if (!options.keepZero) {
+  if (!keepZero) {
     _decimals = Number(_decimals).toString();
   }
 
