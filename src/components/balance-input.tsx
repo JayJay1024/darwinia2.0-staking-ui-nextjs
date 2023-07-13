@@ -2,6 +2,8 @@ import { formatBlanace, prettyNumber } from "@/utils";
 import Image from "next/image";
 import InputLabel from "./input-label";
 
+type PowerChanges = "more" | "less";
+
 export default function BalanceInput({
   balance,
   symbol,
@@ -9,12 +11,14 @@ export default function BalanceInput({
   logoPath,
   power,
   label,
+  powerChanges = "more",
 }: {
   balance: bigint;
   symbol: string;
   decimals: number;
   logoPath?: string;
   power?: bigint;
+  powerChanges?: PowerChanges;
   label?: string;
 }) {
   return (
@@ -31,11 +35,15 @@ export default function BalanceInput({
           <span className="text-sm font-light text-white">{symbol}</span>
         </div>
       </div>
-      {power !== undefined && <ExtraPower power={power} />}
+      {power !== undefined && <ExtraPower power={power} powerChanges={powerChanges} />}
     </div>
   );
 }
 
-export function ExtraPower({ power }: { power: bigint }) {
-  return <span className="text-xs font-bold text-primary">{`+${prettyNumber(power)} Power`}</span>;
+export function ExtraPower({ power, powerChanges }: { power: bigint; powerChanges?: PowerChanges }) {
+  return (
+    <span className="text-xs font-bold text-primary">{`${powerChanges === "more" ? "+" : "-"}${prettyNumber(
+      power
+    )} Power`}</span>
+  );
 }
