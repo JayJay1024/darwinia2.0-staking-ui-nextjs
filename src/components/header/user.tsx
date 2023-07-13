@@ -7,9 +7,12 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Selector, { Button } from "../selector";
 import ActionButton from "./action-button";
 import Jazzicon from "../jazzicon";
+import JoinCollatorModal from "../join-collator-modal";
 
 export default function User() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+  const [isJoinCollatorModalOpen, setIsJoinCollatorModalOpen] = useState(false);
+  const [isManageCollatorModalOpen, setIsManageCollatorModalOpen] = useState(false);
 
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
@@ -25,22 +28,37 @@ export default function User() {
             <span className="text-sm font-light uppercase">{toShortAdrress(address)}</span>
           </>
         }
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        isOpen={isSelectorOpen}
+        setIsOpen={setIsSelectorOpen}
       >
-        <ActionButton onClick={() => setIsOpen(false)}>Join Collator</ActionButton>
-        <ActionButton onClick={() => setIsOpen(false)} disabled>
+        <ActionButton
+          onClick={() => {
+            setIsSelectorOpen(false);
+            setIsJoinCollatorModalOpen(true);
+          }}
+        >
+          Join Collator
+        </ActionButton>
+        <ActionButton
+          onClick={() => {
+            setIsSelectorOpen(false);
+            setIsManageCollatorModalOpen(true);
+          }}
+          disabled
+        >
           Manage Collator
         </ActionButton>
         <ActionButton
           onClick={() => {
-            setIsOpen(false);
+            setIsSelectorOpen(false);
             disconnect();
           }}
         >
           Disconnect
         </ActionButton>
       </Selector>
+
+      <JoinCollatorModal isOpen={isJoinCollatorModalOpen} onClose={() => setIsJoinCollatorModalOpen(false)} />
     </>
   ) : (
     <Button className="capitalize" onClick={() => openConnectModal && openConnectModal()}>
