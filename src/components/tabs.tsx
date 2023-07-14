@@ -75,7 +75,7 @@ export default function Tabs<K extends Key = string | number>({
       {/* content */}
       <SwitchTransition>
         <CSSTransition timeout={200} key={activeKey} nodeRef={nodeRef} classNames="tabs-fade" unmountOnExit>
-          <div ref={nodeRef} className="mt-7 overflow-x-auto">
+          <div ref={nodeRef} className="mt-large overflow-x-auto">
             {activeItem ? (
               activeItem.children
             ) : (
