@@ -117,6 +117,7 @@ export default function CollatorSelectModal({
                   columns={columns}
                   styles={{ minWidth: 560 }}
                   contentClassName="max-h-[35vh]"
+                  onRowClick={() => undefined}
                 />
               </div>
             ),
@@ -132,6 +133,7 @@ export default function CollatorSelectModal({
                   columns={columns}
                   styles={{ minWidth: 560 }}
                   contentClassName="max-h-[35vh]"
+                  onRowClick={() => undefined}
                 />
               </div>
             ),

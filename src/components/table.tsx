@@ -14,9 +14,16 @@ interface Props<T> {
   columns: ColumnType<T>[];
   styles?: CSSProperties;
   contentClassName?: string;
+  onRowClick?: (row: T) => void;
 }
 
-export default function Table<T extends { key: Key }>({ columns, dataSource, styles, contentClassName }: Props<T>) {
+export default function Table<T extends { key: Key }>({
+  columns,
+  dataSource,
+  styles,
+  contentClassName,
+  onRowClick,
+}: Props<T>) {
   const templateCols = columns.reduce((acc, cur) => {
     const width = typeof cur.width === "string" ? cur.width : typeof cur.width === "number" ? `${cur.width}px` : "1fr";
     if (acc === "auto") {
@@ -46,7 +53,9 @@ export default function Table<T extends { key: Key }>({ columns, dataSource, sty
               {dataSource.map((row) => (
                 <div
                   key={row.key}
-                  className="grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white"
+                  className={`grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white last:border-b-0 ${
+                    onRowClick ? "transition-opacity hover:cursor-pointer hover:opacity-80 active:opacity-60" : ""
+                  }`}
                   style={{ gridTemplateColumns: templateCols }}
                 >
                   {columns.map(({ key, dataIndex, render }) => (
