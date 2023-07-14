@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Fragment, Key, ReactElement } from "react";
+import { CSSProperties, Fragment, Key, ReactElement } from "react";
 
 export interface ColumnType<T> {
   title: ReactElement;
@@ -12,9 +12,11 @@ export interface ColumnType<T> {
 interface Props<T> {
   dataSource: T[];
   columns: ColumnType<T>[];
+  styles?: CSSProperties;
+  contentClassName?: string;
 }
 
-export default function Table<T extends { key: Key }>({ columns, dataSource }: Props<T>) {
+export default function Table<T extends { key: Key }>({ columns, dataSource, styles, contentClassName }: Props<T>) {
   const templateCols = columns.reduce((acc, cur) => {
     const width = typeof cur.width === "string" ? cur.width : typeof cur.width === "number" ? `${cur.width}px` : "1fr";
     if (acc === "auto") {
@@ -26,8 +28,8 @@ export default function Table<T extends { key: Key }>({ columns, dataSource }: P
   }, "auto");
 
   return (
-    <div className="overflow-x-auto">
-      <div className="w-full min-w-[800px]">
+    <div className="overflow-auto">
+      <div className="w-full min-w-[872px]" style={styles}>
         {/* table header */}
         <div
           className="grid gap-middle bg-app-black px-middle py-large text-xs font-bold text-white"
@@ -40,19 +42,21 @@ export default function Table<T extends { key: Key }>({ columns, dataSource }: P
         {/* table body */}
         <>
           {dataSource.length ? (
-            dataSource.map((row) => (
-              <div
-                key={row.key}
-                className="grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white"
-                style={{ gridTemplateColumns: templateCols }}
-              >
-                {columns.map(({ key, dataIndex, render }) => (
-                  <Fragment key={key}>
-                    {render ? render(row) : <span className="truncate">{row[dataIndex]}</span>}
-                  </Fragment>
-                ))}
-              </div>
-            ))
+            <div className={`overflow-auto ${contentClassName}`}>
+              {dataSource.map((row) => (
+                <div
+                  key={row.key}
+                  className="grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white"
+                  style={{ gridTemplateColumns: templateCols }}
+                >
+                  {columns.map(({ key, dataIndex, render }) => (
+                    <Fragment key={key}>
+                      {render ? render(row) : <span className="truncate">{row[dataIndex]}</span>}
+                    </Fragment>
+                  ))}
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="flex flex-col items-center gap-large py-10">
               <Image width={50} height={63} alt="Table no data" src="/images/no-data.svg" />
