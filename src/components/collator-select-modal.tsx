@@ -7,6 +7,7 @@ import Table, { ColumnType } from "./table";
 import Jazzicon from "./jazzicon";
 import EllipsisText from "./ellipsis-text";
 import { prettyNumber } from "@/utils";
+import { notification } from "./notification";
 
 type TabKey = "active" | "waiting";
 
@@ -36,6 +37,11 @@ const columns: ColumnType<DataSource>[] = [
           className="transition-transform hover:scale-105 hover:cursor-pointer active:scale-95"
           onClick={(e) => {
             e.stopPropagation();
+            notification.success({
+              title: "Copy successfully",
+              disabledCloseBtn: true,
+              duration: 3000,
+            });
           }}
         />
       </div>
