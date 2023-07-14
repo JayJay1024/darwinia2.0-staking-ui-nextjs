@@ -28,7 +28,16 @@ const columns: ColumnType<DataSource>[] = [
       <div className="flex items-center gap-small">
         <Jazzicon size={20} address={row.collator} className="hidden lg:flex" />
         <EllipsisText text={row.collator} />
-        <Image alt="Copy collator" width={16} height={16} src="/images/copy.svg" />
+        <Image
+          alt="Copy collator"
+          width={16}
+          height={16}
+          src="/images/copy.svg"
+          className="transition-transform hover:scale-105 hover:cursor-pointer active:scale-95"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        />
       </div>
     ),
   },
