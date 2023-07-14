@@ -20,6 +20,24 @@ module.exports = {
       screens: {
         "2xl": "1280px",
       },
+      keyframes: {
+        rightenter: {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        rightleave: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        notificationfadeout: {
+          "100%": { height: 0 },
+        },
+      },
+      animation: {
+        "notification-enter": "rightenter 400ms ease-out",
+        "notification-leave": "rightleave 400ms ease-out",
+        "notification-fadeout": "notificationfadeout 200ms ease-out",
+      }
     },
   },
   plugins: [],
