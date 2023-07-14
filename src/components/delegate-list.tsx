@@ -11,6 +11,7 @@ import BondMoreKtonModal from "./bond-more-kton-modal";
 import UnbondRingModal from "./unbond-ring-modal";
 import UnbondKtonModal from "./unbond-kton-modal";
 import BondMoreDepositModal from "./bond-more-deposit-modal";
+import UnbondDepositModal from "./unbond-deposit-modal";
 
 interface DataSource {
   key: Key;
@@ -62,7 +63,7 @@ const columns: ColumnType<DataSource>[] = [
             {formatBlanace(parseEther("80098765987642.172653"), nativeToken.decimals, { keepZero: false })} Deposit RING
           </span>
           <BondMoreDeposit />
-          <ActionButton action="unbond" />
+          <UnbondDeposit />
         </div>
         <div className="flex items-center gap-small">
           <span className="truncate">
@@ -168,6 +169,16 @@ function UnbondKton() {
     <>
       <ActionButton action="unbond" onClick={() => setIsOpen(true)} />
       <UnbondKtonModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    </>
+  );
+}
+
+function UnbondDeposit() {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <>
+      <ActionButton action="unbond" onClick={() => setIsOpen(true)} />
+      <UnbondDepositModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );
 }

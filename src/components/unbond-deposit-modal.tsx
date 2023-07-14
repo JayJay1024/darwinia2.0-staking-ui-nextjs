@@ -8,7 +8,7 @@ import { ExtraPower } from "./balance-input";
 
 const { nativeToken } = getChainConfig(ChainID.CRAB);
 
-export default function BondMoreDepositModal({
+export default function UnbondDepositModal({
   isOpen,
   onClose = () => undefined,
 }: {
@@ -20,16 +20,16 @@ export default function BondMoreDepositModal({
 
   useEffect(() => {
     setDeposits(
-      new Array(20).fill(0).map((_, index) => ({ id: index + 100, balance: parseEther((index * 1762.354).toString()) }))
+      new Array(0).fill(0).map((_, index) => ({ id: index + 100, balance: parseEther((index * 1762.354).toString()) }))
     );
   }, []);
 
   return (
     <Modal
-      title="Bond More Deposits"
+      title="Unbond Deposits"
       isOpen={isOpen}
       maskClosable={false}
-      okText="Bond"
+      okText="Unbond"
       onCancel={onClose}
       onClose={onClose}
       onOk={onClose}
@@ -55,10 +55,10 @@ export default function BondMoreDepositModal({
 
           <div className="h-[1px] bg-white/20" />
 
-          <ExtraPower power={BigInt(checkedValues.length * 12345)} powerChanges="more" />
+          <ExtraPower power={BigInt(checkedValues.length * 12345)} powerChanges="less" />
         </>
       ) : (
-        <span className="text-xs font-light text-white">No more deposits to bond</span>
+        <span className="text-xs font-light text-white">No deposits to unbond</span>
       )}
     </Modal>
   );
