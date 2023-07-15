@@ -86,6 +86,7 @@ export default function CollatorSelectModal({
 }) {
   const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>("active");
   const [dataSource, setDataSource] = useState<DataSource[]>([]);
+  const [selectedRow, setSelectedRow] = useState(dataSource.at(0)?.key);
   const { address } = useAccount();
 
   useEffect(() => {
@@ -131,7 +132,8 @@ export default function CollatorSelectModal({
                   columns={columns}
                   styles={{ minWidth: 560 }}
                   contentClassName="max-h-[35vh]"
-                  onRowClick={() => undefined}
+                  selectedRow={selectedRow}
+                  onRowSelect={setSelectedRow}
                 />
               </div>
             ),
@@ -147,7 +149,8 @@ export default function CollatorSelectModal({
                   columns={columns}
                   styles={{ minWidth: 560 }}
                   contentClassName="max-h-[35vh]"
-                  onRowClick={() => undefined}
+                  selectedRow={selectedRow}
+                  onRowSelect={setSelectedRow}
                 />
               </div>
             ),
