@@ -1,7 +1,6 @@
 import { ButtonHTMLAttributes, Key, useEffect, useState } from "react";
 import Table, { ColumnType } from "./table";
-import EllipsisText from "./ellipsis-text";
-import { formatBlanace, getChainConfig, prettyNumber } from "@/utils";
+import { formatBlanace, getChainConfig, prettyNumber, toShortAdrress } from "@/utils";
 import Jazzicon from "./jazzicon";
 import Image from "next/image";
 import { parseEther } from "viem";
@@ -32,7 +31,7 @@ const columns: ColumnType<DataSource>[] = [
     render: (row) => (
       <div className="flex items-center gap-small">
         <Jazzicon address={row.collator} size={30} className="hidden lg:flex" />
-        <EllipsisText text={row.collator} textClassName="text-white" />
+        <span>{toShortAdrress(row.collator)}</span>
         <Image alt="Collator tooltip" width={20} height={20} src="/images/warning.svg" />
       </div>
     ),

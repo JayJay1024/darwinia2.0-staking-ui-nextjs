@@ -5,8 +5,7 @@ import Image from "next/image";
 import { useAccount } from "wagmi";
 import Table, { ColumnType } from "./table";
 import Jazzicon from "./jazzicon";
-import EllipsisText from "./ellipsis-text";
-import { prettyNumber } from "@/utils";
+import { prettyNumber, toShortAdrress } from "@/utils";
 import { notification } from "./notification";
 
 type TabKey = "active" | "waiting";
@@ -28,7 +27,7 @@ const columns: ColumnType<DataSource>[] = [
     render: (row) => (
       <div className="flex items-center gap-small">
         <Jazzicon size={20} address={row.collator} className="hidden lg:flex" />
-        <EllipsisText text={row.collator} />
+        <span>{toShortAdrress(row.collator)}</span>
         <Image
           alt="Copy collator"
           width={16}
