@@ -22,7 +22,8 @@ module.exports = {
       },
       keyframes: {
         rightenter: {
-          "0%": { transform: "translateX(100%)" },
+          "0%": { opacity: 0, transform: "translateX(100%)" },
+          "1%": { opacity: 1 },
           "100%": { transform: "translateX(0)" },
         },
         rightleave: {
