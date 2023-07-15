@@ -39,7 +39,7 @@ export default function Table<T extends { key: Key }>({
       <div className="w-full min-w-[872px]" style={styles}>
         {/* table header */}
         <div
-          className="grid gap-middle bg-app-black px-middle py-large text-xs font-bold text-white"
+          className="grid items-center gap-middle bg-app-black px-middle py-large text-xs font-bold text-white"
           style={{ gridTemplateColumns: templateCols }}
         >
           {columns.map(({ key, title }) => (
