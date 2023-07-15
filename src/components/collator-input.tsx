@@ -22,7 +22,7 @@ export default function CollatorInput({
           </Tooltip>
         )}
       </div>
-      <div className="flex h-10 shrink-0 items-center justify-between border border-white px-middle">
+      <div className="flex h-10 shrink-0 items-center justify-between border border-white/50 px-middle transition-colors focus-within:border-white hover:border-white">
         <input
           placeholder={placeholder}
           className={`h-full bg-transparent text-sm font-bold focus-visible:outline-none ${
