@@ -14,7 +14,8 @@ interface Props<T> {
   columns: ColumnType<T>[];
   styles?: CSSProperties;
   contentClassName?: string;
-  onRowClick?: (row: T) => void;
+  selectedRow?: Key;
+  onRowSelect?: (key: Key) => void;
 }
 
 export default function Table<T extends { key: Key }>({
@@ -22,7 +23,8 @@ export default function Table<T extends { key: Key }>({
   dataSource,
   styles,
   contentClassName,
-  onRowClick,
+  selectedRow,
+  onRowSelect,
 }: Props<T>) {
   const templateCols = columns.reduce((acc, cur) => {
     const width = typeof cur.width === "string" ? cur.width : typeof cur.width === "number" ? `${cur.width}px` : "1fr";
@@ -53,10 +55,15 @@ export default function Table<T extends { key: Key }>({
               {dataSource.map((row) => (
                 <div
                   key={row.key}
-                  className={`grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white last:border-b-0 ${
-                    onRowClick ? "transition-opacity hover:cursor-pointer hover:opacity-80 active:opacity-60" : ""
-                  }`}
+                  className={`grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white transition last:border-b-0 ${
+                    onRowSelect ? "hover:cursor-pointer hover:opacity-80" : ""
+                  } ${selectedRow === row.key ? "bg-primary" : ""}`}
                   style={{ gridTemplateColumns: templateCols }}
+                  onClick={() => {
+                    if (onRowSelect) {
+                      onRowSelect(row.key);
+                    }
+                  }}
                 >
                   {columns.map(({ key, dataIndex, render }) => (
                     <Fragment key={key}>
