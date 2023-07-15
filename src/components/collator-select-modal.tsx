@@ -120,7 +120,7 @@ export default function CollatorSelectModal({
             key: "active",
             label: <span>Active Pool</span>,
             children: (
-              <div className="flex flex-col gap-middle">
+              <div className="flex h-[40vh] flex-col gap-middle overflow-y-auto">
                 <div className="flex flex-col gap-middle">
                   <span className="text-xs font-light text-white/50">
                     These candidates are in the active collator pool of the current Session.
@@ -141,7 +141,7 @@ export default function CollatorSelectModal({
             key: "waiting",
             label: <span>Waiting Pool</span>,
             children: (
-              <div className="flex flex-col gap-middle">
+              <div className="flex h-[40vh] flex-col gap-middle overflow-y-auto">
                 <SearchInput />
                 <Table
                   dataSource={dataSource}
