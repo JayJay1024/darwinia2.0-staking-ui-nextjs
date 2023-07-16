@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { CSSProperties, Fragment, Key, ReactElement } from "react";
+import Pagination from "./pagination";
 
 export interface ColumnType<T> {
   title: ReactElement;
@@ -15,6 +16,10 @@ interface Props<T> {
   styles?: CSSProperties;
   contentClassName?: string;
   selectedRow?: Key;
+  total?: number;
+  pageSize?: number;
+  currentPage?: number;
+  onPageChange?: (page: number) => void;
   onRowSelect?: (key: Key) => void;
 }
 
@@ -24,6 +29,10 @@ export default function Table<T extends { key: Key }>({
   styles,
   contentClassName,
   selectedRow,
+  total,
+  pageSize,
+  currentPage,
+  onPageChange,
   onRowSelect,
 }: Props<T>) {
   const templateCols = columns.reduce((acc, cur) => {
@@ -51,27 +60,32 @@ export default function Table<T extends { key: Key }>({
         {/* table body */}
         <>
           {dataSource.length ? (
-            <div className={`overflow-auto ${contentClassName}`}>
-              {dataSource.map((row) => (
-                <div
-                  key={row.key}
-                  className={`grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white transition last:border-b-0 ${
-                    onRowSelect ? "hover:cursor-pointer hover:opacity-80" : ""
-                  } ${selectedRow === row.key ? "bg-primary" : ""}`}
-                  style={{ gridTemplateColumns: templateCols }}
-                  onClick={() => {
-                    if (onRowSelect) {
-                      onRowSelect(row.key);
-                    }
-                  }}
-                >
-                  {columns.map(({ key, dataIndex, render }) => (
-                    <Fragment key={key}>
-                      {render ? render(row) : <span className="truncate">{row[dataIndex]}</span>}
-                    </Fragment>
-                  ))}
-                </div>
-              ))}
+            <div>
+              <div className={`overflow-auto ${contentClassName}`}>
+                {dataSource.map((row) => (
+                  <div
+                    key={row.key}
+                    className={`grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white transition last:border-b-0 ${
+                      onRowSelect ? "hover:cursor-pointer hover:opacity-80" : ""
+                    } ${selectedRow === row.key ? "bg-primary" : ""}`}
+                    style={{ gridTemplateColumns: templateCols }}
+                    onClick={() => {
+                      if (onRowSelect) {
+                        onRowSelect(row.key);
+                      }
+                    }}
+                  >
+                    {columns.map(({ key, dataIndex, render }) => (
+                      <Fragment key={key}>
+                        {render ? render(row) : <span className="truncate">{row[dataIndex]}</span>}
+                      </Fragment>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              {total !== undefined && currentPage !== undefined && (
+                <Pagination total={total} pageSize={pageSize} currentPage={currentPage} onPageChange={onPageChange} />
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center gap-large py-10">
