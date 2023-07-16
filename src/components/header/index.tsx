@@ -1,6 +1,5 @@
 import dynamic from "next/dynamic";
 import NetworkSelector from "./network-selector";
-import Link from "next/link";
 import Image from "next/image";
 import CustomRpc from "../custom-rpc";
 
@@ -10,9 +9,7 @@ export default function Header({ className }: { className: string }) {
   return (
     <div className={`${className} z-10 flex items-center bg-app-black px-large`}>
       <div className="container mx-auto flex items-center justify-between">
-        <Link href="/" className="hidden lg:inline">
-          <Image width={156} height={18} alt="Logo" src="/images/logo.png" />
-        </Link>
+        <Image width={156} height={18} alt="Logo" src="/images/logo.png" className="hidden lg:block" />
         <div className="lg:hidden">
           <User />
         </div>
