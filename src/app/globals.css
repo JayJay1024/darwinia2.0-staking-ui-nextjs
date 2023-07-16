@@ -8,6 +8,10 @@
   left: 0;
   top: 0;
   width: 100%;
+
+  @media (min-width: 1024px) {
+    height: 60px;
+  }
 }
 .app-main {
   min-height: calc(100vh - 70px - 60px);
