@@ -23,14 +23,14 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "id",
     dataIndex: "id",
-    width: "10%",
+    width: "12%",
     title: <span>No.</span>,
     render: (row) => <span className="truncate text-sm font-light text-primary">{`ID #${row.id}`}</span>,
   },
   {
     key: "duration",
     dataIndex: "duration",
-    width: "28%",
+    width: "26%",
     title: <span>Duration</span>,
     render: (row) => (
       <div className="flex w-fit flex-col gap-small">
@@ -53,13 +53,13 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "reward",
     dataIndex: "reward",
-    width: "15%",
     title: <span>Reward (KTON)</span>,
     render: (row) => <span className="truncate">{formatBlanace(row.reward, ktonToken?.decimals)}</span>,
   },
   {
     key: "action",
     dataIndex: "action",
+    width: "20%",
     title: <span>Action</span>,
     render: () => (
       <div>

@@ -18,31 +18,38 @@ export default function TermDeposit() {
 
       <div className="h-[1px] bg-white/20" />
 
-      {/* amount */}
-      <BalanceInput
-        label="Amount"
-        balance={parseEther("1234.8763")}
-        symbol={nativeToken.symbol}
-        decimals={nativeToken.decimals}
-        logoPath={nativeToken.logoPath}
-      />
+      <div className="flex flex-col gap-middle lg:flex-row">
+        {/* amount */}
+        <BalanceInput
+          label="Amount"
+          balance={parseEther("1234.8763")}
+          symbol={nativeToken.symbol}
+          decimals={nativeToken.decimals}
+          logoPath={nativeToken.logoPath}
+          className="lg:flex-1"
+        />
 
-      {/* deposit term */}
-      <InputLabel label="Deposit term" />
-      <DepositTermSelector />
+        {/* deposit term */}
+        <div className="flex flex-col gap-middle lg:flex-1">
+          <InputLabel label="Deposit term" />
+          <DepositTermSelector />
+        </div>
 
-      {/* reward */}
-      <InputLabel label="Reward you'll receive" />
-      <div className="flex h-10 items-center justify-between bg-primary px-middle">
-        <span className="text-sm font-bold text-white">7.614213</span>
-        <span className="text-sm font-bold text-white">KTON</span>
+        {/* reward */}
+        <div className="flex flex-col gap-middle lg:flex-1">
+          <InputLabel label="Reward you'll receive" />
+          <div className="flex h-10 items-center justify-between bg-primary px-middle">
+            <span className="text-sm font-bold text-white">7.614213</span>
+            <span className="text-sm font-bold text-white">KTON</span>
+          </div>
+        </div>
       </div>
 
       <div className="h-[1px] bg-white/20" />
 
       <button
         disabled
-        className="bg-primary px-large py-middle text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
+        className="bg-primary px-large py-middle text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60 lg:w-40"
       >
         Deposit
       </button>
