@@ -13,10 +13,24 @@ export default function Power() {
       </div>
 
       {/* reward */}
-      <div className="flex min-h-[10rem] flex-col gap-middle bg-component p-5">
+      <div className="flex flex-col gap-middle bg-component p-5">
         <span className="text-sm font-bold text-white">Latest Staking Rewards</span>
-        <div className="h-[1px] bg-white/20" />
-        <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+        <div className="h-[1px] shrink-0 bg-white/20" />
+        <div className="flex h-[6rem] flex-col overflow-y-auto">
+          <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+          {/* <div className="flex flex-col gap-small">
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+          </div> */}
+        </div>
       </div>
 
       {/* see detail */}
