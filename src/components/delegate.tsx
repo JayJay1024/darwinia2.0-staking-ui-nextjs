@@ -21,37 +21,43 @@ export default function Delegate() {
       {/* collator */}
       <CollatorSelector />
 
-      {/* ring */}
-      <BalanceInput
-        balance={parseEther("1876.6354")}
-        symbol={nativeToken.symbol}
-        logoPath={nativeToken.logoPath}
-        decimals={nativeToken.decimals}
-        power={BigInt(0)}
-      />
+      <div className="flex flex-col gap-middle lg:flex-row">
+        {/* ring */}
+        <BalanceInput
+          balance={parseEther("1876.6354")}
+          symbol={nativeToken.symbol}
+          logoPath={nativeToken.logoPath}
+          decimals={nativeToken.decimals}
+          power={BigInt(0)}
+          className="lg:flex-1"
+        />
 
-      {/* kton */}
-      {ktonToken && (
-        <>
-          <BalanceInput
-            balance={parseEther("1876.6354")}
-            symbol={ktonToken.symbol}
-            logoPath={ktonToken.logoPath}
-            decimals={ktonToken.decimals}
-            power={BigInt(0)}
-          />
-        </>
-      )}
+        {/* kton */}
+        {ktonToken && (
+          <>
+            <BalanceInput
+              balance={parseEther("1876.6354")}
+              symbol={ktonToken.symbol}
+              logoPath={ktonToken.logoPath}
+              decimals={ktonToken.decimals}
+              power={BigInt(0)}
+              className="lg:flex-1"
+            />
+          </>
+        )}
 
-      {/* active deposit */}
-      <ActiveDepositSelector />
-      <ExtraPower power={BigInt(0)} />
+        {/* active deposit */}
+        <div className="flex flex-col gap-middle lg:flex-1">
+          <ActiveDepositSelector />
+          <ExtraPower power={BigInt(0)} />
+        </div>
+      </div>
 
       <div className="h-[1px] bg-white/20" />
 
       <button
         disabled
-        className="bg-primary px-large py-middle text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
+        className="bg-primary px-large py-middle text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60 lg:w-40"
       >
         Stake
       </button>

@@ -6,7 +6,7 @@ const { nativeToken, ktonToken } = getChainConfig(ChainID.DARWINIA);
 
 export default function ReservedInStaking() {
   return (
-    <div className="flex flex-col gap-5 bg-component p-5">
+    <div className="flex flex-col gap-5 bg-component p-5 lg:w-[32%] lg:shrink-0">
       <span className="text-lg font-bold text-white">Reserved in Staking</span>
       <div className="h-[1px] bg-white/20" />
       <Token symbol={nativeToken.symbol} logoPath={nativeToken.logoPath} isNative />

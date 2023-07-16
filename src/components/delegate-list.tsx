@@ -26,7 +26,7 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "collator",
     dataIndex: "collator",
-    width: "22%",
+    width: "24%",
     title: <span>Collator</span>,
     render: (row) => (
       <div className="flex items-center gap-small">
@@ -39,7 +39,6 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "stakedPower",
     dataIndex: "stakedPower",
-    width: "14%",
     title: <span>Your staked (Power)</span>,
     render: (row) => <span className="truncate">{prettyNumber(row.stakedPower)}</span>,
   },
@@ -59,7 +58,7 @@ const columns: ColumnType<DataSource>[] = [
         </div>
         <div className="flex items-center gap-small">
           <span className="truncate">
-            {formatBlanace(parseEther("80098765987642.172653"), nativeToken.decimals, { keepZero: false })} Deposit RING
+            {formatBlanace(parseEther("800987642.172653"), nativeToken.decimals, { keepZero: false })} Deposit RING
           </span>
           <BondMoreDeposit />
           <UnbondDeposit />
@@ -77,6 +76,7 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "action",
     dataIndex: "action",
+    width: "26%",
     title: <span>Action</span>,
     render: (row) => (
       <div className="flex items-center gap-middle">

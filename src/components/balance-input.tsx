@@ -12,6 +12,7 @@ export default function BalanceInput({
   power,
   label,
   boldLabel,
+  className,
   powerChanges = "more",
 }: {
   balance: bigint;
@@ -22,9 +23,10 @@ export default function BalanceInput({
   powerChanges?: PowerChanges;
   label?: string;
   boldLabel?: boolean;
+  className?: string;
 }) {
   return (
-    <div className="flex flex-col gap-middle">
+    <div className={`flex flex-col gap-middle ${className}`}>
       {label && <InputLabel label={label} bold={boldLabel} />}
       <div className="flex h-10 items-center justify-between gap-middle border border-white px-middle">
         <input

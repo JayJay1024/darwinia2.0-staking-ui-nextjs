@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Power() {
   return (
-    <div className="flex flex-col gap-5 bg-primary p-5">
+    <div className="flex flex-1 flex-col gap-5 bg-primary p-5">
       {/* power */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-middle">

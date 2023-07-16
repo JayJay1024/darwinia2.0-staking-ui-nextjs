@@ -29,6 +29,7 @@ export default function User() {
             <span className="text-sm font-light uppercase">{toShortAdrress(address)}</span>
           </>
         }
+        labelClassName="lg:h-9"
         isOpen={isSelectorOpen}
         setIsOpen={setIsSelectorOpen}
       >
@@ -63,7 +64,7 @@ export default function User() {
       <ManageCollator isOpen={isManageCollatorModalOpen} onClose={() => setIsManageCollatorModalOpen(false)} />
     </>
   ) : (
-    <Button className="capitalize" onClick={() => openConnectModal && openConnectModal()}>
+    <Button className="capitalize lg:h-9" onClick={() => openConnectModal && openConnectModal()}>
       Connect Wallet
     </Button>
   );

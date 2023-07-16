@@ -16,9 +16,17 @@
 .app-main {
   min-height: calc(100vh - 70px - 60px);
   margin-top: 70px;
+
+  @media (min-width: 1024px) {
+    margin-top: 60px;
+  }
 }
 .app-footer {
   height: 60px;
+
+  @media (min-width: 1024px) {
+    height: 70px;
+  }
 }
 
 .home-page {

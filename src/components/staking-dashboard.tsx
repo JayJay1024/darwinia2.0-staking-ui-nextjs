@@ -15,7 +15,7 @@ export default function StakingDashboard() {
 
   return (
     <>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5 lg:flex-row">
         <Power />
         <ReservedInStaking />
       </div>
