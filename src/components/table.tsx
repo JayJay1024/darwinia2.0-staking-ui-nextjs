@@ -46,7 +46,7 @@ export default function Table<T extends { key: Key }>({
   }, "auto");
 
   return (
-    <div className="overflow-auto">
+    <div className="overflow-x-auto overflow-y-hidden">
       <div className="w-full min-w-[872px]" style={styles}>
         {/* table header */}
         <div
@@ -61,28 +61,33 @@ export default function Table<T extends { key: Key }>({
         <>
           {dataSource.length ? (
             <div>
-              <div className={`overflow-auto ${contentClassName}`}>
-                {dataSource.map((row) => (
-                  <div
-                    key={row.key}
-                    className={`grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white transition last:border-b-0 ${
-                      onRowSelect ? "hover:cursor-pointer hover:opacity-80" : ""
-                    } ${selectedRow === row.key ? "bg-primary" : ""}`}
-                    style={{ gridTemplateColumns: templateCols }}
-                    onClick={() => {
-                      if (onRowSelect) {
-                        onRowSelect(row.key);
-                      }
-                    }}
-                  >
-                    {columns.map(({ key, dataIndex, render }) => (
-                      <Fragment key={key}>
-                        {render ? render(row) : <span className="truncate">{row[dataIndex]}</span>}
-                      </Fragment>
-                    ))}
-                  </div>
-                ))}
+              {/* content */}
+              <div className={`overflow-y-auto ${contentClassName}`}>
+                <div>
+                  {dataSource.map((row) => (
+                    <div
+                      key={row.key}
+                      className={`grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white transition last:border-b-0 ${
+                        onRowSelect ? "hover:cursor-pointer hover:opacity-80" : ""
+                      } ${selectedRow === row.key ? "bg-primary" : ""}`}
+                      style={{ gridTemplateColumns: templateCols }}
+                      onClick={() => {
+                        if (onRowSelect) {
+                          onRowSelect(row.key);
+                        }
+                      }}
+                    >
+                      {columns.map(({ key, dataIndex, render }) => (
+                        <Fragment key={key}>
+                          {render ? render(row) : <span className="truncate">{row[dataIndex]}</span>}
+                        </Fragment>
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
+
+              {/* pagination */}
               {total !== undefined && currentPage !== undefined && (
                 <Pagination total={total} pageSize={pageSize} currentPage={currentPage} onPageChange={onPageChange} />
               )}
