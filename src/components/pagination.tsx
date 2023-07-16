@@ -51,11 +51,17 @@ export default function Pagination({ total, currentPage, pageSize = 10, onPageCh
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div className="flex items-center justify-end gap-small">
-      <PageButton page="previous" disabled={currentPage === 0} onClick={() => onPageChange(currentPage - 1)} />
-      {createPageOptions(totalPages, currentPage, onPageChange)}
-      <PageButton page="next" disabled={currentPage === totalPages - 1} onClick={() => onPageChange(currentPage + 1)} />
-    </div>
+    totalPages > 1 && (
+      <div className="flex items-center justify-end gap-small">
+        <PageButton page="previous" disabled={currentPage === 0} onClick={() => onPageChange(currentPage - 1)} />
+        {createPageOptions(totalPages, currentPage, onPageChange)}
+        <PageButton
+          page="next"
+          disabled={currentPage === totalPages - 1}
+          onClick={() => onPageChange(currentPage + 1)}
+        />
+      </div>
+    )
   );
 }
 
