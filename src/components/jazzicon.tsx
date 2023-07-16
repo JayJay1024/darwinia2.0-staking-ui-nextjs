@@ -2,6 +2,7 @@
 
 import { MouseEventHandler } from "react";
 import Icon, { jsNumberForAddress } from "react-jazzicon";
+import { notification } from "./notification";
 
 interface Props {
   size: number;
@@ -15,6 +16,11 @@ export default function Jazzicon({ address, className, size = 24, onCopy = () =>
     e.stopPropagation();
     try {
       await navigator.clipboard.writeText(address);
+      notification.success({
+        title: "Copy successfully",
+        disabledCloseBtn: true,
+        duration: 3000,
+      });
       onCopy();
     } catch (err) {
       console.error(err);
