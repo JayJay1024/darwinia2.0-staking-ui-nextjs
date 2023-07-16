@@ -89,6 +89,7 @@ const columns: ColumnType<DataSource>[] = [
 
 export default function DelegateList() {
   const [dataSource, setDataSource] = useState<DataSource[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     setDataSource(
@@ -105,7 +106,13 @@ export default function DelegateList() {
   return (
     <div className="flex flex-col gap-large bg-component p-5">
       <h5 className="text-sm font-bold text-white">Staking Delegations</h5>
-      <Table columns={columns} dataSource={dataSource} />
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        total={123}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }
