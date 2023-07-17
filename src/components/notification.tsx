@@ -14,7 +14,7 @@ type Status = "success" | "info" | "warn" | "error";
 
 const createContainer = () => {
   const container = document.createElement("div");
-  container.className = "fixed top-middle right-middle flex flex-col overflow-hidden z-40";
+  container.className = "fixed top-middle right-middle lg:top-5 lg:right-5 flex flex-col overflow-hidden z-40";
   document.body.appendChild(container);
   return container;
 };
