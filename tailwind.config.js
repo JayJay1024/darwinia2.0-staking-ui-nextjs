@@ -18,7 +18,8 @@ module.exports = {
         large: "0.9375rem", // 15px
       },
       screens: {
-        "2xl": "1280px",
+        "xl": "1200px",
+        "2xl": "1200px",
       },
       keyframes: {
         rightenter: {
