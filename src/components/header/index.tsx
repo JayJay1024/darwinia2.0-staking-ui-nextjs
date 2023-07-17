@@ -7,7 +7,7 @@ const User = dynamic(() => import("./user"), { ssr: false });
 
 export default function Header({ className }: { className: string }) {
   return (
-    <div className={`${className} z-10 flex items-center bg-app-black px-large`}>
+    <div className={`${className} z-20 flex items-center bg-app-black px-large`}>
       <div className="container mx-auto flex items-center justify-between">
         <Image width={156} height={18} alt="Logo" src="/images/logo.png" className="hidden lg:block" />
         <div className="lg:hidden">
