@@ -113,6 +113,7 @@ export default function CollatorSelectModal({
       onClose={onClose}
       onCancel={onClose}
       onOk={onClose}
+      maskClosable={false}
     >
       <Tabs
         items={[
