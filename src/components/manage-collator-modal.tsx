@@ -13,7 +13,15 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
   const [activeKey, setActiveKey] = useState(TabKey.UPDATE_SESSION_KEY);
 
   return (
-    <Modal title="Manage Collator" isOpen={isOpen} onClose={onClose} maskClosable={false}>
+    <Modal
+      title="Manage Collator"
+      isOpen={isOpen}
+      onClose={onClose}
+      maskClosable={false}
+      className="lg:h-[25rem] lg:w-[45rem]"
+      btnWrapClassName="lg:flex-row"
+      btnClassName="lg:w-40"
+    >
       <Tabs
         items={[
           {
@@ -75,7 +83,7 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
 function Button({ children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
-      className="h-10 w-full bg-primary text-xs font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
+      className="h-10 w-full bg-primary text-xs font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60 lg:w-40"
       {...rest}
     >
       {children}

@@ -33,6 +33,7 @@ export default function BondMoreDepositModal({
       onCancel={onClose}
       onClose={onClose}
       onOk={onClose}
+      className="lg:w-[25rem]"
     >
       {deposits.length ? (
         <>

@@ -10,6 +10,9 @@ interface Props {
   okText?: string;
   disabled?: boolean;
   maskClosable?: boolean;
+  className?: string;
+  btnWrapClassName?: string;
+  btnClassName?: string;
   onClose?: () => void;
   onCancel?: () => void;
   onOk?: () => void;
@@ -22,6 +25,9 @@ export default function Modal({
   cancelText,
   okText,
   disabled,
+  className,
+  btnClassName,
+  btnWrapClassName,
   maskClosable = true,
   onClose = () => undefined,
   onCancel,
@@ -45,14 +51,14 @@ export default function Modal({
     >
       <div
         ref={nodeRef}
-        className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center justify-center bg-app-black/80 px-large"
+        className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center justify-center bg-app-black/90 px-large"
         onClick={() => {
           if (maskClosable) {
             onClose();
           }
         }}
       >
-        <div className="w-full border border-primary" onClick={(e) => e.stopPropagation()}>
+        <div className={`flex w-full flex-col border border-primary ${className}`} onClick={(e) => e.stopPropagation()}>
           {/* header */}
           <div className="flex h-11 items-center justify-between bg-primary px-middle">
             <span className="text-sm font-bold text-white">{title}</span>
@@ -66,16 +72,25 @@ export default function Modal({
             />
           </div>
           {/* content */}
-          <div className={`bg-component p-large ${onCancel || onOk ? "flex flex-col gap-large" : ""}`}>
+          <div className={`h-full bg-component p-large ${onCancel || onOk ? "flex flex-col gap-large" : ""}`}>
             {children}{" "}
             {(onCancel || onOk) && (
               <>
                 <div className="h-[1px] bg-white/20" />
-                {onOk && (
-                  <Button className="bg-primary" onClick={onOk} disabled={disabled}>{`${okText || "Ok"}`}</Button>
-                )}
-                {onCancel && (
-                  <Button className="bg-transparent" onClick={onCancel}>{`${cancelText || "Cancel"}`}</Button>
+
+                {(onOk || onCancel) && (
+                  <div className={`flex flex-col gap-large ${btnWrapClassName}`}>
+                    {onOk && (
+                      <Button className={`bg-primary ${btnClassName}`} onClick={onOk} disabled={disabled}>{`${
+                        okText || "Ok"
+                      }`}</Button>
+                    )}
+                    {onCancel && (
+                      <Button className={`bg-transparent ${btnClassName}`} onClick={onCancel}>{`${
+                        cancelText || "Cancel"
+                      }`}</Button>
+                    )}
+                  </div>
                 )}
               </>
             )}

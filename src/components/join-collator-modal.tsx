@@ -11,6 +11,9 @@ export default function JoinCollatorModal({ isOpen, onClose }: { isOpen: boolean
       okText="Confirm"
       disabled
       maskClosable={false}
+      className="lg:h-[25rem] lg:w-[45rem]"
+      btnWrapClassName="lg:flex-row"
+      btnClassName="lg:w-40"
     >
       <p className="text-xs font-light text-white/90">
         Note that you need to complete two steps in sequence, setup [Session Key] and setup [Commission] before becoming

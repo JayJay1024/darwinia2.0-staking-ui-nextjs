@@ -29,6 +29,7 @@ export default function UnbondTokenModal({
       onOk={onBond}
       maskClosable={false}
       okText="Bond"
+      className="lg:w-[25rem]"
     >
       <>
         <p className="text-xs font-light text-white">This unbonding process will take 14 days to complete.</p>

@@ -13,7 +13,7 @@ export default function CollatorInput({
   placeholder?: string;
 }) {
   return (
-    <div className="flex flex-col gap-small">
+    <div className="flex flex-col gap-small lg:gap-middle">
       <div className="inline-flex items-center gap-middle">
         <span className="text-xs font-bold text-white">{label}</span>
         {tooltip && (

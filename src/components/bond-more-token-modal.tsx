@@ -29,6 +29,7 @@ export default function BondMoreTokenModal({
       onOk={onBond}
       maskClosable={false}
       okText="Bond"
+      className="lg:w-[25rem]"
     >
       <BalanceInput label="Amount" boldLabel decimals={decimals} symbol={symbol} balance={balance} power={power} />
     </Modal>

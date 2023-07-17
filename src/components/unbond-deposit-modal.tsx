@@ -33,6 +33,7 @@ export default function UnbondDepositModal({
       onCancel={onClose}
       onClose={onClose}
       onOk={onClose}
+      className="w-[25rem]"
     >
       {deposits.length ? (
         <>
