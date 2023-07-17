@@ -9,9 +9,9 @@ import StakingDepositTabs from "./staking-deposit-tabs";
 export default function StakingDashboard() {
   const { address } = useAccount();
 
-  // if (!address) {
-  //   redirect("/");
-  // }
+  if (!address) {
+    redirect("/");
+  }
 
   return (
     <>
