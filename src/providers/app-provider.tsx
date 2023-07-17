@@ -38,6 +38,7 @@ export function AppProvider({ children }: PropsWithChildren<unknown>) {
 
       const params = new URLSearchParams(searchParams.toString());
       params.set(UrlParamsKey.NETWORK, chainConfig.name);
+      params.set(UrlParamsKey.RPC, chainConfig.rpcMetas[0].url);
 
       router.push(`?${params.toString()}`);
     },
