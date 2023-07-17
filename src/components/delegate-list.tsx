@@ -11,6 +11,7 @@ import UnbondRingModal from "./unbond-ring-modal";
 import UnbondKtonModal from "./unbond-kton-modal";
 import BondMoreDepositModal from "./bond-more-deposit-modal";
 import UnbondDepositModal from "./unbond-deposit-modal";
+import CollatorSelectModal from "./collator-select-modal";
 
 interface DataSource {
   key: Key;
@@ -80,7 +81,7 @@ const columns: ColumnType<DataSource>[] = [
     title: <span>Action</span>,
     render: (row) => (
       <div className="flex items-center gap-middle">
-        <button className="border border-primary px-middle py-small">Change collator</button>
+        <ChangeCollator />
         <button className="border border-primary px-middle py-small">...</button>
       </div>
     ),
@@ -185,6 +186,22 @@ function UnbondDeposit() {
     <>
       <ActionButton action="unbond" onClick={() => setIsOpen(true)} />
       <UnbondDepositModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    </>
+  );
+}
+
+function ChangeCollator() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        className="border border-primary px-middle py-small transition-opacity hover:opacity-80 active:opacity-60"
+        onClick={() => setIsOpen(true)}
+      >
+        Change collator
+      </button>
+      <CollatorSelectModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );
 }
