@@ -21,18 +21,20 @@ export default function Power() {
         <span className="text-sm font-bold text-white">Latest Staking Rewards</span>
         <div className="h-[1px] shrink-0 bg-white/20" />
         <div className="flex h-[6rem] flex-col overflow-y-auto">
-          <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+          <span className="text-sm font-light text-white/50">No rewards yet</span>
           {/* <div className="flex flex-col gap-small">
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
-            <span className="text-sm font-bold text-white/50">No Rewards Yet</span>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-light text-white">0.1436 RING</span>
+              <span className="text-sm font-light text-white">19 hours ago</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-light text-white">0.1436 RING</span>
+              <span className="text-sm font-light text-white">19 hours ago</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-light text-white">0.1436 RING</span>
+              <span className="text-sm font-light text-white">19 hours ago</span>
+            </div>
           </div> */}
         </div>
       </div>
