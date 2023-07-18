@@ -33,7 +33,7 @@ const columns: ColumnType<DataSource>[] = [
       <div className="flex items-center gap-small">
         <Jazzicon address={row.collator} size={24} className="hidden lg:flex" />
         <span>{toShortAdrress(row.collator)}</span>
-        <Image alt="Collator tooltip" width={20} height={20} src="/images/warning.svg" />
+        <Image alt="Collator tooltip" width={16} height={16} src="/images/warning.svg" />
       </div>
     ),
   },
