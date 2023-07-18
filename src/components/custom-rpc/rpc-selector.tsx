@@ -1,19 +1,11 @@
 import { useApp } from "@/hooks";
 import { RpcMeta } from "@/types";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import AddRpcModal from "./add-rpc-modal";
 
-export default function RpcSelector({
-  rpcMetas,
-  setRpcMetas,
-  onClose = () => undefined,
-}: {
-  rpcMetas: RpcMeta[];
-  setRpcMetas: Dispatch<SetStateAction<RpcMeta[]>>;
-  onClose?: () => void;
-}) {
+export default function RpcSelector({ onClose = () => undefined }: { onClose?: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { activeRpc, setActiveRpc } = useApp();
+  const { rpcMetas, setRpcMetas } = useApp();
 
   return (
     <>
@@ -21,15 +13,7 @@ export default function RpcSelector({
         <div className="max-h-[25vh] overflow-y-auto">
           <div className="flex flex-col gap-middle">
             {rpcMetas.map((rpcMeta) => (
-              <RpcItem
-                key={rpcMeta.url}
-                activeRpc={activeRpc}
-                rpcMeta={rpcMeta}
-                onSelect={(value) => {
-                  setActiveRpc(value);
-                  onClose();
-                }}
-              />
+              <RpcItem key={rpcMeta.url} rpcMeta={rpcMeta} onClose={onClose} />
             ))}
           </div>
         </div>
@@ -51,28 +35,26 @@ export default function RpcSelector({
       <AddRpcModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        onSave={(value) => setRpcMetas((prev) => (prev.some(({ url }) => url === value.url) ? prev : [...prev, value]))}
+        onSave={(value) => {
+          setRpcMetas((prev) => (prev.some(({ url }) => url === value.url) ? prev : [...prev, value]));
+          setIsOpen(false);
+        }}
       />
     </>
   );
 }
 
-function RpcItem({
-  activeRpc,
-  rpcMeta,
-  onSelect,
-}: {
-  activeRpc: RpcMeta;
-  rpcMeta: RpcMeta;
-  onSelect: (rpcMeta: RpcMeta) => void;
-}) {
+function RpcItem({ rpcMeta, onClose }: { rpcMeta: RpcMeta; onClose: () => void }) {
+  const { activeRpc, setActiveRpc } = useApp();
+
   return (
     <div
       className={`flex gap-middle p-small transition hover:cursor-pointer hover:opacity-80 active:opacity-60 ${
         activeRpc.url === rpcMeta.url ? "bg-primary/20" : "bg-white/20"
       }`}
       onClick={() => {
-        onSelect(rpcMeta);
+        setActiveRpc(rpcMeta);
+        onClose();
       }}
     >
       <div

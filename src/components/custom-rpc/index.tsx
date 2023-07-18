@@ -1,17 +1,12 @@
 "use client";
 
-import { useApp } from "@/hooks";
-import { RpcMeta, UrlParamsKey } from "@/types";
-import { getChainConfig } from "@/utils";
 import { useFloating, offset, useTransitionStyles, useClick, useDismiss, useInteractions } from "@floating-ui/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import RpcSelector from "./rpc-selector";
 
 export default function CustomRpc() {
-  const [rpcMetas, setRpcMetas] = useState<RpcMeta[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const { activeChain } = useApp();
 
   const { refs, context, floatingStyles } = useFloating({
     open: isOpen,
@@ -30,20 +25,6 @@ export default function CustomRpc() {
   const dismiss = useDismiss(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const rpcParam = searchParams.get(UrlParamsKey.RPC);
-
-    const chainConfig = getChainConfig(activeChain);
-    const rpcParamUrl = rpcParam ? decodeURIComponent(rpcParam) : null;
-
-    if (chainConfig.rpcMetas.some(({ url }) => url === rpcParamUrl)) {
-      setRpcMetas(chainConfig.rpcMetas);
-    } else {
-      setRpcMetas(chainConfig.rpcMetas.concat(rpcParamUrl ? { url: rpcParamUrl } : []));
-    }
-  }, [activeChain]);
-
   return (
     <>
       <button
@@ -57,7 +38,7 @@ export default function CustomRpc() {
       {isMounted && (
         <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
           <div style={styles}>
-            <RpcSelector rpcMetas={rpcMetas} setRpcMetas={setRpcMetas} onClose={() => setIsOpen(false)} />
+            <RpcSelector onClose={() => setIsOpen(false)} />
           </div>
         </div>
       )}

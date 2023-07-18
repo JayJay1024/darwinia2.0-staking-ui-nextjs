@@ -14,7 +14,7 @@ export default function AddRpcModal({
   const [rpcMeta, setRpcMeta] = useState<RpcMeta>();
 
   return (
-    <Modal title="Custom Endpoint" isOpen={isOpen} onClose={onClose} className="w-[560px]">
+    <Modal title="Custom Endpoint" isOpen={isOpen} onClose={onClose} className="lg:w-[560px]">
       <div className="flex flex-col gap-5">
         <Input
           label="Endpoint Name (Optional)"
@@ -31,7 +31,6 @@ export default function AddRpcModal({
           className="flex h-10 w-full items-center justify-center bg-primary transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
           onClick={() => {
             rpcMeta && onSave(rpcMeta);
-            onClose();
           }}
           disabled={!rpcMeta?.url}
         >
