@@ -51,7 +51,7 @@ export default function Modal({
     >
       <div
         ref={nodeRef}
-        className="fixed left-0 top-0 z-10 flex h-screen w-screen items-center justify-center bg-app-black/90 px-large"
+        className="fixed left-0 top-0 z-30 flex h-screen w-screen items-center justify-center bg-app-black/90 px-large"
         onClick={() => {
           if (maskClosable) {
             onClose();
