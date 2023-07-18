@@ -13,6 +13,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@floating-ui/react": "^0.24.5",
+    "@polkadot/api": "^10.9.1",
     "@rainbow-me/rainbowkit": "^1.0.4",
     "next": "13.4.8",
     "react": "18.2.0",

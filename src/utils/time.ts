@@ -10,3 +10,8 @@ export function formatTime(timestamp: number) {
 
   return `${date.getUTCFullYear()}.${month}.${day}`;
 }
+
+export function calcMonths(startTime: number, endTime: number) {
+  const month = 60 * 60 * 24 * 30;
+  return Math.round((endTime - startTime) / month);
+}

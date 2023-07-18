@@ -18,7 +18,7 @@ export default function UnbondKtonModal({
         isOpen={isOpen}
         symbol={ktonToken.symbol}
         decimals={ktonToken.decimals}
-        power={BigInt(0)}
+        power={0n}
         balance={parseEther("12345.87654")}
         onClose={onClose}
         onBond={onClose}

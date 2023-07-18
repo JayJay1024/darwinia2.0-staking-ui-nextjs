@@ -98,7 +98,7 @@ export default function DelegateList() {
         key: index,
         collator: "0xf422673CB7a673f595852f7B00906408A0b073db",
         stakedPower: BigInt(index * 1928768765),
-        bondedTokens: BigInt(0),
+        bondedTokens: 0n,
         action: true,
       }))
     );

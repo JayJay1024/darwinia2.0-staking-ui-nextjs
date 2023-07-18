@@ -17,7 +17,7 @@ export default function UnbondRingModal({
       isOpen={isOpen}
       symbol={nativeToken.symbol}
       decimals={nativeToken.decimals}
-      power={BigInt(0)}
+      power={0n}
       balance={parseEther("12345.87654")}
       onClose={onClose}
       onBond={onClose}

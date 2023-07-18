@@ -28,7 +28,7 @@ export default function Delegate() {
           symbol={nativeToken.symbol}
           logoPath={nativeToken.logoPath}
           decimals={nativeToken.decimals}
-          power={BigInt(0)}
+          power={0n}
           className="lg:flex-1"
         />
 
@@ -40,7 +40,7 @@ export default function Delegate() {
               symbol={ktonToken.symbol}
               logoPath={ktonToken.logoPath}
               decimals={ktonToken.decimals}
-              power={BigInt(0)}
+              power={0n}
               className="lg:flex-1"
             />
           </>
@@ -49,7 +49,7 @@ export default function Delegate() {
         {/* active deposit */}
         <div className="flex flex-col gap-middle lg:flex-1">
           <ActiveDepositSelector />
-          <ExtraPower power={BigInt(0)} />
+          <ExtraPower power={0n} />
         </div>
       </div>
 

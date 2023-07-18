@@ -1,6 +1,10 @@
+import { useStaking } from "@/hooks";
+import { prettyNumber } from "@/utils";
 import Image from "next/image";
 
 export default function Power() {
+  const { power } = useStaking();
+
   return (
     <div className="flex flex-1 flex-col gap-5 bg-primary p-5">
       {/* power */}
@@ -9,7 +13,7 @@ export default function Power() {
           <Image alt="Icon of Power" src="/images/power.svg" width={30} height={42} />
           <span className="text-3xl font-bold text-white">Power</span>
         </div>
-        <span className="text-3xl font-bold text-white">94261823</span>
+        <span className="text-3xl font-bold text-white">{prettyNumber(power)}</span>
       </div>
 
       {/* reward */}
