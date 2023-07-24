@@ -15,6 +15,7 @@ interface StakingCtx {
   ktonPool: bigint;
   stakingRing: bigint;
   stakingKton: bigint;
+  totalOfRingInDeposit: bigint;
 }
 
 const defaultValue: StakingCtx = {
@@ -23,6 +24,7 @@ const defaultValue: StakingCtx = {
   ktonPool: 0n,
   stakingRing: 0n,
   stakingKton: 0n,
+  totalOfRingInDeposit: 0n,
 };
 
 export const StakingContext = createContext(defaultValue);
@@ -32,6 +34,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [ktonPool, setKtonPool] = useState(defaultValue.ktonPool);
   const [stakingRing, setStakingRing] = useState(defaultValue.stakingRing);
   const [stakingKton, setStakingKton] = useState(defaultValue.stakingKton);
+  const [totalOfRingInDeposit, setTotalOfRingInDeposit] = useState(defaultValue.totalOfRingInDeposit);
   const [deposits, setDeposits] = useState<Deposit[]>([]);
 
   const { address } = useAccount();
@@ -79,6 +82,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       sub$$ = from(polkadotApi.query.deposit.deposits(address) as Promise<Option<Vec<DepositCodec>>>).subscribe({
         next: (depositsOpt) => {
           if (depositsOpt.isSome) {
+            setTotalOfRingInDeposit(depositsOpt.unwrap().reduce((acc, cur) => acc + cur.value.toBigInt(), 0n));
             setDeposits(
               depositsOpt.unwrap().map((item) => {
                 const startTime = item.startTime.toNumber();
@@ -98,12 +102,14 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
               })
             );
           } else {
+            setTotalOfRingInDeposit(0n);
             setDeposits([]);
           }
         },
         error: console.error,
       });
     } else {
+      setTotalOfRingInDeposit(0n);
       setDeposits([]);
     }
 
@@ -142,7 +148,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   }, [address, deposits, polkadotApi]);
 
   return (
-    <StakingContext.Provider value={{ power, ringPool, ktonPool, stakingRing, stakingKton }}>
+    <StakingContext.Provider value={{ power, ringPool, ktonPool, stakingRing, stakingKton, totalOfRingInDeposit }}>
       {children}
     </StakingContext.Provider>
   );
