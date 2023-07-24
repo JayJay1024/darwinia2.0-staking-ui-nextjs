@@ -37,8 +37,8 @@ module.exports = {
       },
       animation: {
         "notification-enter": "rightenter 400ms ease-out",
-        "notification-leave": "rightleave 400ms ease-out",
-        "notification-fadeout": "notificationfadeout 200ms ease-out",
+        "notification-leave": "rightleave 400ms ease-out forwards",
+        "notification-fadeout": "notificationfadeout 200ms ease-out forwards",
       }
     },
   },
