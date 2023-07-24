@@ -1,9 +1,12 @@
-import { useStaking } from "@/hooks";
-import { prettyNumber } from "@/utils";
+import { useApp, useStaking } from "@/hooks";
+import { getChainConfig, prettyNumber } from "@/utils";
 import Image from "next/image";
 
 export default function Power() {
   const { power } = useStaking();
+  const { activeChain } = useApp();
+
+  const chainConfig = getChainConfig(activeChain);
 
   return (
     <div className="flex flex-1 flex-col gap-5 bg-primary p-5">
@@ -44,11 +47,11 @@ export default function Power() {
         <span className="text-xs font-light text-white">See detailed staking rewards in </span>
         <a
           target="_blank"
-          href="www.subscan.io"
+          href={chainConfig.explorer.url}
           rel="noopener"
           className="font-sans text-xs font-normal text-white underline transition-opacity hover:opacity-80 active:opacity-60"
         >
-          Subscan→
+          {chainConfig.explorer.name}→
         </a>
       </div>
     </div>
