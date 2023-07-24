@@ -20,7 +20,7 @@ export default function WrongChainAlert() {
         closerRef.current = notification.warn({
           duration: 0,
           description: (
-            <div className="w-80">
+            <div className="w-[70vw] lg:w-80">
               <p className="text-sm text-white">
                 You are connected to the Wrong Chain.{" "}
                 <span
