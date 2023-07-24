@@ -1,10 +1,43 @@
+import { GET_LATEST_STAKING_REWARDS } from "@/config";
 import { useApp, useStaking } from "@/hooks";
-import { getChainConfig, prettyNumber } from "@/utils";
+import { formatBlanace, getChainConfig, prettyNumber } from "@/utils";
+import { formatDistanceStrict } from "date-fns";
+import { useQuery } from "graphql-hooks";
 import Image from "next/image";
+import { getAddress } from "viem";
+import { useAccount } from "wagmi";
+
+interface Reward {
+  id: string;
+  amount: string;
+  blockNumber: number;
+  blockTime: string;
+}
+
+interface RewardNode {
+  nodes: Reward[];
+}
+
+interface StakingRecord {
+  rewards: RewardNode;
+}
+
+interface QueryVariables {
+  accountAddress: string;
+  itemsCount: number;
+}
+
+interface QueryResult {
+  stakingRecord: StakingRecord;
+}
 
 export default function Power() {
   const { power } = useStaking();
   const { activeChain } = useApp();
+  const { address } = useAccount();
+  const { data: rewardData } = useQuery<QueryResult, QueryVariables>(GET_LATEST_STAKING_REWARDS, {
+    variables: { accountAddress: address ? getAddress(address) : "", itemsCount: 9 },
+  });
 
   const chainConfig = getChainConfig(activeChain);
 
@@ -24,21 +57,20 @@ export default function Power() {
         <span className="text-sm font-bold text-white">Latest Staking Rewards</span>
         <div className="h-[1px] shrink-0 bg-white/20" />
         <div className="flex h-[6rem] flex-col overflow-y-auto">
-          <span className="text-sm font-light text-white/50">No rewards yet</span>
-          {/* <div className="flex flex-col gap-small">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-light text-white">0.1436 RING</span>
-              <span className="text-sm font-light text-white">19 hours ago</span>
+          {rewardData?.stakingRecord.rewards.nodes.length ? (
+            <div className="flex flex-col gap-small">
+              {rewardData.stakingRecord.rewards.nodes.map(({ id, amount, blockTime }) => (
+                <div className="flex items-center justify-between" key={id}>
+                  <span className="text-sm font-light text-white">
+                    {formatBlanace(BigInt(amount), chainConfig.nativeToken.decimals)} {chainConfig.nativeToken.symbol}
+                  </span>
+                  <span className="text-sm font-light text-white">{toTimeAgo(blockTime)}</span>
+                </div>
+              ))}
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-light text-white">0.1436 RING</span>
-              <span className="text-sm font-light text-white">19 hours ago</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-light text-white">0.1436 RING</span>
-              <span className="text-sm font-light text-white">19 hours ago</span>
-            </div>
-          </div> */}
+          ) : (
+            <span className="text-sm font-light text-white/50">No rewards yet</span>
+          )}
         </div>
       </div>
 
@@ -56,4 +88,10 @@ export default function Power() {
       </div>
     </div>
   );
+}
+
+function toTimeAgo(time: string) {
+  return formatDistanceStrict(time.endsWith("Z") ? new Date(time) : new Date(`${time}Z`), Date.now(), {
+    addSuffix: true,
+  });
 }
