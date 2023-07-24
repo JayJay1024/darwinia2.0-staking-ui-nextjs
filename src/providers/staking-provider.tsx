@@ -10,6 +10,7 @@ import { Subscription, from } from "rxjs";
 import type { DarwiniaStakingLedger, Deposit, DepositCodec } from "@/types";
 
 interface StakingCtx {
+  deposits: Deposit[];
   power: bigint;
   ringPool: bigint;
   ktonPool: bigint;
@@ -19,6 +20,7 @@ interface StakingCtx {
 }
 
 const defaultValue: StakingCtx = {
+  deposits: [],
   power: 0n,
   ringPool: 0n,
   ktonPool: 0n,
@@ -30,12 +32,12 @@ const defaultValue: StakingCtx = {
 export const StakingContext = createContext(defaultValue);
 
 export function StakingProvider({ children }: PropsWithChildren<unknown>) {
+  const [deposits, setDeposits] = useState(defaultValue.deposits);
   const [ringPool, setRingPool] = useState(defaultValue.ringPool);
   const [ktonPool, setKtonPool] = useState(defaultValue.ktonPool);
   const [stakingRing, setStakingRing] = useState(defaultValue.stakingRing);
   const [stakingKton, setStakingKton] = useState(defaultValue.stakingKton);
   const [totalOfRingInDeposit, setTotalOfRingInDeposit] = useState(defaultValue.totalOfRingInDeposit);
-  const [deposits, setDeposits] = useState<Deposit[]>([]);
 
   const { address } = useAccount();
   const { polkadotApi } = useApi();
@@ -148,7 +150,9 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   }, [address, deposits, polkadotApi]);
 
   return (
-    <StakingContext.Provider value={{ power, ringPool, ktonPool, stakingRing, stakingKton, totalOfRingInDeposit }}>
+    <StakingContext.Provider
+      value={{ power, deposits, ringPool, ktonPool, stakingRing, stakingKton, totalOfRingInDeposit }}
+    >
       {children}
     </StakingContext.Provider>
   );
