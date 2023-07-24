@@ -62,7 +62,8 @@ export default function Power() {
               {rewardData.stakingRecord.rewards.nodes.map(({ id, amount, blockTime }) => (
                 <div className="flex items-center justify-between" key={id}>
                   <span className="text-sm font-light text-white">
-                    {formatBlanace(BigInt(amount), chainConfig.nativeToken.decimals)} {chainConfig.nativeToken.symbol}
+                    {formatBlanace(BigInt(amount), chainConfig.nativeToken.decimals, { precision: 4 })}{" "}
+                    {chainConfig.nativeToken.symbol}
                   </span>
                   <span className="text-sm font-light text-white">{toTimeAgo(blockTime)}</span>
                 </div>
