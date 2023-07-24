@@ -12,6 +12,6 @@ export function formatTime(timestamp: number) {
 }
 
 export function calcMonths(startTime: number, endTime: number) {
-  const month = 60 * 60 * 24 * 30;
+  const month = 60 * 60 * 24 * 30 * 1000;
   return Math.round((endTime - startTime) / month);
 }
