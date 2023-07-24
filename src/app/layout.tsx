@@ -1,8 +1,9 @@
-import { AppProvider, NotificationProvider, RainbowProvider } from "@/providers";
+import { AppProvider, RainbowProvider } from "@/providers";
 import "./globals.css";
 import { JetBrains_Mono } from "next/font/google";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import WrongChainAlert from "@/components/wrong-chain-alert";
 
 const fontJetBrainsMono = JetBrains_Mono({ subsets: ["latin", "latin-ext"] });
 
@@ -15,15 +16,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="bg-app-black text-white">
       <body className={fontJetBrainsMono.className}>
-        <NotificationProvider>
-          <AppProvider>
-            <RainbowProvider>
-              <Header className="app-header" />
-              <main className="app-main">{children}</main>
-              <Footer className="app-footer" />
-            </RainbowProvider>
-          </AppProvider>
-        </NotificationProvider>
+        <AppProvider>
+          <RainbowProvider>
+            <Header className="app-header" />
+            <main className="app-main">{children}</main>
+            <Footer className="app-footer" />
+
+            <WrongChainAlert />
+          </RainbowProvider>
+        </AppProvider>
       </body>
     </html>
   );

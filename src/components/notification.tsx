@@ -8,6 +8,7 @@ interface Config {
   duration?: number; // millisecond
   disabledCloseBtn?: boolean;
   className?: string;
+  onClose?: () => void;
 }
 
 type Status = "success" | "info" | "warn" | "error";
@@ -22,7 +23,7 @@ const createContainer = () => {
 const createOne = (config: Config, status: Status, onClose: () => void) => {
   const domNode = document.createElement("div");
 
-  domNode.className = `border border-primary p-middle flex items-center gap-middle mb-middle animate-notification-enter relative bg-component ${config.className}`;
+  domNode.className = `border border-primary p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative bg-component ${config.className}`;
 
   const root = createRoot(domNode);
 
@@ -39,7 +40,7 @@ const createOne = (config: Config, status: Status, onClose: () => void) => {
           width={16}
           height={16}
           src="/images/close-white.svg"
-          className="absolute right-1 top-1 transition-transform hover:scale-105 hover:cursor-pointer active:scale-95"
+          className="absolute right-1 top-1 transition-transform hover:scale-105 hover:cursor-pointer active:scale-95 lg:right-2 lg:top-2"
           onClick={onClose}
         />
       )}
@@ -90,6 +91,7 @@ const notificationInstance = (config: Config, status: Status) => {
       wrapper.style.height = `${thisOne.offsetHeight}px`;
       thisRoot.unmount();
       thisOne.remove();
+      config.onClose && config.onClose();
       wrapper.classList.add("animate-notification-fadeout");
     }
   });
