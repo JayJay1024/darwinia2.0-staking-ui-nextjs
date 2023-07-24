@@ -1,3 +1,5 @@
+"use client";
+
 import { useApp } from "@/hooks";
 import { getChainConfig } from "@/utils";
 import { ClientContext, GraphQLClient } from "graphql-hooks";

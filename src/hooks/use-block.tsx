@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import type { Codec } from "@polkadot/types-codec/types";
 import { useApi } from "./use-api";
