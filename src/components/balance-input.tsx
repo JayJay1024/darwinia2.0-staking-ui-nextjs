@@ -1,6 +1,7 @@
 import { formatBlanace, prettyNumber } from "@/utils";
 import Image from "next/image";
 import InputLabel from "./input-label";
+import { parseUnits } from "viem";
 
 type PowerChanges = "more" | "less";
 
@@ -14,6 +15,7 @@ export default function BalanceInput({
   boldLabel,
   className,
   powerChanges = "more",
+  onChange = () => undefined,
 }: {
   balance: bigint;
   symbol: string;
@@ -24,6 +26,7 @@ export default function BalanceInput({
   label?: string;
   boldLabel?: boolean;
   className?: string;
+  onChange?: (amount: bigint) => void;
 }) {
   return (
     <div className={`flex flex-col gap-middle ${className}`}>
@@ -33,6 +36,11 @@ export default function BalanceInput({
           type="string"
           placeholder={`Balance: ${formatBlanace(balance, decimals, { keepZero: false, precision: 4 })}`}
           className="h-full w-[72%] bg-transparent text-sm font-light focus-visible:outline-none"
+          onChange={(e) => {
+            if (!Number.isNaN(Number(e.target.value))) {
+              onChange(parseUnits(e.target.value, decimals));
+            }
+          }}
         />
         <div className="flex items-center gap-middle">
           {logoPath && <Image alt={symbol} width={20} height={20} src={logoPath} />}
