@@ -31,7 +31,7 @@ export default function BalanceInput({
       <div className="flex h-10 items-center justify-between gap-middle border border-white px-middle">
         <input
           type="string"
-          placeholder={`Balance: ${formatBlanace(balance, decimals, { keepZero: false })}`}
+          placeholder={`Balance: ${formatBlanace(balance, decimals, { keepZero: false, precision: 4 })}`}
           className="h-full w-[72%] bg-transparent text-sm font-light focus-visible:outline-none"
         />
         <div className="flex items-center gap-middle">

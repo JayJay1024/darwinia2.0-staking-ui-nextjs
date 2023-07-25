@@ -1,13 +1,17 @@
-import { ChainID } from "@/types";
 import { getChainConfig } from "@/utils";
 import BalanceInput from "./balance-input";
 import DepositTermSelector from "./deposit-term-selector";
-import { parseEther } from "viem";
 import InputLabel from "./input-label";
-
-const { nativeToken } = getChainConfig(ChainID.DARWINIA);
+import { useAccount, useBalance } from "wagmi";
+import { useApp } from "@/hooks";
 
 export default function TermDeposit() {
+  const { address } = useAccount();
+  const { data: balanceData } = useBalance({ address });
+  const { activeChain } = useApp();
+
+  const { nativeToken } = getChainConfig(activeChain);
+
   return (
     <div className="flex flex-col gap-middle bg-component p-5">
       <h5 className="text-sm font-bold text-white">Term Deposit</h5>
@@ -22,7 +26,7 @@ export default function TermDeposit() {
         {/* amount */}
         <BalanceInput
           label="Amount"
-          balance={parseEther("1234.8763")}
+          balance={balanceData?.value || 0n}
           symbol={nativeToken.symbol}
           decimals={nativeToken.decimals}
           logoPath={nativeToken.logoPath}
