@@ -14,9 +14,9 @@ interface StakingCtx {
   power: bigint;
   ringPool: bigint;
   ktonPool: bigint;
-  stakingRing: bigint;
-  stakingKton: bigint;
-  totalOfRingInDeposit: bigint;
+  stakedRing: bigint;
+  stakedKton: bigint;
+  totalOfDepositsInStaking: bigint;
 }
 
 const defaultValue: StakingCtx = {
@@ -24,9 +24,9 @@ const defaultValue: StakingCtx = {
   power: 0n,
   ringPool: 0n,
   ktonPool: 0n,
-  stakingRing: 0n,
-  stakingKton: 0n,
-  totalOfRingInDeposit: 0n,
+  stakedRing: 0n,
+  stakedKton: 0n,
+  totalOfDepositsInStaking: 0n,
 };
 
 export const StakingContext = createContext(defaultValue);
@@ -35,17 +35,17 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [deposits, setDeposits] = useState(defaultValue.deposits);
   const [ringPool, setRingPool] = useState(defaultValue.ringPool);
   const [ktonPool, setKtonPool] = useState(defaultValue.ktonPool);
-  const [stakingRing, setStakingRing] = useState(defaultValue.stakingRing);
-  const [stakingKton, setStakingKton] = useState(defaultValue.stakingKton);
-  const [totalOfRingInDeposit, setTotalOfRingInDeposit] = useState(defaultValue.totalOfRingInDeposit);
+  const [stakedRing, setStakedRing] = useState(defaultValue.stakedRing);
+  const [stakedKton, setStakedKton] = useState(defaultValue.stakedKton);
+  const [totalOfDepositsInStaking, setTotalOfDepositsInStaking] = useState(defaultValue.totalOfDepositsInStaking);
 
   const { address } = useAccount();
   const { polkadotApi } = useApi();
   const { blockTimestamp } = useBlock();
 
   const power = useMemo(
-    () => stakingToPower(stakingRing, stakingKton, ringPool, ktonPool),
-    [stakingRing, stakingKton, ringPool, ktonPool]
+    () => stakingToPower(stakedRing + totalOfDepositsInStaking, stakedKton, ringPool, ktonPool),
+    [stakedRing, stakedKton, ringPool, ktonPool, totalOfDepositsInStaking]
   );
 
   // ring pool
@@ -84,7 +84,6 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       sub$$ = from(polkadotApi.query.deposit.deposits(address) as Promise<Option<Vec<DepositCodec>>>).subscribe({
         next: (depositsOpt) => {
           if (depositsOpt.isSome) {
-            setTotalOfRingInDeposit(depositsOpt.unwrap().reduce((acc, cur) => acc + cur.value.toBigInt(), 0n));
             setDeposits(
               depositsOpt.unwrap().map((item) => {
                 const startTime = item.startTime.toNumber();
@@ -104,14 +103,12 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
               })
             );
           } else {
-            setTotalOfRingInDeposit(0n);
             setDeposits([]);
           }
         },
         error: console.error,
       });
     } else {
-      setTotalOfRingInDeposit(0n);
       setDeposits([]);
     }
 
@@ -128,22 +125,26 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
           if (ledgerOpt.isSome) {
             const ledgerData = ledgerOpt.unwrap().toJSON() as unknown as DarwiniaStakingLedger;
 
-            const totalOfDepositsInStaking = deposits
-              .filter(({ id }) => ledgerData.stakedDeposits?.includes(id))
-              .reduce((acc, cur) => acc + cur.value, 0n);
+            setTotalOfDepositsInStaking(
+              deposits
+                .filter(({ id }) => ledgerData.stakedDeposits?.includes(id))
+                .reduce((acc, cur) => acc + cur.value, 0n)
+            );
 
-            setStakingRing(BigInt(ledgerData.stakedRing) + totalOfDepositsInStaking);
-            setStakingKton(BigInt(ledgerData.stakedKton));
+            setStakedRing(BigInt(ledgerData.stakedRing));
+            setStakedKton(BigInt(ledgerData.stakedKton));
           } else {
-            setStakingRing(0n);
-            setStakingKton(0n);
+            setTotalOfDepositsInStaking(0n);
+            setStakedRing(0n);
+            setStakedKton(0n);
           }
         },
         error: console.error,
       });
     } else {
-      setStakingRing(0n);
-      setStakingKton(0n);
+      setTotalOfDepositsInStaking(0n);
+      setStakedRing(0n);
+      setStakedKton(0n);
     }
 
     return () => sub$$?.unsubscribe();
@@ -151,7 +152,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
 
   return (
     <StakingContext.Provider
-      value={{ power, deposits, ringPool, ktonPool, stakingRing, stakingKton, totalOfRingInDeposit }}
+      value={{ power, deposits, ringPool, ktonPool, stakedRing, stakedKton, totalOfDepositsInStaking }}
     >
       {children}
     </StakingContext.Provider>

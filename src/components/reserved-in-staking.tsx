@@ -3,7 +3,7 @@ import { formatBlanace, getChainConfig } from "@/utils";
 import Image from "next/image";
 
 export default function ReservedInStaking() {
-  const { stakingRing, stakingKton, totalOfRingInDeposit } = useStaking();
+  const { stakedRing, stakedKton, totalOfDepositsInStaking } = useStaking();
   const { activeChain } = useApp();
 
   const { nativeToken, ktonToken } = getChainConfig(activeChain);
@@ -16,8 +16,8 @@ export default function ReservedInStaking() {
         symbol={nativeToken.symbol}
         decimals={nativeToken.decimals}
         logoPath={nativeToken.logoPath}
-        bonded={stakingRing}
-        inDeposit={totalOfRingInDeposit}
+        bonded={stakedRing + totalOfDepositsInStaking}
+        inDeposit={totalOfDepositsInStaking}
         isNative
       />
       <div className="h-[1px] bg-white/20" />
@@ -26,7 +26,7 @@ export default function ReservedInStaking() {
           symbol={ktonToken.symbol}
           decimals={ktonToken.decimals}
           logoPath={ktonToken.logoPath}
-          bonded={stakingKton}
+          bonded={stakedKton}
         />
       )}
     </div>
