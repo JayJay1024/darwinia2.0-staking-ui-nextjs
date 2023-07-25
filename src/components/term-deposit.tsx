@@ -59,7 +59,7 @@ export default function TermDeposit() {
       <div className="h-[1px] bg-white/20" />
 
       <button
-        disabled
+        disabled={!(depositRing > 0)}
         className="bg-primary px-large py-middle text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60 lg:w-40"
       >
         Deposit
