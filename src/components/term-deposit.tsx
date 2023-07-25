@@ -41,7 +41,7 @@ export default function TermDeposit() {
         {/* deposit term */}
         <div className="flex flex-col gap-middle lg:flex-1">
           <InputLabel label="Deposit term" />
-          <DepositTermSelector onChange={setDepositTerm} />
+          <DepositTermSelector activeTerm={depositTerm} onChange={setDepositTerm} />
         </div>
 
         {/* reward */}

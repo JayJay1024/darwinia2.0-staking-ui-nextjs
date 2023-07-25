@@ -3,8 +3,13 @@ import Selector from "./selector";
 
 const terms = new Array(36).fill(0).map((_, index) => index + 1);
 
-export default function DepositTermSelector({ onChange }: { onChange: (term: number) => void }) {
-  const [activeTerm, setActiveTerm] = useState(terms[0]);
+export default function DepositTermSelector({
+  activeTerm,
+  onChange,
+}: {
+  activeTerm: number;
+  onChange: (term: number) => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -20,7 +25,6 @@ export default function DepositTermSelector({ onChange }: { onChange: (term: num
           key={term}
           type="button"
           onClick={() => {
-            setActiveTerm(term);
             onChange(term);
             setIsOpen(false);
           }}
