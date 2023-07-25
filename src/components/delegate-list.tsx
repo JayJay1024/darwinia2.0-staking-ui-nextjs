@@ -12,12 +12,17 @@ import UnbondKtonModal from "./unbond-kton-modal";
 import BondMoreDepositModal from "./bond-more-deposit-modal";
 import UnbondDepositModal from "./unbond-deposit-modal";
 import CollatorSelectModal from "./collator-select-modal";
+import { useStaking } from "@/hooks";
 
 interface DataSource {
   key: Key;
   collator: string;
   stakedPower: bigint;
-  bondedTokens: bigint;
+  bondedTokens: {
+    stakedRing: bigint;
+    stakedKton: bigint;
+    totalOfDepositsInStaking: bigint;
+  };
   action: true;
 }
 
@@ -89,20 +94,21 @@ const columns: ColumnType<DataSource>[] = [
 ];
 
 export default function DelegateList() {
+  const {} = useStaking();
   const [dataSource, setDataSource] = useState<DataSource[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
 
-  useEffect(() => {
-    setDataSource(
-      new Array(10).fill(0).map((_, index) => ({
-        key: index,
-        collator: "0xf422673CB7a673f595852f7B00906408A0b073db",
-        stakedPower: BigInt(index * 1928768765),
-        bondedTokens: 0n,
-        action: true,
-      }))
-    );
-  }, []);
+  // useEffect(() => {
+  //   setDataSource(
+  //     new Array(10).fill(0).map((_, index) => ({
+  //       key: index,
+  //       collator: "0xf422673CB7a673f595852f7B00906408A0b073db",
+  //       stakedPower: BigInt(index * 1928768765),
+  //       bondedTokens: 0n,
+  //       action: true,
+  //     }))
+  //   );
+  // }, []);
 
   return (
     <div className="flex flex-col gap-large bg-component p-5">

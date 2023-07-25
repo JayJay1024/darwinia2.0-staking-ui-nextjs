@@ -4,7 +4,8 @@ import { useApi, useBlock } from "@/hooks";
 import { calcKtonReward, calcMonths, stakingToPower } from "@/utils";
 import { PropsWithChildren, createContext, useEffect, useMemo, useState } from "react";
 import type { Balance } from "@polkadot/types/interfaces";
-import type { Option, Vec } from "@polkadot/types";
+import type { Option, Vec, StorageKey } from "@polkadot/types";
+import type { AnyTuple, Codec } from "@polkadot/types/types";
 import { useAccount } from "wagmi";
 import { Subscription, from } from "rxjs";
 import type { DarwiniaStakingLedger, Deposit, DepositCodec } from "@/types";
@@ -17,6 +18,16 @@ interface StakingCtx {
   stakedRing: bigint;
   stakedKton: bigint;
   totalOfDepositsInStaking: bigint;
+  activeCollators: string[];
+  collatorCommission: { [collator: string]: string };
+  collatorLastSessionBlocks: { [collator: string]: number };
+  collatorNominators: {
+    [collator: string]: {
+      totalStakedPower: bigint;
+      nominators: { address: string; stakedPower: bigint }[];
+    };
+  };
+  nominatorCollators: { [nominator: string]: string[] };
 }
 
 const defaultValue: StakingCtx = {
@@ -27,6 +38,11 @@ const defaultValue: StakingCtx = {
   stakedRing: 0n,
   stakedKton: 0n,
   totalOfDepositsInStaking: 0n,
+  activeCollators: [],
+  collatorCommission: {},
+  collatorLastSessionBlocks: {},
+  collatorNominators: {},
+  nominatorCollators: {},
 };
 
 export const StakingContext = createContext(defaultValue);
@@ -38,6 +54,11 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [stakedRing, setStakedRing] = useState(defaultValue.stakedRing);
   const [stakedKton, setStakedKton] = useState(defaultValue.stakedKton);
   const [totalOfDepositsInStaking, setTotalOfDepositsInStaking] = useState(defaultValue.totalOfDepositsInStaking);
+  const [activeCollators, setActiveCollators] = useState(defaultValue.activeCollators);
+  const [collatorCommission, setCollatorCommission] = useState(defaultValue.collatorCommission);
+  const [collatorLastSessionBlocks, setCollatorLastSessionBlocks] = useState(defaultValue.collatorLastSessionBlocks);
+  const [collatorNominators, setCollatorNominators] = useState(defaultValue.collatorNominators);
+  const [nominatorCollators, setNominatorCollators] = useState(defaultValue.nominatorCollators);
 
   const { address } = useAccount();
   const { polkadotApi } = useApi();
@@ -47,6 +68,129 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
     () => stakingToPower(stakedRing + totalOfDepositsInStaking, stakedKton, ringPool, ktonPool),
     [stakedRing, stakedKton, ringPool, ktonPool, totalOfDepositsInStaking]
   );
+
+  // active collators
+  useEffect(() => {
+    let unsub = () => undefined;
+
+    polkadotApi?.query.session
+      .validators((addresses: Codec) => {
+        // these are the collators that are active in this session
+        setActiveCollators(addresses.toJSON() as string[]);
+      })
+      .then((_unsub) => {
+        unsub = _unsub as unknown as typeof unsub;
+      })
+      .catch(console.error);
+
+    return () => unsub();
+  }, [polkadotApi]);
+
+  // collator commission
+  useEffect(() => {
+    let unsub = () => undefined;
+
+    polkadotApi?.query.darwiniaStaking.collators
+      .entries((entries: [StorageKey<AnyTuple>, Codec][]) => {
+        setCollatorCommission(
+          entries.reduce((acc, cur) => {
+            const [key, result] = cur;
+            const collator = key.args[0].toHuman() as string;
+            const commission = `${result.toHuman()}`;
+            return { ...acc, [collator]: commission };
+          }, {})
+        );
+      })
+      .then((_unsub) => {
+        unsub = _unsub as unknown as typeof unsub;
+      })
+      .catch(console.error);
+
+    return () => unsub();
+  }, [polkadotApi]);
+
+  // collator's nominators
+  useEffect(() => {
+    let unsub = () => undefined;
+
+    polkadotApi?.query.darwiniaStaking.exposures
+      .entries((entries: [StorageKey<AnyTuple>, Codec][]) => {
+        setCollatorNominators(
+          entries.reduce((acc, cur) => {
+            const [key, result] = cur;
+            const collator = key.args[0].toHuman() as string;
+            const exposure = result.toJSON() as {
+              total: number | string;
+              nominators: { value: number | string; who: string }[];
+            };
+            return {
+              ...acc,
+              [collator]: {
+                totalStakedPower: BigInt(exposure.total),
+                nominators: exposure.nominators.map(({ value, who }) => ({ address: who, stakedPower: BigInt(value) })),
+              },
+            };
+          }, {})
+        );
+      })
+      .then((_unsub) => {
+        unsub = _unsub as unknown as typeof unsub;
+      })
+      .catch(console.error);
+
+    return () => unsub();
+  }, [polkadotApi]);
+
+  // collator last session blocks
+  useEffect(() => {
+    let unsub = () => undefined;
+
+    polkadotApi?.query.darwiniaStaking
+      .rewardPoints((points: Codec) => {
+        const [_, collatorPoints] = points.toJSON() as [number, { [address: string]: number }]; // [totalPoint, { collator: collatorPoint }]
+        const staticNumber = 20; // this staticNumber = 20 was given by the backend
+
+        setCollatorLastSessionBlocks(
+          Object.keys(collatorPoints).reduce((acc, cur) => {
+            const collatorPoint = collatorPoints[cur];
+            const blocks = collatorPoint / staticNumber;
+            return { ...acc, [cur]: blocks };
+          }, {})
+        );
+      })
+      .then((_unsub) => {
+        unsub = _unsub as unknown as typeof unsub;
+      })
+      .catch(console.error);
+
+    return () => unsub();
+  }, [polkadotApi]);
+
+  // nominator's collator
+  useEffect(() => {
+    let unsub = () => undefined;
+
+    polkadotApi?.query.darwiniaStaking.nominators
+      .entries((entries: [StorageKey<AnyTuple>, Option<Codec>][]) => {
+        setNominatorCollators(
+          entries.reduce((acc, cur) => {
+            const [key, result] = cur;
+            const nominator = key.args[0].toHuman() as string;
+            if (result.isSome) {
+              const collator = result.unwrap().toHuman() as string;
+              return { ...acc, [nominator]: [collator] };
+            }
+            return acc;
+          }, {})
+        );
+      })
+      .then((_unsub) => {
+        unsub = _unsub as unknown as typeof unsub;
+      })
+      .catch(console.error);
+
+    return () => unsub();
+  }, [polkadotApi]);
 
   // ring pool
   useEffect(() => {
@@ -152,7 +296,20 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
 
   return (
     <StakingContext.Provider
-      value={{ power, deposits, ringPool, ktonPool, stakedRing, stakedKton, totalOfDepositsInStaking }}
+      value={{
+        power,
+        deposits,
+        ringPool,
+        ktonPool,
+        stakedRing,
+        stakedKton,
+        totalOfDepositsInStaking,
+        activeCollators,
+        collatorCommission,
+        collatorLastSessionBlocks,
+        collatorNominators,
+        nominatorCollators,
+      }}
     >
       {children}
     </StakingContext.Provider>
