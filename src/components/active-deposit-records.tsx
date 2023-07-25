@@ -3,11 +3,14 @@ import { formatBlanace, formatTime, getChainConfig } from "@/utils";
 import Progress from "./progress";
 import { Deposit } from "@/types";
 import { useApp, useStaking } from "@/hooks";
-import { Key } from "react";
+import { ButtonHTMLAttributes, Key, forwardRef, useState } from "react";
+import Tooltip from "./tooltip";
+import WithdrawModal, { WithdrawType } from "./withdraw-modal";
 
 type DataSource = Deposit & { key: Key };
 
 export default function ActiveDepositRecords() {
+  const [openWithdraw, setOpenWithdraw] = useState<{ type: WithdrawType; deposit: Deposit } | null>(null);
   const { deposits } = useStaking();
   const { activeChain } = useApp();
 
@@ -59,20 +62,73 @@ export default function ActiveDepositRecords() {
       dataIndex: "accountId",
       width: "20%",
       title: <span>Action</span>,
-      render: () => (
-        <div>
-          <button className="border border-primary px-middle py-small">
-            <span className="text-sm font-light text-white">Withdraw Earlier</span>
-          </button>
-        </div>
-      ),
+      render: (row) => {
+        if (row.canEarlyWithdraw) {
+          if (row.inUse) {
+            return (
+              <Tooltip
+                content={
+                  <span className="text-xs font-light text-white">
+                    This deposit is used in staking, you should unbond it first then release it to be able to withdraw
+                    it.
+                  </span>
+                }
+                className="w-fit"
+                contentClassName="w-64"
+              >
+                <Button disabled>Withdraw Earlier</Button>
+              </Tooltip>
+            );
+          }
+          return <Button onClick={() => setOpenWithdraw({ type: "early", deposit: row })}>Withdraw Earlier</Button>;
+        } else if (row.inUse) {
+          return (
+            <Tooltip
+              content={
+                <span className="text-xs font-light text-white">
+                  This deposit is used in staking, you should unbond it first then release it to be able to withdraw it.
+                </span>
+              }
+              className="w-fit"
+              contentClassName="w-64"
+            >
+              <Button disabled>Withdraw</Button>
+            </Tooltip>
+          );
+        } else {
+          return <Button onClick={() => setOpenWithdraw({ type: "regular", deposit: row })}>Withdraw</Button>;
+        }
+      },
     },
   ];
 
   return (
-    <div className="flex flex-col gap-large bg-component p-5">
-      <h5 className="text-sm font-bold text-white">Active Deposit Records</h5>
-      <Table columns={columns} dataSource={deposits.map((item) => ({ ...item, key: item.id }))} />
-    </div>
+    <>
+      <div className="flex flex-col gap-large bg-component p-5">
+        <h5 className="text-sm font-bold text-white">Active Deposit Records</h5>
+        <Table columns={columns} dataSource={deposits.map((item) => ({ ...item, key: item.id }))} />
+      </div>
+      <WithdrawModal
+        isOpen={!!openWithdraw}
+        onClose={() => setOpenWithdraw(null)}
+        type={openWithdraw?.type}
+        deposit={openWithdraw?.deposit}
+      />
+    </>
   );
 }
+
+const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(function Button(
+  { children, ...rest },
+  ref
+) {
+  return (
+    <button
+      className="w-fit border border-primary px-middle py-small transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
+      ref={ref}
+      {...rest}
+    >
+      <span className="text-sm font-light text-white">{children}</span>
+    </button>
+  );
+});
