@@ -12,6 +12,7 @@ import {
   useTransitionStyles,
   FloatingArrow,
   arrow,
+  safePolygon,
 } from "@floating-ui/react";
 import { PropsWithChildren, ReactElement, useRef, useState } from "react";
 
@@ -40,7 +41,7 @@ export default function Tooltip({ children, content, className, contentClassName
     whileElementsMounted: autoUpdate,
   });
 
-  const hover = useHover(context, { move: false });
+  const hover = useHover(context, { move: false, handleClose: safePolygon() });
   const focus = useFocus(context);
   const dismiss = useDismiss(context);
   const role = useRole(context, { role: "tooltip" });
