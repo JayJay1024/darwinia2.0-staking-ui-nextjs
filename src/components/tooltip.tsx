@@ -20,9 +20,16 @@ interface Props {
   className?: string;
   contentClassName?: string;
   content: ReactElement | string;
+  enabledSafePolygon?: boolean;
 }
 
-export default function Tooltip({ children, content, className, contentClassName }: PropsWithChildren<Props>) {
+export default function Tooltip({
+  children,
+  content,
+  className,
+  contentClassName,
+  enabledSafePolygon,
+}: PropsWithChildren<Props>) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef(null);
 
@@ -41,7 +48,7 @@ export default function Tooltip({ children, content, className, contentClassName
     whileElementsMounted: autoUpdate,
   });
 
-  const hover = useHover(context, { move: false, handleClose: safePolygon() });
+  const hover = useHover(context, { move: false, handleClose: enabledSafePolygon ? safePolygon() : undefined });
   const focus = useFocus(context);
   const dismiss = useDismiss(context);
   const role = useRole(context, { role: "tooltip" });
