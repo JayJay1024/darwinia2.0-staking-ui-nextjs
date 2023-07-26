@@ -21,6 +21,7 @@ interface Props {
   contentClassName?: string;
   content: ReactElement | string;
   enabledSafePolygon?: boolean;
+  enabled?: boolean;
 }
 
 export default function Tooltip({
@@ -29,6 +30,7 @@ export default function Tooltip({
   className,
   contentClassName,
   enabledSafePolygon,
+  enabled,
 }: PropsWithChildren<Props>) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef(null);
@@ -60,7 +62,7 @@ export default function Tooltip({
     close: { transform: "scale(0.5)", opacity: 0 },
   });
 
-  return (
+  return enabled ? (
     <>
       <div className={className} ref={refs.setReference} {...getReferenceProps()}>
         {children}
@@ -74,5 +76,7 @@ export default function Tooltip({
         </div>
       )}
     </>
+  ) : (
+    children
   );
 }
