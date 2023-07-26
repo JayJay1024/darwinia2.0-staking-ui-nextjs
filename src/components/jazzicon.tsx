@@ -17,7 +17,7 @@ export default function Jazzicon({ address, className, size = 24, onCopy = () =>
     try {
       await navigator.clipboard.writeText(address);
       notification.success({
-        title: "Copy successfully",
+        title: "Copy address successfully",
         disabledCloseBtn: true,
         duration: 3000,
       });
