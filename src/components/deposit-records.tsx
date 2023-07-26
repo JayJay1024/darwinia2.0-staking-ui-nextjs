@@ -9,7 +9,7 @@ import WithdrawModal, { WithdrawType } from "./withdraw-modal";
 
 type DataSource = Deposit & { key: Key };
 
-export default function ActiveDepositRecords() {
+export default function DepositRecords() {
   const [openWithdraw, setOpenWithdraw] = useState<{ type: WithdrawType; deposit: Deposit } | null>(null);
   const { deposits } = useStaking();
   const { activeChain } = useApp();

@@ -35,7 +35,7 @@ interface DataSource {
   action: true;
 }
 
-export default function DelegateList() {
+export default function StakingRecords() {
   const { activeChain } = useApp();
   const {
     power,

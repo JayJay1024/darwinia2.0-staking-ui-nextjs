@@ -6,7 +6,7 @@ import { useAccount, useBalance } from "wagmi";
 import { useApp } from "@/hooks";
 import { useState } from "react";
 
-export default function TermDeposit() {
+export default function DoDeposit() {
   const [depositRing, setDepositRing] = useState(0n);
   const [depositTerm, setDepositTerm] = useState(1);
 

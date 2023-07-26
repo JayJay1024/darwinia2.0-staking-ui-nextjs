@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Tabs, { TabsProps } from "./tabs";
-import Delegate from "./delegate";
-import DelegateList from "./delegate-list";
-import TermDeposit from "./term-deposit";
-import ActiveDepositRecords from "./active-deposit-records";
+import DoStake from "./do-stake";
+import StakingRecords from "./staking-records";
+import DoDeposit from "./do-deposit";
+import DepositRecords from "./deposit-records";
 
 type TabKey = "staking" | "deposit";
 
@@ -18,8 +18,8 @@ export default function StakingDepositTabs() {
           label: <span>Staking</span>,
           children: (
             <div className="flex flex-col gap-5">
-              <Delegate />
-              <DelegateList />
+              <DoStake />
+              <StakingRecords />
             </div>
           ),
         },
@@ -28,8 +28,8 @@ export default function StakingDepositTabs() {
           label: <span>Deposit</span>,
           children: (
             <div className="flex flex-col gap-5">
-              <TermDeposit />
-              <ActiveDepositRecords />
+              <DoDeposit />
+              <DepositRecords />
             </div>
           ),
         },

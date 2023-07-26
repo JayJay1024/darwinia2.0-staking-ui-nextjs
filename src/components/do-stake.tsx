@@ -7,7 +7,7 @@ import { parseEther } from "viem";
 
 const { nativeToken, ktonToken } = getChainConfig(ChainID.DARWINIA);
 
-export default function Delegate() {
+export default function DoStake() {
   return (
     <div className="flex flex-col gap-middle bg-component p-5">
       <h5 className="text-sm font-bold text-white">Delegate</h5>
