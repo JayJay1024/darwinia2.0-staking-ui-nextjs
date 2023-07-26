@@ -19,15 +19,17 @@ interface StakingCtx {
   stakedKton: bigint;
   totalOfDepositsInStaking: bigint;
   activeCollators: string[];
-  collatorCommission: { [collator: string]: string };
-  collatorLastSessionBlocks: { [collator: string]: number };
+  collatorCommission: { [collator: string]: string | undefined };
+  collatorLastSessionBlocks: { [collator: string]: number | undefined };
   collatorNominators: {
-    [collator: string]: {
-      totalStakedPower: bigint;
-      nominators: { address: string; stakedPower: bigint }[];
-    };
+    [collator: string]:
+      | {
+          totalStakedPower: bigint;
+          nominators: { address: string; stakedPower: bigint }[];
+        }
+      | undefined;
   };
-  nominatorCollators: { [nominator: string]: string[] };
+  nominatorCollators: { [nominator: string]: string[] | undefined };
   unbondingRing: Omit<UnbondingInfo, "depositId">[];
   unbondingKton: Omit<UnbondingInfo, "depositId">[];
   unbondingDeposits: UnbondingInfo[];
