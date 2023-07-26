@@ -28,3 +28,11 @@ export interface Deposit {
   canEarlyWithdraw: boolean;
   inUse: boolean;
 }
+
+export interface UnbondingInfo {
+  depositId: number;
+  amount: bigint;
+  expiredAtBlock: number;
+  expiredTimestamp: number; // millisecond
+  isExpired: boolean;
+}

@@ -1,14 +1,14 @@
 "use client";
 
-import { useApi, useBlock } from "@/hooks";
-import { calcKtonReward, calcMonths, stakingToPower } from "@/utils";
+import { useApi, useApp, useBlock } from "@/hooks";
+import { calcKtonReward, calcMonths, getChainConfig, stakingToPower } from "@/utils";
 import { PropsWithChildren, createContext, useEffect, useMemo, useState } from "react";
 import type { Balance } from "@polkadot/types/interfaces";
 import type { Option, Vec, StorageKey } from "@polkadot/types";
 import type { AnyTuple, Codec } from "@polkadot/types/types";
 import { useAccount } from "wagmi";
 import { Subscription, from } from "rxjs";
-import type { DarwiniaStakingLedger, Deposit, DepositCodec } from "@/types";
+import type { DarwiniaStakingLedger, Deposit, DepositCodec, UnbondingInfo } from "@/types";
 
 interface StakingCtx {
   deposits: Deposit[];
@@ -28,6 +28,9 @@ interface StakingCtx {
     };
   };
   nominatorCollators: { [nominator: string]: string[] };
+  unbondingRing: Omit<UnbondingInfo, "depositId">[];
+  unbondingKton: Omit<UnbondingInfo, "depositId">[];
+  unbondingDeposits: UnbondingInfo[];
 }
 
 const defaultValue: StakingCtx = {
@@ -43,6 +46,9 @@ const defaultValue: StakingCtx = {
   collatorLastSessionBlocks: {},
   collatorNominators: {},
   nominatorCollators: {},
+  unbondingRing: [],
+  unbondingKton: [],
+  unbondingDeposits: [],
 };
 
 export const StakingContext = createContext(defaultValue);
@@ -59,10 +65,14 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [collatorLastSessionBlocks, setCollatorLastSessionBlocks] = useState(defaultValue.collatorLastSessionBlocks);
   const [collatorNominators, setCollatorNominators] = useState(defaultValue.collatorNominators);
   const [nominatorCollators, setNominatorCollators] = useState(defaultValue.nominatorCollators);
+  const [unbondingRing, setUnbondingRing] = useState(defaultValue.unbondingRing);
+  const [unbondingKton, setUnbondingKton] = useState(defaultValue.unbondingKton);
+  const [unbondingDeposits, setUnbondingDeposits] = useState(defaultValue.unbondingDeposits);
 
   const { address } = useAccount();
   const { polkadotApi } = useApi();
-  const { blockTimestamp } = useBlock();
+  const { blockTimestamp, blockNumber } = useBlock();
+  const { activeChain } = useApp();
 
   const power = useMemo(
     () => stakingToPower(stakedRing + totalOfDepositsInStaking, stakedKton, ringPool, ktonPool),
@@ -264,10 +274,52 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
     let sub$$: Subscription | undefined;
 
     if (address && polkadotApi) {
-      from(polkadotApi.query.darwiniaStaking.ledgers(address) as Promise<Option<DarwiniaStakingLedger>>).subscribe({
+      const { secondsPerBlock } = getChainConfig(activeChain);
+
+      sub$$ = from(
+        polkadotApi.query.darwiniaStaking.ledgers(address) as Promise<Option<DarwiniaStakingLedger>>
+      ).subscribe({
         next: (ledgerOpt) => {
           if (ledgerOpt.isSome) {
             const ledgerData = ledgerOpt.unwrap().toJSON() as unknown as DarwiniaStakingLedger;
+            const now = Date.now();
+
+            const _unbondingDeposits = (ledgerData.unstakingRing || []).map(([depositId, lastBlockNumber]) => {
+              const blocksLeft = lastBlockNumber - blockNumber;
+              const secondsLeft = blocksLeft * secondsPerBlock;
+
+              return {
+                depositId,
+                amount: deposits.find(({ id }) => id === depositId)?.value || 0n,
+                expiredAtBlock: lastBlockNumber,
+                isExpired: blockNumber >= lastBlockNumber,
+                expiredTimestamp: now + secondsLeft * 1000,
+              };
+            });
+
+            const _unbondingRing = (ledgerData.unstakingRing || []).map(([amount, lastBlockNumber]) => {
+              const blocksLeft = lastBlockNumber - blockNumber;
+              const secondsLeft = blocksLeft * secondsPerBlock;
+
+              return {
+                amount: BigInt(amount),
+                expiredAtBlock: lastBlockNumber,
+                isExpired: blockNumber >= lastBlockNumber,
+                expiredTimestamp: now + secondsLeft * 1000,
+              };
+            });
+
+            const _unbondingKton = (ledgerData.unstakingKton || []).map(([amount, lastBlockNumber]) => {
+              const blocksLeft = lastBlockNumber - blockNumber;
+              const secondsLeft = blocksLeft * secondsPerBlock;
+
+              return {
+                amount: BigInt(amount),
+                expiredAtBlock: lastBlockNumber,
+                isExpired: blockNumber >= lastBlockNumber,
+                expiredTimestamp: now + secondsLeft * 1000,
+              };
+            });
 
             setTotalOfDepositsInStaking(
               deposits
@@ -277,10 +329,17 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
 
             setStakedRing(BigInt(ledgerData.stakedRing));
             setStakedKton(BigInt(ledgerData.stakedKton));
+
+            setUnbondingRing(_unbondingRing);
+            setUnbondingKton(_unbondingKton);
+            setUnbondingDeposits(_unbondingDeposits);
           } else {
             setTotalOfDepositsInStaking(0n);
             setStakedRing(0n);
             setStakedKton(0n);
+            setUnbondingRing([]);
+            setUnbondingKton([]);
+            setUnbondingDeposits([]);
           }
         },
         error: console.error,
@@ -289,10 +348,13 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       setTotalOfDepositsInStaking(0n);
       setStakedRing(0n);
       setStakedKton(0n);
+      setUnbondingRing([]);
+      setUnbondingKton([]);
+      setUnbondingDeposits([]);
     }
 
     return () => sub$$?.unsubscribe();
-  }, [address, deposits, polkadotApi]);
+  }, [address, deposits, polkadotApi, activeChain, blockNumber]);
 
   return (
     <StakingContext.Provider
@@ -309,6 +371,9 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
         collatorLastSessionBlocks,
         collatorNominators,
         nominatorCollators,
+        unbondingRing,
+        unbondingKton,
+        unbondingDeposits,
       }}
     >
       {children}
