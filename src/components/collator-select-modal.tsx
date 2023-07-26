@@ -5,8 +5,9 @@ import Image from "next/image";
 import { useAccount } from "wagmi";
 import Table, { ColumnType } from "./table";
 import Jazzicon from "./jazzicon";
-import { prettyNumber, toShortAdrress } from "@/utils";
+import { prettyNumber } from "@/utils";
 import { notification } from "./notification";
+import DisplayAccountName from "./display-account-name";
 
 type TabKey = "active" | "waiting";
 
@@ -27,7 +28,7 @@ const columns: ColumnType<DataSource>[] = [
     render: (row) => (
       <div className="flex items-center gap-small">
         <Jazzicon size={20} address={row.collator} className="hidden lg:flex" />
-        <span>{toShortAdrress(row.collator)}</span>
+        <DisplayAccountName address={row.collator} />
         <Image
           alt="Copy collator"
           width={16}
@@ -37,7 +38,7 @@ const columns: ColumnType<DataSource>[] = [
           onClick={(e) => {
             e.stopPropagation();
             notification.success({
-              title: "Copy successfully",
+              title: "Copy address successfully",
               disabledCloseBtn: true,
               duration: 3000,
             });
