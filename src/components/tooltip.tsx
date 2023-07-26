@@ -30,7 +30,7 @@ export default function Tooltip({
   className,
   contentClassName,
   enabledSafePolygon,
-  enabled,
+  enabled = true,
 }: PropsWithChildren<Props>) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef(null);
