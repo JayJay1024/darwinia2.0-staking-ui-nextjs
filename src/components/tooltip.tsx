@@ -13,6 +13,7 @@ import {
   FloatingArrow,
   arrow,
   safePolygon,
+  FloatingPortal,
 } from "@floating-ui/react";
 import { PropsWithChildren, ReactElement, useRef, useState } from "react";
 
@@ -68,12 +69,14 @@ export default function Tooltip({
         {children}
       </div>
       {isMounted && (
-        <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-          <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#FF0083" />
-          <div style={styles} className={`border border-primary bg-component p-middle ${contentClassName}`}>
-            {content}
+        <FloatingPortal>
+          <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
+            <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#FF0083" />
+            <div style={styles} className={`border border-primary bg-component p-middle ${contentClassName}`}>
+              {content}
+            </div>
           </div>
-        </div>
+        </FloatingPortal>
       )}
     </>
   ) : (
