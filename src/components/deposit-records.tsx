@@ -11,7 +11,7 @@ type DataSource = Deposit & { key: Key };
 
 export default function DepositRecords() {
   const [openWithdraw, setOpenWithdraw] = useState<{ type: WithdrawType; deposit: Deposit } | null>(null);
-  const { deposits } = useStaking();
+  const { deposits, isDepositsInitialized } = useStaking();
   const { activeChain } = useApp();
 
   const { nativeToken, ktonToken } = getChainConfig(activeChain);
@@ -106,7 +106,11 @@ export default function DepositRecords() {
     <>
       <div className="flex flex-col gap-large bg-component p-5">
         <h5 className="text-sm font-bold text-white">Active Deposit Records</h5>
-        <Table columns={columns} dataSource={deposits.map((item) => ({ ...item, key: item.id }))} />
+        <Table
+          columns={columns}
+          dataSource={deposits.map((item) => ({ ...item, key: item.id }))}
+          loading={!isDepositsInitialized}
+        />
       </div>
       <WithdrawModal
         isOpen={!!openWithdraw}
