@@ -14,6 +14,7 @@ import OpacityButton from "./opacity-button";
 import ScaleButton from "./scale-button";
 import {
   FloatingArrow,
+  FloatingPortal,
   arrow,
   autoUpdate,
   flip,
@@ -98,20 +99,22 @@ export default forwardRef<
         </ScaleButton>
       )}
       {isMounted && (
-        <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-          <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#FF0083" />
-          <div style={styles} className="w-[70vw] border border-primary bg-component  p-middle lg:w-64">
-            <p className="text-xs font-light text-white">
-              You are connected to the Wrong Chain.{" "}
-              <span
-                className="text-primary transition-opacity hover:cursor-pointer hover:opacity-80"
-                onClick={() => switchNetwork && switchNetwork(activeChain)}
-              >
-                Switch network
-              </span>
-            </p>
+        <FloatingPortal>
+          <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
+            <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#FF0083" />
+            <div style={styles} className="w-[70vw] border border-primary bg-component  p-middle lg:w-64">
+              <p className="text-xs font-light text-white">
+                You are connected to the Wrong Chain.{" "}
+                <span
+                  className="text-primary transition-opacity hover:cursor-pointer hover:opacity-80"
+                  onClick={() => switchNetwork && switchNetwork(activeChain)}
+                >
+                  Switch network
+                </span>
+              </p>
+            </div>
           </div>
-        </div>
+        </FloatingPortal>
       )}
     </>
   );

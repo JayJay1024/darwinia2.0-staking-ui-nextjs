@@ -17,7 +17,15 @@ import { UnbondingInfo } from "@/types";
 import DisplayAccountName from "./display-account-name";
 import UnbondingDepositTooltip from "./unbonding-deposit-tooltip";
 import UnbondingTokenTooltip from "./unbonding-token-tooltip";
-import { offset, useClick, useDismiss, useFloating, useInteractions, useTransitionStyles } from "@floating-ui/react";
+import {
+  FloatingPortal,
+  offset,
+  useClick,
+  useDismiss,
+  useFloating,
+  useInteractions,
+  useTransitionStyles,
+} from "@floating-ui/react";
 
 interface DataSource {
   key: Key;
@@ -362,11 +370,13 @@ function MoreAction() {
         ...
       </BaseButton>
       {isMounted && (
-        <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
-          <div style={styles}>
-            <BaseButton>Undelegate</BaseButton>
+        <FloatingPortal>
+          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
+            <div style={styles}>
+              <BaseButton>Undelegate</BaseButton>
+            </div>
           </div>
-        </div>
+        </FloatingPortal>
       )}
     </>
   );

@@ -9,6 +9,7 @@ import {
   offset,
   size,
   useDismiss,
+  FloatingPortal,
 } from "@floating-ui/react";
 import Image from "next/image";
 
@@ -67,11 +68,13 @@ export default function Selector({
         />
       </Button>
       {isMounted && (
-        <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
-          <div style={styles} className={menuClassName}>
-            {children}
+        <FloatingPortal>
+          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
+            <div style={styles} className={menuClassName}>
+              {children}
+            </div>
           </div>
-        </div>
+        </FloatingPortal>
       )}
     </>
   );

@@ -1,6 +1,14 @@
 "use client";
 
-import { useFloating, offset, useTransitionStyles, useClick, useDismiss, useInteractions } from "@floating-ui/react";
+import {
+  useFloating,
+  offset,
+  useTransitionStyles,
+  useClick,
+  useDismiss,
+  useInteractions,
+  FloatingPortal,
+} from "@floating-ui/react";
 import Image from "next/image";
 import { useState } from "react";
 import RpcSelector from "./rpc-selector";
@@ -36,11 +44,13 @@ export default function CustomRpc() {
       </button>
 
       {isMounted && (
-        <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
-          <div style={styles}>
-            <RpcSelector onClose={() => setIsOpen(false)} />
+        <FloatingPortal>
+          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
+            <div style={styles}>
+              <RpcSelector onClose={() => setIsOpen(false)} />
+            </div>
           </div>
-        </div>
+        </FloatingPortal>
       )}
     </>
   );
