@@ -46,7 +46,10 @@ export default function StakingRecords() {
     unbondingKton,
     unbondingDeposits,
     nominatorCollators,
+    isNominatorCollatorsInitialized,
     activeCollators,
+    isActiveCollatorsInitialized,
+    isLedgersInitialized,
   } = useStaking();
   const { address } = useAccount();
 
@@ -253,7 +256,11 @@ export default function StakingRecords() {
   return (
     <div className="flex flex-col gap-large bg-component p-5">
       <h5 className="text-sm font-bold text-white">Staking Delegations</h5>
-      <Table columns={columns} dataSource={dataSource} />
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={!isActiveCollatorsInitialized || !isNominatorCollatorsInitialized || !isLedgersInitialized}
+      />
     </div>
   );
 }

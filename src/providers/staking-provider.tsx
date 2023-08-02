@@ -20,6 +20,7 @@ interface StakingCtx {
   stakedKton: bigint;
   totalOfDepositsInStaking: bigint;
   activeCollators: string[];
+  isActiveCollatorsInitialized: boolean;
   collatorCommission: { [collator: string]: string | undefined };
   collatorLastSessionBlocks: { [collator: string]: number | undefined };
   collatorNominators: {
@@ -31,9 +32,11 @@ interface StakingCtx {
       | undefined;
   };
   nominatorCollators: { [nominator: string]: string[] | undefined };
+  isNominatorCollatorsInitialized: boolean;
   unbondingRing: Omit<UnbondingInfo, "depositId">[];
   unbondingKton: Omit<UnbondingInfo, "depositId">[];
   unbondingDeposits: UnbondingInfo[];
+  isLedgersInitialized: boolean;
 }
 
 const defaultValue: StakingCtx = {
@@ -46,13 +49,16 @@ const defaultValue: StakingCtx = {
   stakedKton: 0n,
   totalOfDepositsInStaking: 0n,
   activeCollators: [],
+  isActiveCollatorsInitialized: false,
   collatorCommission: {},
   collatorLastSessionBlocks: {},
   collatorNominators: {},
   nominatorCollators: {},
+  isNominatorCollatorsInitialized: false,
   unbondingRing: [],
   unbondingKton: [],
   unbondingDeposits: [],
+  isLedgersInitialized: false,
 };
 
 export const StakingContext = createContext(defaultValue);
@@ -66,13 +72,20 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [stakedKton, setStakedKton] = useState(defaultValue.stakedKton);
   const [totalOfDepositsInStaking, setTotalOfDepositsInStaking] = useState(defaultValue.totalOfDepositsInStaking);
   const [activeCollators, setActiveCollators] = useState(defaultValue.activeCollators);
+  const [isActiveCollatorsInitialized, setIsActiveCollatorsInitialized] = useState(
+    defaultValue.isActiveCollatorsInitialized
+  );
   const [collatorCommission, setCollatorCommission] = useState(defaultValue.collatorCommission);
   const [collatorLastSessionBlocks, setCollatorLastSessionBlocks] = useState(defaultValue.collatorLastSessionBlocks);
   const [collatorNominators, setCollatorNominators] = useState(defaultValue.collatorNominators);
   const [nominatorCollators, setNominatorCollators] = useState(defaultValue.nominatorCollators);
+  const [isNominatorCollatorsInitialized, setIsNominatorCollatorsInitialized] = useState(
+    defaultValue.isNominatorCollatorsInitialized
+  );
   const [unbondingRing, setUnbondingRing] = useState(defaultValue.unbondingRing);
   const [unbondingKton, setUnbondingKton] = useState(defaultValue.unbondingKton);
   const [unbondingDeposits, setUnbondingDeposits] = useState(defaultValue.unbondingDeposits);
+  const [isLedgersInitialized, setIsLedgersInitialized] = useState(defaultValue.isLedgersInitialized);
 
   const { address } = useAccount();
   const { polkadotApi } = useApi();
@@ -96,7 +109,8 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       .then((_unsub) => {
         unsub = _unsub as unknown as typeof unsub;
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsActiveCollatorsInitialized(true));
 
     return () => unsub();
   }, [polkadotApi]);
@@ -202,7 +216,8 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       .then((_unsub) => {
         unsub = _unsub as unknown as typeof unsub;
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsNominatorCollatorsInitialized(true));
 
     return () => unsub();
   }, [polkadotApi]);
@@ -349,6 +364,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
           }
         },
         error: console.error,
+        complete: () => setIsLedgersInitialized(true),
       });
     } else {
       setTotalOfDepositsInStaking(0n);
@@ -374,13 +390,16 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
         stakedKton,
         totalOfDepositsInStaking,
         activeCollators,
+        isActiveCollatorsInitialized,
         collatorCommission,
         collatorLastSessionBlocks,
         collatorNominators,
         nominatorCollators,
+        isNominatorCollatorsInitialized,
         unbondingRing,
         unbondingKton,
         unbondingDeposits,
+        isLedgersInitialized,
       }}
     >
       {children}
