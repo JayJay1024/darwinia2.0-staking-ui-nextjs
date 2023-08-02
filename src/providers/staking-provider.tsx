@@ -12,6 +12,7 @@ import type { DarwiniaStakingLedger, Deposit, DepositCodec, UnbondingInfo } from
 
 interface StakingCtx {
   deposits: Deposit[];
+  isDepositsInitialized: boolean;
   power: bigint;
   ringPool: bigint;
   ktonPool: bigint;
@@ -37,6 +38,7 @@ interface StakingCtx {
 
 const defaultValue: StakingCtx = {
   deposits: [],
+  isDepositsInitialized: false,
   power: 0n,
   ringPool: 0n,
   ktonPool: 0n,
@@ -57,6 +59,7 @@ export const StakingContext = createContext(defaultValue);
 
 export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [deposits, setDeposits] = useState(defaultValue.deposits);
+  const [isDepositsInitialized, setIsDepositsInitialized] = useState(defaultValue.isDepositsInitialized);
   const [ringPool, setRingPool] = useState(defaultValue.ringPool);
   const [ktonPool, setKtonPool] = useState(defaultValue.ktonPool);
   const [stakedRing, setStakedRing] = useState(defaultValue.stakedRing);
@@ -263,6 +266,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
           }
         },
         error: console.error,
+        complete: () => setIsDepositsInitialized(true),
       });
     } else {
       setDeposits([]);
@@ -363,6 +367,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       value={{
         power,
         deposits,
+        isDepositsInitialized,
         ringPool,
         ktonPool,
         stakedRing,
