@@ -19,6 +19,7 @@ interface Props<T> {
   total?: number;
   pageSize?: number;
   currentPage?: number;
+  loading?: boolean;
   onPageChange?: (page: number) => void;
   onRowSelect?: (key: Key) => void;
 }
@@ -32,6 +33,7 @@ export default function Table<T extends { key: Key }>({
   total,
   pageSize,
   currentPage,
+  loading,
   onPageChange,
   onRowSelect,
 }: Props<T>) {
@@ -58,7 +60,13 @@ export default function Table<T extends { key: Key }>({
           ))}
         </div>
         {/* table body */}
-        <>
+        <div className={`relative transition-opacity ${loading ? "opacity-60" : "opacity-100"}`}>
+          {loading && (
+            <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center">
+              <div className="h-6 w-6 animate-spin rounded-full border-[4px] border-b-white/50 border-l-white/50 border-r-white border-t-white" />
+            </div>
+          )}
+
           {dataSource.length ? (
             <div>
               {/* content */}
@@ -98,7 +106,7 @@ export default function Table<T extends { key: Key }>({
               <span className="text-sm font-light text-white/50">No data</span>
             </div>
           )}
-        </>
+        </div>
       </div>
     </div>
   );
