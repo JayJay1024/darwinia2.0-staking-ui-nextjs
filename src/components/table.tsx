@@ -102,8 +102,12 @@ export default function Table<T extends { key: Key }>({
             </div>
           ) : (
             <div className="flex flex-col items-center gap-large py-10">
-              <Image width={50} height={63} alt="Table no data" src="/images/no-data.svg" />
-              <span className="text-sm font-light text-white/50">No data</span>
+              {!loading && (
+                <>
+                  <Image width={50} height={63} alt="Table no data" src="/images/no-data.svg" />
+                  <span className="text-sm font-light text-white/50">No data</span>
+                </>
+              )}
             </div>
           )}
         </div>
