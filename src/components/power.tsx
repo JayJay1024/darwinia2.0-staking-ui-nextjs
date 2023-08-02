@@ -28,7 +28,7 @@ interface QueryVariables {
 }
 
 interface QueryResult {
-  stakingRecord: StakingRecord;
+  stakingRecord: StakingRecord | null;
 }
 
 export default function Power() {
@@ -57,7 +57,7 @@ export default function Power() {
         <span className="text-sm font-bold text-white">Latest Staking Rewards</span>
         <div className="h-[1px] shrink-0 bg-white/20" />
         <div className="flex h-[6rem] flex-col overflow-y-auto">
-          {rewardData?.stakingRecord.rewards.nodes.length ? (
+          {rewardData?.stakingRecord?.rewards.nodes.length ? (
             <div className="flex flex-col gap-small">
               {rewardData.stakingRecord.rewards.nodes.map(({ id, amount, blockTime }) => (
                 <div className="flex items-center justify-between" key={id}>
