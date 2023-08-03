@@ -21,7 +21,7 @@ interface KtonToken extends NativeToken {
 }
 
 interface Contract {
-  abiPath: string;
+  abiFile: string;
   address: `0x${string}`;
 }
 

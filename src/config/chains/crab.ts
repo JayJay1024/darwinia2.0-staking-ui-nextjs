@@ -39,11 +39,11 @@ export const crabChainConfig: ChainConfig = {
   contract: {
     deposit: {
       address: "0x0000000000000000000000000000000000000600",
-      abiPath: "@/config/abi/deposit.json",
+      abiFile: "deposit.json",
     },
     staking: {
       address: "0x0000000000000000000000000000000000000601",
-      abiPath: "@/config/abi/staking.json",
+      abiFile: "staking.json",
     },
   },
   secondsPerBlock: 12,
