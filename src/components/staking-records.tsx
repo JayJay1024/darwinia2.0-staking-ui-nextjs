@@ -395,12 +395,12 @@ function ActionButton({ action, ...rest }: ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const BaseButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(function BaseButton(
-  { children, className, ...rest },
+  { children, ...rest },
   ref
 ) {
   return (
     <button
-      className={`w-fit border border-primary px-middle py-small transition-opacity hover:opacity-80 active:opacity-60 ${className}`}
+      className={`w-fit border border-primary px-middle py-small text-sm font-light text-white transition-opacity hover:opacity-80 active:opacity-60`}
       ref={ref}
       {...rest}
     >
