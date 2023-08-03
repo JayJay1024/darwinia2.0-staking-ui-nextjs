@@ -1,9 +1,10 @@
 import { useApp, useStaking } from "@/hooks";
 import { formatBlanace, getChainConfig } from "@/utils";
 import Image from "next/image";
+import CountLoading from "./count-loading";
 
 export default function ReservedInStaking() {
-  const { stakedRing, stakedKton, totalOfDepositsInStaking } = useStaking();
+  const { stakedRing, stakedKton, totalOfDepositsInStaking, isLedgersInitialized } = useStaking();
   const { activeChain } = useApp();
 
   const { nativeToken, ktonToken } = getChainConfig(activeChain);
@@ -17,6 +18,7 @@ export default function ReservedInStaking() {
         decimals={nativeToken.decimals}
         logoPath={nativeToken.logoPath}
         bonded={stakedRing + totalOfDepositsInStaking}
+        loading={!isLedgersInitialized}
         inDeposit={totalOfDepositsInStaking}
         isNative
       />
@@ -27,6 +29,7 @@ export default function ReservedInStaking() {
           decimals={ktonToken.decimals}
           logoPath={ktonToken.logoPath}
           bonded={stakedKton}
+          loading={!isLedgersInitialized}
         />
       )}
     </div>
@@ -38,6 +41,7 @@ function Token({
   decimals,
   logoPath,
   bonded,
+  loading,
   inDeposit,
   isNative,
 }: {
@@ -45,6 +49,7 @@ function Token({
   decimals: number;
   logoPath: string;
   bonded: bigint;
+  loading?: boolean;
   inDeposit?: bigint;
   isNative?: boolean;
 }) {
@@ -59,12 +64,20 @@ function Token({
       <div className="flex flex-col gap-small">
         <div className="flex items-center justify-between">
           <span className="text-sm font-light text-white">Bonded</span>
-          <span className="text-sm font-bold text-white">{formatBlanace(bonded, decimals)}</span>
+          {loading ? (
+            <CountLoading color="white" />
+          ) : (
+            <span className="text-sm font-bold text-white">{formatBlanace(bonded, decimals)}</span>
+          )}
         </div>
         {isNative && inDeposit !== undefined && (
           <div className="flex items-center justify-between">
             <span className="text-xs font-light text-white/50">In Deposit</span>
-            <span className="text-xs font-bold text-white/50">{formatBlanace(inDeposit, decimals)}</span>
+            {loading ? (
+              <CountLoading color="gray" />
+            ) : (
+              <span className="text-xs font-bold text-white/50">{formatBlanace(inDeposit, decimals)}</span>
+            )}
           </div>
         )}
       </div>
