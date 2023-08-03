@@ -54,7 +54,7 @@ export default function DepositRecords() {
       dataIndex: "reward",
       title: <span>Reward (KTON)</span>,
       render: (row) => (
-        <span className="truncate">{formatBlanace(row.reward, ktonToken?.decimals, { precision: 4 })}</span>
+        <span className="truncate">{formatBlanace(row.reward, ktonToken?.decimals, { precision: 6 })}</span>
       ),
     },
     {
