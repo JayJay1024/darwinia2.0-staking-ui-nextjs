@@ -1,6 +1,8 @@
 import Image from "next/image";
-import { CSSProperties, Fragment, Key, ReactElement } from "react";
+import { CSSProperties, Fragment, Key, ReactElement, useRef } from "react";
 import Pagination from "./pagination";
+import CountLoading from "./count-loading";
+import { CSSTransition } from "react-transition-group";
 
 export interface ColumnType<T> {
   title: ReactElement;
@@ -37,6 +39,8 @@ export default function Table<T extends { key: Key }>({
   onPageChange,
   onRowSelect,
 }: Props<T>) {
+  const loadingRef = useRef<HTMLDivElement>(null);
+
   const templateCols = columns.reduce((acc, cur) => {
     const width = typeof cur.width === "string" ? cur.width : typeof cur.width === "number" ? `${cur.width}px` : "1fr";
     if (acc === "auto") {
@@ -60,12 +64,16 @@ export default function Table<T extends { key: Key }>({
           ))}
         </div>
         {/* table body */}
-        <div className={`relative transition-opacity ${loading ? "opacity-60" : "opacity-100"}`}>
-          {loading && (
-            <div className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center">
-              <div className="h-6 w-6 animate-spin rounded-full border-[4px] border-b-white/50 border-l-white/50 border-r-white border-t-white" />
+        <div className="relative">
+          {/* loading */}
+          <CSSTransition in={loading} nodeRef={loadingRef} timeout={300} classNames="component-loading" unmountOnExit>
+            <div
+              ref={loadingRef}
+              className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center"
+            >
+              <CountLoading size="large" />
             </div>
-          )}
+          </CSSTransition>
 
           {dataSource.length ? (
             <div>
