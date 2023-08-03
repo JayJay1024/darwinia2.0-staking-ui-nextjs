@@ -45,7 +45,7 @@ export default function BalanceInput({
           className="h-full w-[72%] bg-transparent text-sm font-light focus-visible:outline-none"
           onChange={(e) => {
             const _hasError = Number.isNaN(Number(e.target.value));
-            setHasError(_hasError);
+            setHasError(_hasError || balance < parseUnits(e.target.value, decimals));
 
             if (!_hasError) {
               onChange(parseUnits(e.target.value, decimals));
