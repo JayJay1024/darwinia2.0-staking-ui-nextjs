@@ -20,16 +20,14 @@ export default function WrongChainAlert() {
         closerRef.current = notification.warn({
           duration: 0,
           description: (
-            <div className="w-[70vw] lg:w-80">
-              <p className="text-sm text-white">
-                You are connected to the Wrong Chain.{" "}
-                <span
-                  className="text-primary transition-opacity hover:cursor-pointer hover:opacity-80"
-                  onClick={() => switchNetwork(activeChain)}
-                >{`Change the selected Chain to ${chainConfig.name}`}</span>{" "}
-                in MetaMask.
-              </p>
-            </div>
+            <p className="text-sm text-white">
+              You are connected to the Wrong Chain.{" "}
+              <span
+                className="text-primary transition-opacity hover:cursor-pointer hover:opacity-80"
+                onClick={() => switchNetwork(activeChain)}
+              >{`Change the selected Chain to ${chainConfig.name}`}</span>{" "}
+              in MetaMask.
+            </p>
           ),
           onClose: () => {
             closerRef.current = null;
