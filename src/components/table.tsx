@@ -66,7 +66,14 @@ export default function Table<T extends { key: Key }>({
         {/* table body */}
         <div className="relative">
           {/* loading */}
-          <CSSTransition in={loading} nodeRef={loadingRef} timeout={300} classNames="component-loading" unmountOnExit>
+          <CSSTransition
+            in={loading}
+            nodeRef={loadingRef}
+            timeout={300}
+            classNames="component-loading"
+            unmountOnExit
+            appear
+          >
             <div
               ref={loadingRef}
               className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center"

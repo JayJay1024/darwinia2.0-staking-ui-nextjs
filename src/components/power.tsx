@@ -7,6 +7,8 @@ import Image from "next/image";
 import { getAddress } from "viem";
 import { useAccount } from "wagmi";
 import CountLoading from "./count-loading";
+import { useRef } from "react";
+import { CSSTransition } from "react-transition-group";
 
 interface Reward {
   id: string;
@@ -33,12 +35,16 @@ interface QueryResult {
 }
 
 export default function Power() {
+  const loadingRef = useRef<HTMLDivElement>(null);
   const { power, isLedgersInitialized, isRingPoolInitialized, isKtonPoolInitialized } = useStaking();
   const { activeChain } = useApp();
   const { address } = useAccount();
-  const { data: rewardData } = useQuery<QueryResult, QueryVariables>(GET_LATEST_STAKING_REWARDS, {
-    variables: { accountAddress: address ? getAddress(address) : "", itemsCount: 9 },
-  });
+  const { data: rewardData, loading: rewardLoading } = useQuery<QueryResult, QueryVariables>(
+    GET_LATEST_STAKING_REWARDS,
+    {
+      variables: { accountAddress: address ? getAddress(address) : "", itemsCount: 9 },
+    }
+  );
 
   const chainConfig = getChainConfig(activeChain);
 
@@ -57,11 +63,29 @@ export default function Power() {
         )}
       </div>
 
-      {/* reward */}
+      {/* reward records */}
       <div className="flex flex-col gap-middle bg-component p-5">
         <span className="text-sm font-bold text-white">Latest Staking Rewards</span>
         <div className="h-[1px] shrink-0 bg-white/20" />
-        <div className="flex h-[6rem] flex-col overflow-y-auto">
+        <div className="relative flex h-[6rem] flex-col overflow-y-auto">
+          {/* loading */}
+          <CSSTransition
+            in={rewardLoading}
+            timeout={300}
+            classNames="component-loading"
+            nodeRef={loadingRef}
+            unmountOnExit
+            appear
+          >
+            <div
+              ref={loadingRef}
+              className="absolute bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center"
+            >
+              <CountLoading size="large" />
+            </div>
+          </CSSTransition>
+
+          {/* records */}
           {rewardData?.stakingRecord?.rewards.nodes.length ? (
             <div className="flex flex-col gap-small">
               {rewardData.stakingRecord.rewards.nodes.map(({ id, amount, blockTime }) => (
