@@ -29,10 +29,23 @@ const createOne = (config: Config, status: Status, onClose: () => void) => {
 
   root.render(
     <>
-      <Image alt={status} width={20} height={20} src={`/images/status/${status}.svg`} className="self-start" />
+      <Image
+        alt={status}
+        width={20}
+        height={20}
+        src={`/images/status/${status}.svg`}
+        className="self-start lg:hidden"
+      />
+      <Image
+        alt={status}
+        width={36}
+        height={36}
+        src={`/images/status/${status}.svg`}
+        className="hidden self-start lg:inline"
+      />
       <div className="flex flex-col gap-small">
-        {config.title && <div className="text-xs font-bold text-white">{config.title}</div>}
-        {config.description && <div className="text-xs font-light text-white">{config.description}</div>}
+        {config.title && <div className="text-xs font-bold text-white lg:text-sm">{config.title}</div>}
+        {config.description && <div className="text-xs font-light text-white lg:text-sm">{config.description}</div>}
       </div>
       {!config.disabledCloseBtn && (
         <Image
