@@ -23,7 +23,7 @@ const createContainer = () => {
 const createOne = (config: Config, status: Status, onClose: () => void) => {
   const domNode = document.createElement("div");
 
-  domNode.className = `border border-primary p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative bg-component ${config.className}`;
+  domNode.className = `border border-primary p-middle lg:p-5 flex items-center gap-middle mb-middle animate-notification-enter relative bg-component w-[82vw] lg:w-96 ${config.className}`;
 
   const root = createRoot(domNode);
 
@@ -34,18 +34,20 @@ const createOne = (config: Config, status: Status, onClose: () => void) => {
         width={20}
         height={20}
         src={`/images/status/${status}.svg`}
-        className="self-start lg:hidden"
+        className="shrink-0 self-start lg:hidden"
       />
       <Image
         alt={status}
-        width={36}
-        height={36}
+        width={24}
+        height={24}
         src={`/images/status/${status}.svg`}
-        className="hidden self-start lg:inline"
+        className="hidden shrink-0 self-start lg:inline"
       />
       <div className="flex flex-col gap-small">
-        {config.title && <div className="text-xs font-bold text-white lg:text-sm">{config.title}</div>}
-        {config.description && <div className="text-xs font-light text-white lg:text-sm">{config.description}</div>}
+        {config.title && <div className="break-all text-xs font-bold text-white lg:text-sm">{config.title}</div>}
+        {config.description && (
+          <div className="break-all text-xs font-light text-white lg:text-sm">{config.description}</div>
+        )}
       </div>
       {!config.disabledCloseBtn && (
         <Image
