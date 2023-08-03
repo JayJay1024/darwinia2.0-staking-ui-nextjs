@@ -69,7 +69,7 @@ export default function Selector({
       </Button>
       {isMounted && (
         <FloatingPortal>
-          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
+          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
             <div style={styles} className={menuClassName}>
               {children}
             </div>
