@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ButtonHTMLAttributes, PropsWithChildren, useRef } from "react";
+import { PropsWithChildren, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
 import EnsureMatchNetworkButton from "./ensure-match-network-button";
@@ -85,16 +85,17 @@ export default function Modal({
                   <div className={`flex flex-col gap-large ${btnWrapClassName}`}>
                     {onOk && (
                       <EnsureMatchNetworkButton
-                        className={`bg-primary ${btnClassName}`}
+                        className={`h-10 shrink-0 border border-primary bg-primary text-sm font-bold text-white ${btnClassName}`}
                         onClick={onOk}
                         disabled={disabled}
                         busy={busy}
                       >{`${okText || "Ok"}`}</EnsureMatchNetworkButton>
                     )}
                     {onCancel && (
-                      <Button className={`bg-transparent ${btnClassName}`} onClick={onCancel}>{`${
-                        cancelText || "Cancel"
-                      }`}</Button>
+                      <button
+                        className={`h-10 shrink-0 border border-primary bg-transparent text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60 ${btnClassName}`}
+                        onClick={onCancel}
+                      >{`${cancelText || "Cancel"}`}</button>
                     )}
                   </div>
                 )}
@@ -105,16 +106,5 @@ export default function Modal({
       </div>
     </CSSTransition>,
     document.body
-  );
-}
-
-function Button({ className, children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...rest}
-      className={`h-10 shrink-0 border border-primary text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
-    >
-      {children}
-    </button>
   );
 }
