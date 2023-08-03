@@ -39,6 +39,7 @@ interface StakingCtx {
   unbondingKton: Omit<UnbondingInfo, "depositId">[];
   unbondingDeposits: UnbondingInfo[];
   isLedgersInitialized: boolean;
+  minimumDeposit: bigint;
 }
 
 const defaultValue: StakingCtx = {
@@ -63,6 +64,7 @@ const defaultValue: StakingCtx = {
   unbondingKton: [],
   unbondingDeposits: [],
   isLedgersInitialized: false,
+  minimumDeposit: 0n,
 };
 
 export const StakingContext = createContext(defaultValue);
@@ -92,6 +94,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [unbondingKton, setUnbondingKton] = useState(defaultValue.unbondingKton);
   const [unbondingDeposits, setUnbondingDeposits] = useState(defaultValue.unbondingDeposits);
   const [isLedgersInitialized, setIsLedgersInitialized] = useState(defaultValue.isLedgersInitialized);
+  const [minimumDeposit, setMinimumDeposit] = useState(defaultValue.minimumDeposit);
 
   const { address } = useAccount();
   const { polkadotApi } = useApi();
@@ -102,6 +105,19 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
     () => stakingToPower(stakedRing + totalOfDepositsInStaking, stakedKton, ringPool, ktonPool),
     [stakedRing, stakedKton, ringPool, ktonPool, totalOfDepositsInStaking]
   );
+
+  useEffect(() => {
+    let sub$$: Subscription | undefined;
+
+    if (polkadotApi) {
+      sub$$ = from(polkadotApi.consts.deposit.minLockingAmount.toString()).subscribe({
+        next: (amount) => setMinimumDeposit(BigInt(amount)),
+        error: console.error,
+      });
+    }
+
+    return () => sub$$?.unsubscribe();
+  }, [polkadotApi]);
 
   // active collators
   useEffect(() => {
@@ -410,6 +426,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
         unbondingKton,
         unbondingDeposits,
         isLedgersInitialized,
+        minimumDeposit,
       }}
     >
       {children}
