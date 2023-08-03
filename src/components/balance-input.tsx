@@ -2,11 +2,12 @@ import { formatBlanace, prettyNumber } from "@/utils";
 import Image from "next/image";
 import InputLabel from "./input-label";
 import { parseUnits } from "viem";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type PowerChanges = "more" | "less";
 
 export default function BalanceInput({
+  reset,
   balance,
   symbol,
   decimals,
@@ -18,6 +19,7 @@ export default function BalanceInput({
   powerChanges = "more",
   onChange = () => undefined,
 }: {
+  reset?: boolean;
   balance: bigint;
   symbol: string;
   decimals: number;
@@ -30,6 +32,13 @@ export default function BalanceInput({
   onChange?: (amount: bigint) => void;
 }) {
   const [hasError, setHasError] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (reset && inputRef.current) {
+      inputRef.current.value = "";
+    }
+  }, [reset]);
 
   return (
     <div className={`flex flex-col gap-middle ${className}`}>
@@ -40,7 +49,6 @@ export default function BalanceInput({
         }`}
       >
         <input
-          type="string"
           placeholder={`Balance: ${formatBlanace(balance, decimals, { keepZero: false, precision: 4 })}`}
           className="h-full w-[72%] bg-transparent text-sm font-light focus-visible:outline-none"
           onChange={(e) => {
@@ -51,6 +59,7 @@ export default function BalanceInput({
               onChange(parseUnits(e.target.value, decimals));
             }
           }}
+          ref={inputRef}
         />
         <div className="flex items-center gap-middle">
           {logoPath && <Image alt={symbol} width={20} height={20} src={logoPath} />}
