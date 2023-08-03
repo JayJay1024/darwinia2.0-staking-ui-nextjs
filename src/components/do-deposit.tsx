@@ -88,7 +88,7 @@ export default function DoDeposit() {
           logoPath={chainConfig.nativeToken.logoPath}
           className="lg:flex-1"
           onChange={setDepositRing}
-          reset={depositRing <= 0}
+          isReset={depositRing <= 0}
         />
 
         {/* deposit term */}

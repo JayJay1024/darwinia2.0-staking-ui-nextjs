@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 type PowerChanges = "more" | "less";
 
 export default function BalanceInput({
-  reset,
+  isReset,
   balance,
   symbol,
   decimals,
@@ -19,7 +19,7 @@ export default function BalanceInput({
   powerChanges = "more",
   onChange = () => undefined,
 }: {
-  reset?: boolean;
+  isReset?: boolean;
   balance: bigint;
   symbol: string;
   decimals: number;
@@ -35,10 +35,10 @@ export default function BalanceInput({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (reset && inputRef.current) {
+    if (isReset && inputRef.current) {
       inputRef.current.value = "";
     }
-  }, [reset]);
+  }, [isReset]);
 
   return (
     <div className={`flex flex-col gap-middle ${className}`}>
