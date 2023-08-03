@@ -2,6 +2,7 @@ import Image from "next/image";
 import { ButtonHTMLAttributes, PropsWithChildren, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CSSTransition } from "react-transition-group";
+import EnsureMatchNetworkButton from "./ensure-match-network-button";
 
 interface Props {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface Props {
   cancelText?: string;
   okText?: string;
   disabled?: boolean;
+  busy?: boolean;
   maskClosable?: boolean;
   className?: string;
   btnWrapClassName?: string;
@@ -25,6 +27,7 @@ export default function Modal({
   cancelText,
   okText,
   disabled,
+  busy,
   className,
   btnClassName,
   btnWrapClassName,
@@ -81,9 +84,12 @@ export default function Modal({
                 {(onOk || onCancel) && (
                   <div className={`flex flex-col gap-large ${btnWrapClassName}`}>
                     {onOk && (
-                      <Button className={`bg-primary ${btnClassName}`} onClick={onOk} disabled={disabled}>{`${
-                        okText || "Ok"
-                      }`}</Button>
+                      <EnsureMatchNetworkButton
+                        className={`bg-primary ${btnClassName}`}
+                        onClick={onOk}
+                        disabled={disabled}
+                        busy={busy}
+                      >{`${okText || "Ok"}`}</EnsureMatchNetworkButton>
                     )}
                     {onCancel && (
                       <Button className={`bg-transparent ${btnClassName}`} onClick={onCancel}>{`${
