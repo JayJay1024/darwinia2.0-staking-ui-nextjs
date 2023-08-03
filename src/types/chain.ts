@@ -22,7 +22,7 @@ interface KtonToken extends NativeToken {
 
 interface Contract {
   abiPath: string;
-  address: string;
+  address: `0x${string}`;
 }
 
 interface Substrate {
