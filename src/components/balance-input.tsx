@@ -2,6 +2,7 @@ import { formatBlanace, prettyNumber } from "@/utils";
 import Image from "next/image";
 import InputLabel from "./input-label";
 import { parseUnits } from "viem";
+import { useState } from "react";
 
 type PowerChanges = "more" | "less";
 
@@ -28,16 +29,25 @@ export default function BalanceInput({
   className?: string;
   onChange?: (amount: bigint) => void;
 }) {
+  const [hasError, setHasError] = useState(false);
+
   return (
     <div className={`flex flex-col gap-middle ${className}`}>
       {label && <InputLabel label={label} bold={boldLabel} />}
-      <div className="flex h-10 items-center justify-between gap-middle border border-white px-middle">
+      <div
+        className={`flex h-10 items-center justify-between gap-middle border px-middle ${
+          hasError ? "border-red-500" : "border-white"
+        }`}
+      >
         <input
           type="string"
           placeholder={`Balance: ${formatBlanace(balance, decimals, { keepZero: false, precision: 4 })}`}
           className="h-full w-[72%] bg-transparent text-sm font-light focus-visible:outline-none"
           onChange={(e) => {
-            if (!Number.isNaN(Number(e.target.value))) {
+            const _hasError = Number.isNaN(Number(e.target.value));
+            setHasError(_hasError);
+
+            if (!_hasError) {
               onChange(parseUnits(e.target.value, decimals));
             }
           }}
