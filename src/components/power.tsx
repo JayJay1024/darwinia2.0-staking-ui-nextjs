@@ -6,6 +6,7 @@ import { useQuery } from "graphql-hooks";
 import Image from "next/image";
 import { getAddress } from "viem";
 import { useAccount } from "wagmi";
+import CountLoading from "./count-loading";
 
 interface Reward {
   id: string;
@@ -32,7 +33,7 @@ interface QueryResult {
 }
 
 export default function Power() {
-  const { power } = useStaking();
+  const { power, isLedgersInitialized, isRingPoolInitialized, isKtonPoolInitialized } = useStaking();
   const { activeChain } = useApp();
   const { address } = useAccount();
   const { data: rewardData } = useQuery<QueryResult, QueryVariables>(GET_LATEST_STAKING_REWARDS, {
@@ -49,7 +50,11 @@ export default function Power() {
           <Image alt="Icon of Power" src="/images/power.svg" width={30} height={42} />
           <span className="text-3xl font-bold text-white">Power</span>
         </div>
-        <span className="text-3xl font-bold text-white">{prettyNumber(power)}</span>
+        {isLedgersInitialized && isRingPoolInitialized && isKtonPoolInitialized ? (
+          <span className="text-3xl font-bold text-white">{prettyNumber(power)}</span>
+        ) : (
+          <CountLoading color="white" size="large" />
+        )}
       </div>
 
       {/* reward */}

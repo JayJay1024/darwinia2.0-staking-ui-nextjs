@@ -15,7 +15,9 @@ interface StakingCtx {
   isDepositsInitialized: boolean;
   power: bigint;
   ringPool: bigint;
+  isRingPoolInitialized: boolean;
   ktonPool: bigint;
+  isKtonPoolInitialized: boolean;
   stakedRing: bigint;
   stakedKton: bigint;
   totalOfDepositsInStaking: bigint;
@@ -44,7 +46,9 @@ const defaultValue: StakingCtx = {
   isDepositsInitialized: false,
   power: 0n,
   ringPool: 0n,
+  isRingPoolInitialized: false,
   ktonPool: 0n,
+  isKtonPoolInitialized: false,
   stakedRing: 0n,
   stakedKton: 0n,
   totalOfDepositsInStaking: 0n,
@@ -67,7 +71,9 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [deposits, setDeposits] = useState(defaultValue.deposits);
   const [isDepositsInitialized, setIsDepositsInitialized] = useState(defaultValue.isDepositsInitialized);
   const [ringPool, setRingPool] = useState(defaultValue.ringPool);
+  const [isRingPoolInitialized, setIsRingPoolInitialized] = useState(defaultValue.isRingPoolInitialized);
   const [ktonPool, setKtonPool] = useState(defaultValue.ktonPool);
+  const [isKtonPoolInitialized, setIsKtonPoolInitialized] = useState(defaultValue.isKtonPoolInitialized);
   const [stakedRing, setStakedRing] = useState(defaultValue.stakedRing);
   const [stakedKton, setStakedKton] = useState(defaultValue.stakedKton);
   const [totalOfDepositsInStaking, setTotalOfDepositsInStaking] = useState(defaultValue.totalOfDepositsInStaking);
@@ -231,7 +237,8 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       .then((_unsub) => {
         unsub = _unsub as unknown as typeof unsub;
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsRingPoolInitialized(true));
 
     return () => unsub();
   }, [polkadotApi]);
@@ -245,7 +252,8 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       .then((_unsub) => {
         unsub = _unsub as unknown as typeof unsub;
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsKtonPoolInitialized(true));
 
     return () => unsub();
   }, [polkadotApi]);
@@ -385,7 +393,9 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
         deposits,
         isDepositsInitialized,
         ringPool,
+        isRingPoolInitialized,
         ktonPool,
+        isKtonPoolInitialized,
         stakedRing,
         stakedKton,
         totalOfDepositsInStaking,
