@@ -100,7 +100,7 @@ export default forwardRef<
       )}
       {isMounted && (
         <FloatingPortal>
-          <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
+          <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()} className="z-30">
             <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#FF0083" />
             <div style={styles} className="w-[70vw] border border-primary bg-component  p-middle lg:w-64">
               <p className="text-xs font-light text-white">
