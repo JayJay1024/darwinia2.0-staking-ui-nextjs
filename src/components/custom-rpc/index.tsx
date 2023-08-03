@@ -45,7 +45,7 @@ export default function CustomRpc() {
 
       {isMounted && (
         <FloatingPortal>
-          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
+          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-20">
             <div style={styles}>
               <RpcSelector onClose={() => setIsOpen(false)} />
             </div>
