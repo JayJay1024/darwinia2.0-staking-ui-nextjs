@@ -107,16 +107,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   );
 
   useEffect(() => {
-    let sub$$: Subscription | undefined;
-
-    if (polkadotApi) {
-      sub$$ = from(polkadotApi.consts.deposit.minLockingAmount.toString()).subscribe({
-        next: (amount) => setMinimumDeposit(BigInt(amount)),
-        error: console.error,
-      });
-    }
-
-    return () => sub$$?.unsubscribe();
+    setMinimumDeposit(BigInt(polkadotApi?.consts.deposit.minLockingAmount.toString() || 0));
   }, [polkadotApi]);
 
   // active collators
