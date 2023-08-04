@@ -83,9 +83,11 @@ const columns: ColumnType<DataSource>[] = [
 export default function CollatorSelectModal({
   isOpen,
   onClose = () => undefined,
+  onConfirm = () => undefined,
 }: {
   isOpen: boolean;
   onClose?: () => void;
+  onConfirm?: (collator: string) => void;
 }) {
   const {
     nominatorCollators,
@@ -143,7 +145,7 @@ export default function CollatorSelectModal({
       okText="Confirm"
       onClose={onClose}
       onCancel={onClose}
-      onOk={onClose}
+      onOk={() => selectedCollator && onConfirm(selectedCollator as string)}
       maskClosable={false}
       className="lg:w-[48rem]"
       btnWrapClassName="lg:flex-row"
