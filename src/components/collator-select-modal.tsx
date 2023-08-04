@@ -132,7 +132,7 @@ export default function CollatorSelectModal({
 
   useEffect(() => {
     if (address && nominatorCollators[address]?.length && isOpen) {
-      setSelectedCollator(nominatorCollators[address]?.at(0));
+      setSelectedCollator((prev) => prev ?? nominatorCollators[address]?.at(0));
     } else if (!isOpen) {
       setSelectedCollator(undefined);
     }
