@@ -1,6 +1,6 @@
-import { ButtonHTMLAttributes, Key, forwardRef, useMemo, useState } from "react";
+import { ButtonHTMLAttributes, Key, forwardRef, useCallback, useMemo, useState } from "react";
 import Table, { ColumnType } from "./table";
-import { formatBlanace, getChainConfig, prettyNumber } from "@/utils";
+import { formatBlanace, getChainConfig, notifyTransaction, prettyNumber } from "@/utils";
 import Jazzicon from "./jazzicon";
 import Image from "next/image";
 import BondMoreRingModal from "./bond-more-ring-modal";
@@ -26,6 +26,9 @@ import {
   useInteractions,
   useTransitionStyles,
 } from "@floating-ui/react";
+import EnsureMatchNetworkButton from "./ensure-match-network-button";
+import { notification } from "./notification";
+import { writeContract, waitForTransaction } from "@wagmi/core";
 
 interface DataSource {
   key: Key;
@@ -335,11 +338,43 @@ function UnbondDeposit() {
 
 function SelectCollator({ text }: { text: string }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const { activeChain } = useApp();
+
+  const handleConfirm = useCallback(
+    async (collator: string) => {
+      setBusy(true);
+      setIsOpen(false);
+      const chainConfig = getChainConfig(activeChain);
+
+      try {
+        const contractAbi = (await import(`@/config/abi/${chainConfig.contract.staking.abiFile}`)).default;
+
+        const { hash } = await writeContract({
+          address: chainConfig.contract.staking.address,
+          abi: contractAbi,
+          functionName: "nominate",
+          args: [collator],
+        });
+        const receipt = await waitForTransaction({ hash });
+
+        notifyTransaction(receipt, chainConfig.explorer);
+      } catch (err) {
+        console.error(err);
+        notification.error({ description: (err as Error).message });
+      }
+
+      setBusy(false);
+    },
+    [activeChain]
+  );
 
   return (
     <>
-      <BaseButton onClick={() => setIsOpen(true)}>{text}</BaseButton>
-      <CollatorSelectModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <BaseButton busy={busy} onClick={() => setIsOpen(true)}>
+        {text}
+      </BaseButton>
+      <CollatorSelectModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleConfirm} />
     </>
   );
 }
@@ -384,27 +419,26 @@ function MoreAction() {
 
 function ActionButton({ action, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { action: "bond" | "unbond" }) {
   return (
-    <button
+    <EnsureMatchNetworkButton
       type="button"
       {...rest}
       className="inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center border border-white/40 transition-transform hover:scale-105 active:scale-95"
     >
       <span className="text-xs">{action === "bond" ? "+" : "-"}</span>
-    </button>
+    </EnsureMatchNetworkButton>
   );
 }
 
-const BaseButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(function BaseButton(
-  { children, ...rest },
-  ref
-) {
-  return (
-    <button
-      className={`w-fit border border-primary px-middle py-small text-sm font-light text-white transition-opacity hover:opacity-80 active:opacity-60`}
-      ref={ref}
-      {...rest}
-    >
-      {children}
-    </button>
-  );
-});
+const BaseButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & { busy?: boolean }>(
+  function BaseButton({ children, ...rest }, ref) {
+    return (
+      <EnsureMatchNetworkButton
+        className={`w-fit border border-primary px-middle py-small text-sm font-light text-white`}
+        ref={ref}
+        {...rest}
+      >
+        {children}
+      </EnsureMatchNetworkButton>
+    );
+  }
+);
