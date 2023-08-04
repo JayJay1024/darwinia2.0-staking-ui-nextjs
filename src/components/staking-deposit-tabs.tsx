@@ -4,11 +4,15 @@ import DoStake from "./do-stake";
 import StakingRecords from "./staking-records";
 import DoDeposit from "./do-deposit";
 import DepositRecords from "./deposit-records";
+import { useStaking } from "@/hooks";
+import { useAccount } from "wagmi";
 
 type TabKey = "staking" | "deposit";
 
 export default function StakingDepositTabs() {
   const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>("staking");
+  const { nominatorCollators, isNominatorCollatorsInitialized } = useStaking();
+  const { address } = useAccount();
 
   return (
     <Tabs
@@ -18,7 +22,7 @@ export default function StakingDepositTabs() {
           label: <span>Staking</span>,
           children: (
             <div className="flex flex-col gap-5">
-              <DoStake />
+              {address && isNominatorCollatorsInitialized && !nominatorCollators[address]?.at(0) ? <DoStake /> : null}
               <StakingRecords />
             </div>
           ),
