@@ -17,7 +17,7 @@ interface Props<T> {
   columns: ColumnType<T>[];
   styles?: CSSProperties;
   contentClassName?: string;
-  selectedRow?: Key;
+  selectedItem?: Key;
   total?: number;
   pageSize?: number;
   currentPage?: number;
@@ -31,7 +31,7 @@ export default function Table<T extends { key: Key }>({
   dataSource,
   styles,
   contentClassName,
-  selectedRow,
+  selectedItem,
   total,
   pageSize,
   currentPage,
@@ -92,7 +92,7 @@ export default function Table<T extends { key: Key }>({
                       key={row.key}
                       className={`grid items-center gap-middle border-b border-b-white/20 px-middle py-middle text-sm font-light text-white transition last:border-b-0 ${
                         onRowSelect ? "hover:cursor-pointer hover:opacity-80" : ""
-                      } ${selectedRow === row.key ? "bg-primary" : ""}`}
+                      } ${selectedItem === row.key ? "bg-primary" : ""}`}
                       style={{ gridTemplateColumns: templateCols }}
                       onClick={() => {
                         if (onRowSelect) {

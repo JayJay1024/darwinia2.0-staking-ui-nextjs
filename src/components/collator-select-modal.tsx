@@ -1,4 +1,4 @@
-import { Key, useEffect, useState } from "react";
+import { Key, useDeferredValue, useEffect, useMemo, useState } from "react";
 import Modal from "./modal";
 import Tabs, { TabsProps } from "./tabs";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import Jazzicon from "./jazzicon";
 import { prettyNumber } from "@/utils";
 import { notification } from "./notification";
 import DisplayAccountName from "./display-account-name";
+import { useStaking } from "@/hooks";
 
 type TabKey = "active" | "waiting";
 
@@ -15,7 +16,7 @@ interface DataSource {
   key: Key;
   collator: string;
   power: bigint;
-  commission: number;
+  commission: string;
   blocks: number;
 }
 
@@ -23,7 +24,7 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "collator",
     dataIndex: "collator",
-    width: "30%",
+    width: "32%",
     title: <span className="text-xs font-bold text-white">Collator</span>,
     render: (row) => (
       <div className="flex items-center gap-small">
@@ -50,7 +51,6 @@ const columns: ColumnType<DataSource>[] = [
   {
     key: "power",
     dataIndex: "power",
-    width: "25%",
     title: (
       <div className="inline-flex flex-col text-xs font-bold text-white">
         <span>Total-staked</span>
@@ -64,17 +64,19 @@ const columns: ColumnType<DataSource>[] = [
     dataIndex: "commission",
     width: "20%",
     title: <span className="text-xs font-bold text-white">Commission</span>,
-    render: (row) => <span>{`${row.commission.toFixed(2)}%`}</span>,
+    render: (row) => <span>{row.commission}</span>,
   },
   {
     key: "blocks",
     dataIndex: "blocks",
+    width: "20%",
     title: (
       <div className="inline-flex flex-col text-xs font-bold text-white">
         <span>Blocks</span>
         <span>Last session</span>
       </div>
     ),
+    render: (row) => <span>{row.blocks >= 0 ? row.blocks : "-"}</span>,
   },
 ];
 
@@ -85,26 +87,37 @@ export default function CollatorSelectModal({
   isOpen: boolean;
   onClose?: () => void;
 }) {
-  const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>("active");
-  const [dataSource, setDataSource] = useState<DataSource[]>([]);
-  const [selectedRow, setSelectedRow] = useState(dataSource.at(0)?.key);
+  const { nominatorCollators, collatorCommission, collatorLastSessionBlocks, collatorNominators, activeCollators } =
+    useStaking();
   const { address } = useAccount();
 
+  const [selectedCollator, setSelectedCollator] = useState<Key | undefined>(undefined);
+  const [activeKey, setActiveKey] = useState<TabsProps<TabKey>["activeKey"]>("active");
+  const [keyword, setKeyword] = useState("");
+  const deferredKeyword = useDeferredValue(keyword);
+
+  const dataSource = useMemo<DataSource[]>(() => {
+    return Object.keys(collatorCommission)
+      .filter((collator) =>
+        activeKey === "active" ? activeCollators.includes(collator) : !activeCollators.includes(collator)
+      )
+      .filter((collator) => collator.toLowerCase().includes(deferredKeyword.toLowerCase()))
+      .map((collator) => ({
+        key: collator,
+        collator,
+        power: collatorNominators[collator]?.totalStakedPower || 0n,
+        commission: collatorCommission[collator] || "-",
+        blocks: collatorLastSessionBlocks[collator] || -1,
+      }));
+  }, [activeCollators, activeKey, collatorCommission, collatorLastSessionBlocks, collatorNominators, deferredKeyword]);
+
   useEffect(() => {
-    if (address) {
-      setDataSource(
-        new Array(20).fill(0).map((_, index) => ({
-          key: index,
-          collator: address,
-          power: BigInt(index * 8736),
-          commission: index,
-          blocks: index,
-        }))
-      );
-    } else {
-      setDataSource([]);
+    if (address && nominatorCollators[address]?.length && isOpen) {
+      setSelectedCollator(nominatorCollators[address]?.at(0));
+    } else if (!isOpen) {
+      setSelectedCollator(undefined);
     }
-  }, [address]);
+  }, [address, nominatorCollators, isOpen]);
 
   return (
     <Modal
@@ -115,7 +128,9 @@ export default function CollatorSelectModal({
       onCancel={onClose}
       onOk={onClose}
       maskClosable={false}
-      className="lg:w-[45rem]"
+      className="lg:w-[48rem]"
+      btnWrapClassName="lg:flex-row"
+      btnClassName="lg:w-[9.375rem]"
     >
       <Tabs
         items={[
@@ -124,19 +139,19 @@ export default function CollatorSelectModal({
             label: <span>Active Pool</span>,
             children: (
               <div className="flex h-[40vh] flex-col gap-middle overflow-y-hidden">
-                <div className="flex flex-col gap-middle">
+                <div className="flex flex-col items-center gap-middle lg:flex-row lg:justify-between lg:gap-small">
                   <span className="text-xs font-light text-white/50">
                     These candidates are in the active collator pool of the current Session.
                   </span>
-                  <SearchInput />
+                  <SearchInput onChange={setKeyword} />
                 </div>
                 <Table
                   dataSource={dataSource}
                   columns={columns}
                   styles={{ minWidth: 560 }}
-                  contentClassName="max-h-[22vh]"
-                  selectedRow={selectedRow}
-                  onRowSelect={setSelectedRow}
+                  contentClassName="h-[22vh] lg:h-[28vh]"
+                  selectedItem={selectedCollator}
+                  onRowSelect={setSelectedCollator}
                 />
               </div>
             ),
@@ -146,14 +161,14 @@ export default function CollatorSelectModal({
             label: <span>Waiting Pool</span>,
             children: (
               <div className="flex h-[40vh] flex-col gap-middle overflow-y-hidden">
-                <SearchInput />
+                <SearchInput onChange={setKeyword} />
                 <Table
                   dataSource={dataSource}
                   columns={columns}
                   styles={{ minWidth: 560 }}
-                  contentClassName="max-h-[28vh]"
-                  selectedRow={selectedRow}
-                  onRowSelect={setSelectedRow}
+                  contentClassName="h-[28vh]"
+                  selectedItem={selectedCollator}
+                  onRowSelect={setSelectedCollator}
                 />
               </div>
             ),
@@ -166,13 +181,14 @@ export default function CollatorSelectModal({
   );
 }
 
-function SearchInput() {
+function SearchInput({ onChange = () => undefined }: { onChange?: (value: string) => void }) {
   return (
-    <div className="flex h-8 w-full items-center gap-middle border border-white/50 px-middle transition-colors focus-within:border-white hover:border-white">
+    <div className="flex h-8 w-full items-center gap-middle border border-white/50 px-middle transition-colors focus-within:border-white hover:border-white lg:w-52 lg:self-end">
       <Image alt="Search" width={20} height={20} src="/images/search.svg" />
       <input
         className="h-full w-full bg-transparent text-xs font-light focus-visible:outline-none"
         placeholder="search for a collator"
+        onChange={(e) => onChange(e.target.value)}
       />
     </div>
   );
