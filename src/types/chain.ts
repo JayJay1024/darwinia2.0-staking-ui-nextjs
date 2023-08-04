@@ -17,7 +17,7 @@ interface NativeToken {
 }
 
 interface KtonToken extends NativeToken {
-  address: string;
+  address: `0x${string}`;
 }
 
 interface Contract {
