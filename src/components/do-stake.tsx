@@ -1,10 +1,14 @@
-import { getChainConfig, stakingToPower } from "@/utils";
+import { getChainConfig, notifyTransaction, stakingToPower } from "@/utils";
 import ActiveDepositSelector from "./active-deposit-selector";
 import CollatorSelector from "./collator-selector";
 import BalanceInput, { ExtraPower } from "./balance-input";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useApp, useStaking } from "@/hooks";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, usePublicClient, useWalletClient } from "wagmi";
+import EnsureMatchNetworkButton from "./ensure-match-network-button";
+import { clientBuilder } from "@/libs";
+import { ChainID } from "@/types";
+import { notification } from "./notification";
 
 export default function DoStake() {
   const { deposits, ringPool, ktonPool, nominatorCollators } = useStaking();
@@ -12,10 +16,13 @@ export default function DoStake() {
   const [delegateRing, setDelegateRing] = useState(0n);
   const [delegateKton, setDelegateKton] = useState(0n);
   const [delegateDeposits, setDelegateDeposits] = useState<number[]>([]);
+  const [busy, setBusy] = useState(false);
 
   const { activeChain } = useApp();
-  const { nativeToken, ktonToken } = getChainConfig(activeChain);
+  const { nativeToken, ktonToken, chainId, explorer } = getChainConfig(activeChain);
 
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
   const { address } = useAccount();
   const { data: ringBalance } = useBalance({ address, watch: true });
   const { data: ktonBalance } = useBalance({ address, watch: true, token: ktonToken?.address });
@@ -37,6 +44,35 @@ export default function DoStake() {
       ),
     [delegateDeposits, deposits, calcExtraPower]
   );
+
+  const handleStake = useCallback(async () => {
+    if (delegateCollator && walletClient) {
+      setBusy(true);
+
+      try {
+        const client =
+          chainId === ChainID.CRAB
+            ? clientBuilder.buildCrabClient(publicClient)
+            : clientBuilder.buildDarwiniaClient(publicClient);
+
+        const nominateCall = client.calls.darwiniaStaking.buildNominateCall(delegateCollator);
+        const stakeCall = client.calls.darwiniaStaking.buildStakeCall(delegateRing, delegateKton, delegateDeposits);
+        const receipt = await client.calls.utility.batchAll(walletClient, [stakeCall, nominateCall]);
+
+        if (receipt.status === "success") {
+          setDelegateRing(0n);
+          setDelegateKton(0n);
+          setDelegateDeposits([]);
+        }
+        notifyTransaction(receipt, explorer);
+      } catch (err) {
+        console.error(err);
+        notification.error({ description: (err as Error).message });
+      }
+
+      setBusy(false);
+    }
+  }, [chainId, delegateCollator, delegateDeposits, delegateKton, delegateRing, explorer, publicClient, walletClient]);
 
   useEffect(() => {
     if (address && nominatorCollators[address]?.length) {
@@ -95,12 +131,14 @@ export default function DoStake() {
 
       <div className="h-[1px] bg-white/20" />
 
-      <button
-        disabled
-        className="bg-primary px-large py-middle text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60 lg:w-40"
+      <EnsureMatchNetworkButton
+        busy={busy}
+        disabled={!delegateCollator || delegateDeposits.length <= 0}
+        className="bg-primary px-large py-middle text-sm font-bold text-white lg:w-40"
+        onClick={handleStake}
       >
         Stake
-      </button>
+      </EnsureMatchNetworkButton>
     </div>
   );
 }
