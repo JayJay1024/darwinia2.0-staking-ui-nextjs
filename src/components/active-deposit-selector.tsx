@@ -11,9 +11,10 @@ interface Props {
 
 export default function ActiveDepositSelector({ checkedDeposits, onChange = () => undefined }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const { deposits } = useStaking();
+  const { deposits, stakedDeposits } = useStaking();
   const { activeChain } = useApp();
 
+  const activeDeposits = deposits.filter(({ id }) => !stakedDeposits.includes(id));
   const { nativeToken } = getChainConfig(activeChain);
 
   return (
@@ -34,9 +35,9 @@ export default function ActiveDepositSelector({ checkedDeposits, onChange = () =
       isOpen={isOpen}
       setIsOpen={setIsOpen}
     >
-      {deposits.length ? (
+      {activeDeposits.length ? (
         <CheckboxGroup
-          options={deposits.map(({ id, value }) => ({
+          options={activeDeposits.map(({ id, value }) => ({
             value: id,
             label: (
               <div key={id} className="flex w-full items-center justify-between">
