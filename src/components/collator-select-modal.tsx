@@ -87,8 +87,18 @@ export default function CollatorSelectModal({
   isOpen: boolean;
   onClose?: () => void;
 }) {
-  const { nominatorCollators, collatorCommission, collatorLastSessionBlocks, collatorNominators, activeCollators } =
-    useStaking();
+  const {
+    nominatorCollators,
+    collatorCommission,
+    collatorLastSessionBlocks,
+    collatorNominators,
+    activeCollators,
+    isCollatorNominatorsInitialized,
+    isCollatorLastSessionBlocksInitialized,
+    isCollatorCommissionInitialized,
+    isNominatorCollatorsInitialized,
+    isActiveCollatorsInitialized,
+  } = useStaking();
   const { address } = useAccount();
 
   const [selectedCollator, setSelectedCollator] = useState<Key | undefined>(undefined);
@@ -110,6 +120,13 @@ export default function CollatorSelectModal({
         blocks: collatorLastSessionBlocks[collator] || -1,
       }));
   }, [activeCollators, activeKey, collatorCommission, collatorLastSessionBlocks, collatorNominators, deferredKeyword]);
+
+  const loading =
+    !isCollatorNominatorsInitialized ||
+    !isCollatorLastSessionBlocksInitialized ||
+    !isCollatorCommissionInitialized ||
+    !isNominatorCollatorsInitialized ||
+    !isActiveCollatorsInitialized;
 
   useEffect(() => {
     if (address && nominatorCollators[address]?.length && isOpen) {
@@ -152,6 +169,7 @@ export default function CollatorSelectModal({
                   contentClassName="h-[22vh] lg:h-[28vh]"
                   selectedItem={selectedCollator}
                   onRowSelect={setSelectedCollator}
+                  loading={loading}
                 />
               </div>
             ),
@@ -169,6 +187,7 @@ export default function CollatorSelectModal({
                   contentClassName="h-[28vh]"
                   selectedItem={selectedCollator}
                   onRowSelect={setSelectedCollator}
+                  loading={loading}
                 />
               </div>
             ),
