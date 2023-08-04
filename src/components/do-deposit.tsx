@@ -15,7 +15,7 @@ export default function DoDeposit() {
   const [busy, setBusy] = useState(false);
 
   const { address } = useAccount();
-  const { data: balanceData } = useBalance({ address });
+  const { data: ringBalance } = useBalance({ address, watch: true });
   const { minimumDeposit } = useStaking();
   const { activeChain } = useApp();
 
@@ -29,7 +29,7 @@ export default function DoDeposit() {
         })} ${chainConfig.nativeToken.symbol}.`,
       });
       return;
-    } else if ((balanceData?.value || 0n) < depositRing) {
+    } else if ((ringBalance?.value || 0n) < depositRing) {
       notification.warn({ description: "Your balance is insufficient." });
       return;
     } else {
@@ -65,7 +65,7 @@ export default function DoDeposit() {
     chainConfig.contract.deposit,
     chainConfig.explorer,
     chainConfig.nativeToken,
-    balanceData?.value,
+    ringBalance?.value,
   ]);
 
   return (
@@ -82,7 +82,7 @@ export default function DoDeposit() {
         {/* amount */}
         <BalanceInput
           label="Amount"
-          balance={balanceData?.value || 0n}
+          balance={ringBalance?.value || 0n}
           symbol={chainConfig.nativeToken.symbol}
           decimals={chainConfig.nativeToken.decimals}
           logoPath={chainConfig.nativeToken.logoPath}
