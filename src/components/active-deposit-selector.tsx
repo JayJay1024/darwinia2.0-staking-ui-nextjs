@@ -1,37 +1,34 @@
-import { Key, useEffect, useState } from "react";
+import { Key, useState } from "react";
 import Selector from "./selector";
-import { parseEther } from "viem";
 import CheckboxGroup from "./checkbox-group";
-import { formatBlanace, getChainConfig, prettyNumber } from "@/utils";
-import { ChainID } from "@/types";
+import { formatBlanace, getChainConfig } from "@/utils";
+import { useApp, useStaking } from "@/hooks";
 
-const { nativeToken } = getChainConfig(ChainID.CRAB);
+interface Props {
+  checkedDeposits: number[];
+  onChange?: (values: number[]) => void;
+}
 
-export default function ActiveDepositSelector() {
-  const [deposits, setDeposits] = useState<{ id: number; balance: bigint }[]>([]);
-  const [checkedValues, setCheckedValues] = useState<Key[]>([]);
+export default function ActiveDepositSelector({ checkedDeposits, onChange = () => undefined }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const { deposits } = useStaking();
+  const { activeChain } = useApp();
 
-  useEffect(() => {
-    setDeposits(
-      new Array(20).fill(0).map((_, index) => ({ id: index + 100, balance: parseEther((index * 1762.354).toString()) }))
-    );
-  }, []);
+  const { nativeToken } = getChainConfig(activeChain);
 
   return (
     <Selector
       labelClassName="border-white px-middle"
       menuClassName="border border-white p-middle bg-app-black max-h-72 overflow-y-auto"
       label={
-        checkedValues.length ? (
+        checkedDeposits.length ? (
           <div className="inline-flex items-center gap-middle truncate">
-            <span className="text-sm font-bold text-white">{`${checkedValues.length} Deposits Selected`}</span>
-            <span className="truncate text-xs font-bold text-white/50">{`+${prettyNumber(
-              checkedValues.length * 1298834
-            )} Power`}</span>
+            <span className="text-sm font-light text-white">{`${checkedDeposits.length} ${
+              checkedDeposits.length > 1 ? "deposits" : "deposit"
+            } selected`}</span>
           </div>
         ) : (
-          <span className="text-sm font-bold text-white">Use A Deposit</span>
+          <span className="text-sm font-light text-white">Use a deposit</span>
         )
       }
       isOpen={isOpen}
@@ -39,19 +36,19 @@ export default function ActiveDepositSelector() {
     >
       {deposits.length ? (
         <CheckboxGroup
-          options={deposits.map(({ id, balance }) => ({
+          options={deposits.map(({ id, value }) => ({
             value: id,
             label: (
               <div key={id} className="flex w-full items-center justify-between">
                 <span className="text-sm font-light text-white">{`ID#${id}`}</span>
-                <span className="text-sm font-light text-white">{`${formatBlanace(balance, nativeToken.decimals, {
+                <span className="text-sm font-light text-white">{`${formatBlanace(value, nativeToken.decimals, {
                   keepZero: false,
                 })} ${nativeToken.symbol}`}</span>
               </div>
             ),
           }))}
-          checkedValues={checkedValues}
-          onChange={setCheckedValues}
+          checkedValues={checkedDeposits}
+          onChange={onChange as (v: Key[]) => void}
         />
       ) : (
         <span className="text-sm font-normal text-white/50">No active deposit</span>

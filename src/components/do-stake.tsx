@@ -1,13 +1,49 @@
-import { ChainID } from "@/types";
-import { getChainConfig } from "@/utils";
+import { getChainConfig, stakingToPower } from "@/utils";
 import ActiveDepositSelector from "./active-deposit-selector";
 import CollatorSelector from "./collator-selector";
 import BalanceInput, { ExtraPower } from "./balance-input";
-import { parseEther } from "viem";
-
-const { nativeToken, ktonToken } = getChainConfig(ChainID.DARWINIA);
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useApp, useStaking } from "@/hooks";
+import { useAccount, useBalance } from "wagmi";
 
 export default function DoStake() {
+  const { deposits, ringPool, ktonPool, nominatorCollators } = useStaking();
+  const [delegateCollator, setDelegateCollator] = useState<string | undefined>(undefined);
+  const [delegateRing, setDelegateRing] = useState(0n);
+  const [delegateKton, setDelegateKton] = useState(0n);
+  const [delegateDeposits, setDelegateDeposits] = useState<number[]>([]);
+
+  const { activeChain } = useApp();
+  const { nativeToken, ktonToken } = getChainConfig(activeChain);
+
+  const { address } = useAccount();
+  const { data: ringBalance } = useBalance({ address, watch: true });
+  const { data: ktonBalance } = useBalance({ address, watch: true, token: ktonToken?.address });
+
+  const calcExtraPower = useCallback(
+    (stakingRing: bigint, stakingKton: bigint) =>
+      stakingToPower(stakingRing, stakingKton, ringPool + stakingRing, ktonPool + stakingKton) -
+      stakingToPower(0n, 0n, ringPool, ktonPool),
+    [ringPool, ktonPool]
+  );
+
+  const ringExtraPower = useMemo(() => calcExtraPower(delegateRing, 0n), [delegateRing, calcExtraPower]);
+  const ktonExtraPower = useMemo(() => calcExtraPower(0n, delegateKton), [delegateKton, calcExtraPower]);
+  const depositsExtraPower = useMemo(
+    () =>
+      calcExtraPower(
+        deposits.filter(({ id }) => delegateDeposits.includes(id)).reduce((acc, cur) => acc + cur.value, 0n),
+        0n
+      ),
+    [delegateDeposits, deposits, calcExtraPower]
+  );
+
+  useEffect(() => {
+    if (address && nominatorCollators[address]?.length) {
+      setDelegateCollator((prev) => prev ?? nominatorCollators[address]?.at(0));
+    }
+  }, [address, nominatorCollators]);
+
   return (
     <div className="flex flex-col gap-middle bg-component p-5">
       <h5 className="text-sm font-bold text-white">Delegate</h5>
@@ -19,37 +55,41 @@ export default function DoStake() {
       <div className="h-[1px] bg-white/20" />
 
       {/* collator */}
-      <CollatorSelector />
+      <CollatorSelector collator={delegateCollator} onSelect={setDelegateCollator} />
 
       <div className="flex flex-col gap-middle lg:flex-row">
         {/* ring */}
         <BalanceInput
-          balance={parseEther("1876.6354")}
+          balance={ringBalance?.value || 0n}
           symbol={nativeToken.symbol}
           logoPath={nativeToken.logoPath}
           decimals={nativeToken.decimals}
-          power={0n}
+          power={ringExtraPower}
           className="lg:flex-1"
+          onChange={setDelegateRing}
+          isReset={delegateRing <= 0}
         />
 
         {/* kton */}
         {ktonToken && (
           <>
             <BalanceInput
-              balance={parseEther("1876.6354")}
+              balance={ktonBalance?.value || 0n}
               symbol={ktonToken.symbol}
               logoPath={ktonToken.logoPath}
               decimals={ktonToken.decimals}
-              power={0n}
+              power={ktonExtraPower}
               className="lg:flex-1"
+              onChange={setDelegateKton}
+              isReset={delegateKton <= 0}
             />
           </>
         )}
 
         {/* active deposit */}
         <div className="flex flex-col gap-middle lg:flex-1">
-          <ActiveDepositSelector />
-          <ExtraPower power={0n} />
+          <ActiveDepositSelector checkedDeposits={delegateDeposits} onChange={setDelegateDeposits} />
+          <ExtraPower power={depositsExtraPower} />
         </div>
       </div>
 
