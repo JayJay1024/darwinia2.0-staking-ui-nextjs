@@ -70,7 +70,7 @@ export default function Tooltip({
       </div>
       {isMounted && (
         <FloatingPortal>
-          <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
+          <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()} className="z-30">
             <FloatingArrow ref={arrowRef} style={styles} context={context} fill="#FF0083" />
             <div style={styles} className={`border border-primary bg-component p-middle ${contentClassName}`}>
               {content}
