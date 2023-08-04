@@ -1,22 +1,31 @@
-import { useAccount } from "wagmi";
 import Jazzicon from "./jazzicon";
 import Image from "next/image";
 import CollatorSelectModal from "./collator-select-modal";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useAccountName } from "@/hooks";
+import { toShortAdrress } from "@/utils";
 
-export default function CollatorSelector() {
+interface Props {
+  collator: string | undefined;
+  onSelect: (collator: string) => void;
+}
+
+export default function CollatorSelector({ collator, onSelect }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const { address } = useAccount();
+
+  const handleConfirm = useCallback(
+    (collator: string) => {
+      onSelect(collator);
+      setIsOpen(false);
+    },
+    [onSelect]
+  );
 
   return (
     <>
-      {address ? (
+      {collator ? (
         <div className="flex items-center gap-middle border border-primary px-large py-middle transition-opacity">
-          <Jazzicon address={address} size={30} />
-          <div className="flex min-w-0 flex-col gap-small">
-            <span className="text-sm font-bold text-white">darwinia</span>
-            <span className="break-words text-xs font-light text-white">{address}</span>
-          </div>
+          <Collator collator={collator} />
           <button
             className="shrink-0 transition-transform hover:scale-105 active:scale-95"
             onClick={() => setIsOpen(true)}
@@ -33,7 +42,23 @@ export default function CollatorSelector() {
         </button>
       )}
 
-      <CollatorSelectModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <CollatorSelectModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleConfirm} />
+    </>
+  );
+}
+
+function Collator({ collator }: { collator: string }) {
+  const { accountName } = useAccountName(collator);
+
+  return (
+    <>
+      <Jazzicon address={collator} size={30} />
+      <div className="flex min-w-0 flex-col gap-small">
+        <span className="text-sm font-bold text-white">
+          {accountName === collator ? toShortAdrress(collator) : accountName}
+        </span>
+        <span className="break-words text-xs font-light text-white">{collator}</span>
+      </div>
     </>
   );
 }
