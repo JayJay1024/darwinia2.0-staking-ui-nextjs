@@ -12,6 +12,7 @@ import type { DarwiniaStakingLedger, Deposit, DepositCodec, UnbondingInfo } from
 
 interface StakingCtx {
   deposits: Deposit[];
+  stakedDeposits: number[];
   power: bigint;
   ringPool: bigint;
   ktonPool: bigint;
@@ -49,6 +50,7 @@ interface StakingCtx {
 
 const defaultValue: StakingCtx = {
   deposits: [],
+  stakedDeposits: [],
   power: 0n,
   ringPool: 0n,
   ktonPool: 0n,
@@ -80,6 +82,7 @@ export const StakingContext = createContext(defaultValue);
 
 export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [deposits, setDeposits] = useState(defaultValue.deposits);
+  const [stakedDeposits, setStakedDeposits] = useState(defaultValue.stakedDeposits);
   const [ringPool, setRingPool] = useState(defaultValue.ringPool);
   const [ktonPool, setKtonPool] = useState(defaultValue.ktonPool);
   const [stakedRing, setStakedRing] = useState(defaultValue.stakedRing);
@@ -384,6 +387,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
                 .filter(({ id }) => ledgerData.stakedDeposits?.includes(id))
                 .reduce((acc, cur) => acc + cur.value, 0n)
             );
+            setStakedDeposits(ledgerData.stakedDeposits || []);
 
             setStakedRing(BigInt(ledgerData.stakedRing));
             setStakedKton(BigInt(ledgerData.stakedKton));
@@ -393,6 +397,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
             setUnbondingDeposits(_unbondingDeposits);
           } else {
             setTotalOfDepositsInStaking(0n);
+            setStakedDeposits([]);
             setStakedRing(0n);
             setStakedKton(0n);
             setUnbondingRing([]);
@@ -405,6 +410,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       });
     } else {
       setTotalOfDepositsInStaking(0n);
+      setStakedDeposits([]);
       setStakedRing(0n);
       setStakedKton(0n);
       setUnbondingRing([]);
@@ -420,6 +426,7 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       value={{
         power,
         deposits,
+        stakedDeposits,
         ringPool,
         ktonPool,
         stakedRing,
