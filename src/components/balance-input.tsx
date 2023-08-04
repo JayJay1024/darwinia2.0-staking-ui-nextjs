@@ -71,7 +71,7 @@ export default function BalanceInput({
   );
 }
 
-export function ExtraPower({ power, powerChanges }: { power: bigint; powerChanges?: PowerChanges }) {
+export function ExtraPower({ power, powerChanges = "more" }: { power: bigint; powerChanges?: PowerChanges }) {
   return (
     <span className="text-xs font-bold text-primary">{`${powerChanges === "more" ? "+" : "-"}${prettyNumber(
       power
