@@ -12,17 +12,13 @@ import type { DarwiniaStakingLedger, Deposit, DepositCodec, UnbondingInfo } from
 
 interface StakingCtx {
   deposits: Deposit[];
-  isDepositsInitialized: boolean;
   power: bigint;
   ringPool: bigint;
-  isRingPoolInitialized: boolean;
   ktonPool: bigint;
-  isKtonPoolInitialized: boolean;
   stakedRing: bigint;
   stakedKton: bigint;
   totalOfDepositsInStaking: bigint;
   activeCollators: string[];
-  isActiveCollatorsInitialized: boolean;
   collatorCommission: { [collator: string]: string | undefined };
   collatorLastSessionBlocks: { [collator: string]: number | undefined };
   collatorNominators: {
@@ -34,67 +30,90 @@ interface StakingCtx {
       | undefined;
   };
   nominatorCollators: { [nominator: string]: string[] | undefined };
-  isNominatorCollatorsInitialized: boolean;
   unbondingRing: Omit<UnbondingInfo, "depositId">[];
   unbondingKton: Omit<UnbondingInfo, "depositId">[];
   unbondingDeposits: UnbondingInfo[];
-  isLedgersInitialized: boolean;
   minimumDeposit: bigint;
+
+  // is state initialized
+  isLedgersInitialized: boolean;
+  isDepositsInitialized: boolean;
+  isRingPoolInitialized: boolean;
+  isKtonPoolInitialized: boolean;
+  isActiveCollatorsInitialized: boolean;
+  isCollatorCommissionInitialized: boolean;
+  isCollatorLastSessionBlocksInitialized: boolean;
+  isCollatorNominatorsInitialized: boolean;
+  isNominatorCollatorsInitialized: boolean;
 }
 
 const defaultValue: StakingCtx = {
   deposits: [],
-  isDepositsInitialized: false,
   power: 0n,
   ringPool: 0n,
-  isRingPoolInitialized: false,
   ktonPool: 0n,
-  isKtonPoolInitialized: false,
   stakedRing: 0n,
   stakedKton: 0n,
   totalOfDepositsInStaking: 0n,
   activeCollators: [],
-  isActiveCollatorsInitialized: false,
   collatorCommission: {},
   collatorLastSessionBlocks: {},
   collatorNominators: {},
   nominatorCollators: {},
-  isNominatorCollatorsInitialized: false,
   unbondingRing: [],
   unbondingKton: [],
   unbondingDeposits: [],
-  isLedgersInitialized: false,
   minimumDeposit: 0n,
+
+  isLedgersInitialized: false,
+  isDepositsInitialized: false,
+  isRingPoolInitialized: false,
+  isKtonPoolInitialized: false,
+  isActiveCollatorsInitialized: false,
+  isCollatorCommissionInitialized: false,
+  isCollatorLastSessionBlocksInitialized: false,
+  isCollatorNominatorsInitialized: false,
+  isNominatorCollatorsInitialized: false,
 };
 
 export const StakingContext = createContext(defaultValue);
 
 export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [deposits, setDeposits] = useState(defaultValue.deposits);
-  const [isDepositsInitialized, setIsDepositsInitialized] = useState(defaultValue.isDepositsInitialized);
   const [ringPool, setRingPool] = useState(defaultValue.ringPool);
-  const [isRingPoolInitialized, setIsRingPoolInitialized] = useState(defaultValue.isRingPoolInitialized);
   const [ktonPool, setKtonPool] = useState(defaultValue.ktonPool);
-  const [isKtonPoolInitialized, setIsKtonPoolInitialized] = useState(defaultValue.isKtonPoolInitialized);
   const [stakedRing, setStakedRing] = useState(defaultValue.stakedRing);
   const [stakedKton, setStakedKton] = useState(defaultValue.stakedKton);
   const [totalOfDepositsInStaking, setTotalOfDepositsInStaking] = useState(defaultValue.totalOfDepositsInStaking);
   const [activeCollators, setActiveCollators] = useState(defaultValue.activeCollators);
-  const [isActiveCollatorsInitialized, setIsActiveCollatorsInitialized] = useState(
-    defaultValue.isActiveCollatorsInitialized
-  );
   const [collatorCommission, setCollatorCommission] = useState(defaultValue.collatorCommission);
   const [collatorLastSessionBlocks, setCollatorLastSessionBlocks] = useState(defaultValue.collatorLastSessionBlocks);
   const [collatorNominators, setCollatorNominators] = useState(defaultValue.collatorNominators);
   const [nominatorCollators, setNominatorCollators] = useState(defaultValue.nominatorCollators);
-  const [isNominatorCollatorsInitialized, setIsNominatorCollatorsInitialized] = useState(
-    defaultValue.isNominatorCollatorsInitialized
-  );
   const [unbondingRing, setUnbondingRing] = useState(defaultValue.unbondingRing);
   const [unbondingKton, setUnbondingKton] = useState(defaultValue.unbondingKton);
   const [unbondingDeposits, setUnbondingDeposits] = useState(defaultValue.unbondingDeposits);
-  const [isLedgersInitialized, setIsLedgersInitialized] = useState(defaultValue.isLedgersInitialized);
   const [minimumDeposit, setMinimumDeposit] = useState(defaultValue.minimumDeposit);
+
+  const [isLedgersInitialized, setIsLedgersInitialized] = useState(defaultValue.isLedgersInitialized);
+  const [isDepositsInitialized, setIsDepositsInitialized] = useState(defaultValue.isDepositsInitialized);
+  const [isRingPoolInitialized, setIsRingPoolInitialized] = useState(defaultValue.isRingPoolInitialized);
+  const [isKtonPoolInitialized, setIsKtonPoolInitialized] = useState(defaultValue.isKtonPoolInitialized);
+  const [isActiveCollatorsInitialized, setIsActiveCollatorsInitialized] = useState(
+    defaultValue.isActiveCollatorsInitialized
+  );
+  const [isCollatorCommissionInitialized, setIsCollatorCommissionInitialized] = useState(
+    defaultValue.isCollatorCommissionInitialized
+  );
+  const [isCollatorLastSessionBlocksInitialized, setIsCollatorLastSessionBlocksInitialized] = useState(
+    defaultValue.isCollatorLastSessionBlocksInitialized
+  );
+  const [isCollatorNominatorsInitialized, setIsCollatorNominatorsInitialized] = useState(
+    defaultValue.isCollatorNominatorsInitialized
+  );
+  const [isNominatorCollatorsInitialized, setIsNominatorCollatorsInitialized] = useState(
+    defaultValue.isNominatorCollatorsInitialized
+  );
 
   const { address } = useAccount();
   const { polkadotApi } = useApi();
@@ -146,7 +165,8 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       .then((_unsub) => {
         unsub = _unsub as unknown as typeof unsub;
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsCollatorCommissionInitialized(true));
 
     return () => unsub();
   }, [polkadotApi]);
@@ -178,7 +198,8 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       .then((_unsub) => {
         unsub = _unsub as unknown as typeof unsub;
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsCollatorNominatorsInitialized(true));
 
     return () => unsub();
   }, [polkadotApi]);
@@ -203,7 +224,8 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       .then((_unsub) => {
         unsub = _unsub as unknown as typeof unsub;
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsCollatorLastSessionBlocksInitialized(true));
 
     return () => unsub();
   }, [polkadotApi]);
@@ -398,26 +420,30 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       value={{
         power,
         deposits,
-        isDepositsInitialized,
         ringPool,
-        isRingPoolInitialized,
         ktonPool,
-        isKtonPoolInitialized,
         stakedRing,
         stakedKton,
         totalOfDepositsInStaking,
         activeCollators,
-        isActiveCollatorsInitialized,
         collatorCommission,
         collatorLastSessionBlocks,
         collatorNominators,
         nominatorCollators,
-        isNominatorCollatorsInitialized,
         unbondingRing,
         unbondingKton,
         unbondingDeposits,
-        isLedgersInitialized,
         minimumDeposit,
+
+        isLedgersInitialized,
+        isDepositsInitialized,
+        isRingPoolInitialized,
+        isKtonPoolInitialized,
+        isActiveCollatorsInitialized,
+        isCollatorCommissionInitialized,
+        isCollatorLastSessionBlocksInitialized,
+        isCollatorNominatorsInitialized,
+        isNominatorCollatorsInitialized,
       }}
     >
       {children}
