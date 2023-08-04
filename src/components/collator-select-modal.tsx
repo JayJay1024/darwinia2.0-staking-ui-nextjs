@@ -148,6 +148,7 @@ export default function CollatorSelectModal({
       className="lg:w-[48rem]"
       btnWrapClassName="lg:flex-row"
       btnClassName="lg:w-[9.375rem]"
+      disabled={!address || !selectedCollator || selectedCollator === nominatorCollators[address]?.at(0)}
     >
       <Tabs
         items={[
