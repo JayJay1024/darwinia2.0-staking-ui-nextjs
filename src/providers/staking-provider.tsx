@@ -45,10 +45,13 @@ interface StakingCtx {
   isCollatorLastSessionBlocksInitialized: boolean;
   isCollatorNominatorsInitialized: boolean;
   isNominatorCollatorsInitialized: boolean;
+
+  isCollatorCommissionLoading: boolean;
   isNominatorCollatorsLoading: boolean;
 
   calcExtraPower: (stakingRing: bigint, stakingKton: bigint) => bigint;
   updateNominatorCollators: () => void;
+  updateCollatorCommission: () => void;
 }
 
 const defaultValue: StakingCtx = {
@@ -79,10 +82,13 @@ const defaultValue: StakingCtx = {
   isCollatorLastSessionBlocksInitialized: false,
   isCollatorNominatorsInitialized: false,
   isNominatorCollatorsInitialized: false,
+
   isNominatorCollatorsLoading: false,
+  isCollatorCommissionLoading: false,
 
   calcExtraPower: () => 0n,
   updateNominatorCollators: () => undefined,
+  updateCollatorCommission: () => undefined,
 };
 
 export const StakingContext = createContext(defaultValue);
@@ -124,7 +130,11 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [isNominatorCollatorsInitialized, setIsNominatorCollatorsInitialized] = useState(
     defaultValue.isNominatorCollatorsInitialized
   );
+
   const [isNominatorCollatorsLoading, setIsNominatorCollatorsLoading] = useState(
+    defaultValue.isNominatorCollatorsLoading
+  );
+  const [isCollatorCommissionLoading, setIsCollatorCommissionLoading] = useState(
     defaultValue.isNominatorCollatorsLoading
   );
 
@@ -174,6 +184,32 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
     }
   }, [polkadotApi]);
 
+  const updateCollatorCommission = useCallback(() => {
+    if (polkadotApi) {
+      setIsCollatorCommissionLoading(true);
+
+      return from(polkadotApi.query.darwiniaStaking.collators.entries()).subscribe({
+        next: (entries) =>
+          setCollatorCommission(
+            entries.reduce((acc, cur) => {
+              const [key, result] = cur;
+              const collator = key.args[0].toHuman() as string;
+              const commission = `${result.toHuman()}`;
+              return { ...acc, [collator]: commission };
+            }, {})
+          ),
+        error: console.error,
+        complete: () => {
+          setIsCollatorCommissionInitialized(true);
+          setIsCollatorCommissionLoading(false);
+        },
+      });
+    } else {
+      setCollatorCommission({});
+      return EMPTY.subscribe();
+    }
+  }, [polkadotApi]);
+
   useEffect(() => {
     setMinimumDeposit(BigInt(polkadotApi?.consts.deposit.minLockingAmount.toString() || 0));
   }, [polkadotApi]);
@@ -192,30 +228,6 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       })
       .catch(console.error)
       .finally(() => setIsActiveCollatorsInitialized(true));
-
-    return () => unsub();
-  }, [polkadotApi]);
-
-  // collator commission
-  useEffect(() => {
-    let unsub = () => undefined;
-
-    polkadotApi?.query.darwiniaStaking.collators
-      .entries((entries: [StorageKey<AnyTuple>, Codec][]) => {
-        setCollatorCommission(
-          entries.reduce((acc, cur) => {
-            const [key, result] = cur;
-            const collator = key.args[0].toHuman() as string;
-            const commission = `${result.toHuman()}`;
-            return { ...acc, [collator]: commission };
-          }, {})
-        );
-      })
-      .then((_unsub) => {
-        unsub = _unsub as unknown as typeof unsub;
-      })
-      .catch(console.error)
-      .finally(() => setIsCollatorCommissionInitialized(true));
 
     return () => unsub();
   }, [polkadotApi]);
@@ -446,6 +458,12 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
     return () => sub$$.unsubscribe();
   }, [updateNominatorCollators]);
 
+  // collator commission
+  useEffect(() => {
+    const sub$$ = updateCollatorCommission();
+    return () => sub$$.unsubscribe();
+  }, [updateCollatorCommission]);
+
   return (
     <StakingContext.Provider
       value={{
@@ -476,10 +494,13 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
         isCollatorLastSessionBlocksInitialized,
         isCollatorNominatorsInitialized,
         isNominatorCollatorsInitialized,
+
         isNominatorCollatorsLoading,
+        isCollatorCommissionLoading,
 
         calcExtraPower,
         updateNominatorCollators,
+        updateCollatorCommission,
       }}
     >
       {children}

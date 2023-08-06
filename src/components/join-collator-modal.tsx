@@ -2,16 +2,23 @@ import Modal from "./modal";
 import CollatorInput from "./collator-input";
 import { useCallback, useState } from "react";
 import { usePublicClient, useWalletClient } from "wagmi";
-import { useApp } from "@/hooks";
+import { useApp, useStaking } from "@/hooks";
 import { notification } from "./notification";
 import { ChainID } from "@/types";
 import { clientBuilder } from "@/libs";
 import { getChainConfig, notifyTransaction } from "@/utils";
 
-export default function JoinCollatorModal({ isOpen, onClose }: { isOpen: boolean; onClose?: () => void }) {
+export default function JoinCollatorModal({
+  isOpen,
+  onClose = () => undefined,
+}: {
+  isOpen: boolean;
+  onClose?: () => void;
+}) {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { activeChain } = useApp();
+  const { isCollatorCommissionLoading, updateCollatorCommission } = useStaking();
 
   const [sessionKey, setSessionKey] = useState("");
   const [commission, setCommission] = useState("");
@@ -40,8 +47,10 @@ export default function JoinCollatorModal({ isOpen, onClose }: { isOpen: boolean
         const receipt = await client.calls.utility.batchAll(walletClient, [sessionKeyCall, commissionCall]);
 
         if (receipt.status === "success") {
+          updateCollatorCommission();
           setSessionKey("");
           setCommission("");
+          onClose();
         }
         notifyTransaction(receipt, explorer);
       } catch (err) {
@@ -51,7 +60,7 @@ export default function JoinCollatorModal({ isOpen, onClose }: { isOpen: boolean
 
       setBusy(false);
     }
-  }, [activeChain, sessionKey, commission, publicClient, walletClient]);
+  }, [activeChain, sessionKey, commission, publicClient, walletClient, updateCollatorCommission, onClose]);
 
   return (
     <Modal
@@ -65,7 +74,7 @@ export default function JoinCollatorModal({ isOpen, onClose }: { isOpen: boolean
       btnWrapClassName="lg:flex-row"
       btnClassName="lg:w-40"
       disabled={!sessionKey || !commission}
-      busy={busy}
+      busy={busy || isCollatorCommissionLoading}
     >
       <p className="text-xs font-light text-white/90">
         Note that you need to complete two steps in sequence, setup [Session Key] and setup [Commission] before becoming
