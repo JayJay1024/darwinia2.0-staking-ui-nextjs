@@ -7,7 +7,7 @@ import type { Balance } from "@polkadot/types/interfaces";
 import type { Option, Vec, StorageKey } from "@polkadot/types";
 import type { AnyTuple, Codec } from "@polkadot/types/types";
 import { useAccount } from "wagmi";
-import { Subscription, from } from "rxjs";
+import { Subscription, EMPTY, from } from "rxjs";
 import type { DarwiniaStakingLedger, Deposit, DepositCodec, UnbondingInfo } from "@/types";
 
 interface StakingCtx {
@@ -36,7 +36,6 @@ interface StakingCtx {
   unbondingDeposits: UnbondingInfo[];
   minimumDeposit: bigint;
 
-  // is state initialized
   isLedgersInitialized: boolean;
   isDepositsInitialized: boolean;
   isRingPoolInitialized: boolean;
@@ -46,8 +45,10 @@ interface StakingCtx {
   isCollatorLastSessionBlocksInitialized: boolean;
   isCollatorNominatorsInitialized: boolean;
   isNominatorCollatorsInitialized: boolean;
+  isNominatorCollatorsLoading: boolean;
 
   calcExtraPower: (stakingRing: bigint, stakingKton: bigint) => bigint;
+  updateNominatorCollators: () => void;
 }
 
 const defaultValue: StakingCtx = {
@@ -78,8 +79,10 @@ const defaultValue: StakingCtx = {
   isCollatorLastSessionBlocksInitialized: false,
   isCollatorNominatorsInitialized: false,
   isNominatorCollatorsInitialized: false,
+  isNominatorCollatorsLoading: false,
 
   calcExtraPower: () => 0n,
+  updateNominatorCollators: () => undefined,
 };
 
 export const StakingContext = createContext(defaultValue);
@@ -121,6 +124,9 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const [isNominatorCollatorsInitialized, setIsNominatorCollatorsInitialized] = useState(
     defaultValue.isNominatorCollatorsInitialized
   );
+  const [isNominatorCollatorsLoading, setIsNominatorCollatorsLoading] = useState(
+    defaultValue.isNominatorCollatorsLoading
+  );
 
   const { address } = useAccount();
   const { polkadotApi } = useApi();
@@ -138,6 +144,35 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       stakingToPower(0n, 0n, ringPool, ktonPool),
     [ringPool, ktonPool]
   );
+
+  const updateNominatorCollators = useCallback(() => {
+    if (polkadotApi) {
+      setIsNominatorCollatorsLoading(true);
+
+      return from(polkadotApi.query.darwiniaStaking.nominators.entries()).subscribe({
+        next: (entries) =>
+          setNominatorCollators(
+            (entries as [StorageKey<AnyTuple>, Option<Codec>][]).reduce((acc, cur) => {
+              const [key, result] = cur;
+              const nominator = key.args[0].toHuman() as string;
+              if (result.isSome) {
+                const collator = result.unwrap().toHuman() as string;
+                return { ...acc, [nominator]: [collator] };
+              }
+              return acc;
+            }, {})
+          ),
+        error: console.error,
+        complete: () => {
+          setIsNominatorCollatorsInitialized(true);
+          setIsNominatorCollatorsLoading(false);
+        },
+      });
+    } else {
+      setNominatorCollators({});
+      return EMPTY.subscribe();
+    }
+  }, [polkadotApi]);
 
   useEffect(() => {
     setMinimumDeposit(BigInt(polkadotApi?.consts.deposit.minLockingAmount.toString() || 0));
@@ -240,33 +275,6 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
       })
       .catch(console.error)
       .finally(() => setIsCollatorLastSessionBlocksInitialized(true));
-
-    return () => unsub();
-  }, [polkadotApi]);
-
-  // nominator's collator
-  useEffect(() => {
-    let unsub = () => undefined;
-
-    polkadotApi?.query.darwiniaStaking.nominators
-      .entries((entries: [StorageKey<AnyTuple>, Option<Codec>][]) => {
-        setNominatorCollators(
-          entries.reduce((acc, cur) => {
-            const [key, result] = cur;
-            const nominator = key.args[0].toHuman() as string;
-            if (result.isSome) {
-              const collator = result.unwrap().toHuman() as string;
-              return { ...acc, [nominator]: [collator] };
-            }
-            return acc;
-          }, {})
-        );
-      })
-      .then((_unsub) => {
-        unsub = _unsub as unknown as typeof unsub;
-      })
-      .catch(console.error)
-      .finally(() => setIsNominatorCollatorsInitialized(true));
 
     return () => unsub();
   }, [polkadotApi]);
@@ -432,6 +440,12 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
     return () => sub$$?.unsubscribe();
   }, [address, deposits, polkadotApi, activeChain, blockNumber]);
 
+  // nominator's collator
+  useEffect(() => {
+    const sub$$ = updateNominatorCollators();
+    return () => sub$$.unsubscribe();
+  }, [updateNominatorCollators]);
+
   return (
     <StakingContext.Provider
       value={{
@@ -462,8 +476,10 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
         isCollatorLastSessionBlocksInitialized,
         isCollatorNominatorsInitialized,
         isNominatorCollatorsInitialized,
+        isNominatorCollatorsLoading,
 
         calcExtraPower,
+        updateNominatorCollators,
       }}
     >
       {children}

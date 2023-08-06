@@ -1,4 +1,4 @@
-import { useApp } from "@/hooks";
+import { useApp, useStaking } from "@/hooks";
 import { getChainConfig, notifyTransaction } from "@/utils";
 import { useCallback, useState } from "react";
 import { writeContract, waitForTransaction } from "@wagmi/core";
@@ -10,6 +10,7 @@ export default function RecordsSelectCollator({ text }: { text: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const { activeChain } = useApp();
+  const { updateNominatorCollators } = useStaking();
 
   const handleConfirm = useCallback(
     async (collator: string) => {
@@ -28,6 +29,9 @@ export default function RecordsSelectCollator({ text }: { text: string }) {
         });
         const receipt = await waitForTransaction({ hash });
 
+        if (receipt.status === "success") {
+          updateNominatorCollators();
+        }
         notifyTransaction(receipt, chainConfig.explorer);
       } catch (err) {
         console.error(err);
@@ -36,7 +40,7 @@ export default function RecordsSelectCollator({ text }: { text: string }) {
 
       setBusy(false);
     },
-    [activeChain]
+    [activeChain, updateNominatorCollators]
   );
 
   return (

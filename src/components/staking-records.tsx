@@ -8,7 +8,6 @@ import { useAccount } from "wagmi";
 import Tooltip from "./tooltip";
 import { StakingRecordsDataSource } from "@/types";
 import DisplayAccountName from "./display-account-name";
-import RecordsActionButton from "./records-action-button";
 import StakingMoreAction from "./staking-more-action";
 import RecordsSelectCollator from "./records-select-collator";
 import RecordsBondedTokens from "./records-bonded-tokens";
@@ -26,10 +25,11 @@ export default function StakingRecords() {
     unbondingKton,
     unbondingDeposits,
     nominatorCollators,
-    isNominatorCollatorsInitialized,
     activeCollators,
+    isNominatorCollatorsInitialized,
     isActiveCollatorsInitialized,
     isLedgersInitialized,
+    isNominatorCollatorsLoading,
   } = useStaking();
   const { address } = useAccount();
 
@@ -183,7 +183,12 @@ export default function StakingRecords() {
       <Table
         columns={columns}
         dataSource={dataSource}
-        loading={!isActiveCollatorsInitialized || !isNominatorCollatorsInitialized || !isLedgersInitialized}
+        loading={
+          !isActiveCollatorsInitialized ||
+          !isNominatorCollatorsInitialized ||
+          !isLedgersInitialized ||
+          isNominatorCollatorsLoading
+        }
       />
     </div>
   );
