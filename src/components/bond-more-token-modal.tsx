@@ -10,6 +10,7 @@ export default function BondMoreTokenModal({
   onCancel = () => undefined,
   onBond = () => undefined,
   onClose = () => undefined,
+  onChange = () => undefined,
 }: {
   isOpen: boolean;
   symbol: string;
@@ -19,6 +20,7 @@ export default function BondMoreTokenModal({
   onCancel?: () => void;
   onBond?: () => void;
   onClose?: () => void;
+  onChange?: (amount: bigint) => void;
 }) {
   return (
     <Modal
@@ -31,7 +33,15 @@ export default function BondMoreTokenModal({
       okText="Bond"
       className="lg:w-[25rem]"
     >
-      <BalanceInput label="Amount" boldLabel decimals={decimals} symbol={symbol} balance={balance} power={power} />
+      <BalanceInput
+        label="Amount"
+        boldLabel
+        decimals={decimals}
+        symbol={symbol}
+        balance={balance}
+        power={power}
+        onChange={onChange}
+      />
     </Modal>
   );
 }
