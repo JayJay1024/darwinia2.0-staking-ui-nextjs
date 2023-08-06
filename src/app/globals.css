@@ -28,6 +28,9 @@
     height: 70px;
   }
 }
+.error-boundary {
+  height: calc(100vh - 70px - 60px - 4px);
+}
 
 .home-page {
   height: calc(100vh - 70px - 60px);
