@@ -1,54 +1,21 @@
-import { ButtonHTMLAttributes, Key, forwardRef, useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Table, { ColumnType } from "./table";
-import { formatBlanace, getChainConfig, notifyTransaction, prettyNumber } from "@/utils";
+import { prettyNumber } from "@/utils";
 import Jazzicon from "./jazzicon";
 import Image from "next/image";
-import BondMoreRingModal from "./bond-more-ring-modal";
-import BondMoreKtonModal from "./bond-more-kton-modal";
-import UnbondRingModal from "./unbond-ring-modal";
-import UnbondKtonModal from "./unbond-kton-modal";
-import BondMoreDepositModal from "./bond-more-deposit-modal";
-import UnbondDepositModal from "./unbond-deposit-modal";
-import CollatorSelectModal from "./collator-select-modal";
-import { useApp, useStaking } from "@/hooks";
+import { useStaking } from "@/hooks";
 import { useAccount } from "wagmi";
 import Tooltip from "./tooltip";
-import { UnbondingInfo } from "@/types";
+import { StakingRecordsDataSource } from "@/types";
 import DisplayAccountName from "./display-account-name";
-import UnbondingDepositTooltip from "./unbonding-deposit-tooltip";
-import UnbondingTokenTooltip from "./unbonding-token-tooltip";
-import {
-  FloatingPortal,
-  offset,
-  useClick,
-  useDismiss,
-  useFloating,
-  useInteractions,
-  useTransitionStyles,
-} from "@floating-ui/react";
-import EnsureMatchNetworkButton from "./ensure-match-network-button";
-import { notification } from "./notification";
-import { writeContract, waitForTransaction } from "@wagmi/core";
-import UndelegateModal from "./undelegate-modal";
+import RecordsActionButton from "./records-action-button";
+import StakingMoreAction from "./staking-more-action";
+import RecordsSelectCollator from "./records-select-collator";
+import RecordsBondedTokens from "./records-bonded-tokens";
 
-interface DataSource {
-  key: Key;
-  collator: string;
-  stakedPower: bigint;
-  bondedTokens: {
-    stakedRing: bigint;
-    stakedKton: bigint;
-    totalOfDepositsInStaking: bigint;
-    unbondingRing: Omit<UnbondingInfo, "depositId">[];
-    unbondingKton: Omit<UnbondingInfo, "depositId">[];
-    unbondingDeposits: UnbondingInfo[];
-  };
-  isActive: boolean;
-  action: true;
-}
+type DataSource = StakingRecordsDataSource;
 
 export default function StakingRecords() {
-  const { activeChain } = useApp();
   const {
     power,
     stakedRing,
@@ -64,8 +31,6 @@ export default function StakingRecords() {
     isLedgersInitialized,
   } = useStaking();
   const { address } = useAccount();
-
-  const { nativeToken, ktonToken } = getChainConfig(activeChain);
 
   const columns: ColumnType<DataSource>[] = [
     {
@@ -103,7 +68,7 @@ export default function StakingRecords() {
           );
         }
 
-        return <SelectCollator text="Select a collator" />;
+        return <RecordsSelectCollator text="Select a collator" />;
       },
     },
     {
@@ -144,61 +109,7 @@ export default function StakingRecords() {
       dataIndex: "bondedTokens",
       width: "30%",
       title: <span>Your bonded tokens</span>,
-      render: (row) => (
-        <div className="flex flex-col">
-          {/* ring */}
-          <div className="flex items-center gap-small">
-            <UnbondingTokenTooltip unbondings={row.bondedTokens.unbondingRing} token={nativeToken}>
-              <span
-                className={`truncate ${row.bondedTokens.unbondingRing.length > 0 ? "text-white/50" : "text-white"}`}
-              >
-                {formatBlanace(row.bondedTokens.stakedRing, nativeToken.decimals, { keepZero: false })}{" "}
-                {nativeToken.symbol}
-              </span>
-            </UnbondingTokenTooltip>
-            {row.collator.length > 0 && (
-              <>
-                <BondMoreRing />
-                <UnbondRing />
-              </>
-            )}
-          </div>
-          {/* deposit */}
-          <div className="flex items-center gap-small">
-            <UnbondingDepositTooltip unbondings={row.bondedTokens.unbondingDeposits} token={nativeToken}>
-              <span
-                className={`truncate ${row.bondedTokens.unbondingDeposits.length > 0 ? "text-white/50" : "text-white"}`}
-              >
-                {formatBlanace(row.bondedTokens.totalOfDepositsInStaking, nativeToken.decimals, { keepZero: false })}{" "}
-                Deposit {nativeToken.symbol}
-              </span>
-            </UnbondingDepositTooltip>
-            {row.collator.length > 0 && (
-              <>
-                <BondMoreDeposit />
-                <UnbondDeposit />
-              </>
-            )}
-          </div>
-          {/* kton */}
-          <div className="flex items-center gap-small">
-            <UnbondingTokenTooltip unbondings={row.bondedTokens.unbondingKton} token={ktonToken || nativeToken}>
-              <span
-                className={`truncate ${row.bondedTokens.unbondingKton.length > 0 ? "text-white/50" : "text-white"}`}
-              >
-                {formatBlanace(row.bondedTokens.stakedKton, ktonToken?.decimals, { keepZero: false })}{" "}
-                {ktonToken?.symbol}
-              </span>
-            </UnbondingTokenTooltip>
-            {row.collator.length > 0 && (
-              <>
-                <BondMoreKton />
-                <UnbondKton />
-              </>
-            )}
-          </div>
-        </div>
-      ),
+      render: (row) => <RecordsBondedTokens row={row} />,
     },
     {
       key: "action",
@@ -209,13 +120,13 @@ export default function StakingRecords() {
         if (row.collator) {
           return (
             <div className="flex items-center gap-middle">
-              <SelectCollator text="Change collator" />
-              <MoreAction />
+              <RecordsSelectCollator text="Change collator" />
+              <StakingMoreAction />
             </div>
           );
         }
 
-        return <BaseButton>Unbond all</BaseButton>;
+        return <RecordsActionButton>Unbond all</RecordsActionButton>;
       },
     },
   ];
@@ -276,173 +187,3 @@ export default function StakingRecords() {
     </div>
   );
 }
-
-function BondMoreRing() {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <>
-      <ActionButton action="bond" onClick={() => setIsOpen(true)} />
-      <BondMoreRingModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-    </>
-  );
-}
-
-function BondMoreKton() {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <>
-      <ActionButton action="bond" onClick={() => setIsOpen(true)} />
-      <BondMoreKtonModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-    </>
-  );
-}
-
-function BondMoreDeposit() {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <>
-      <ActionButton action="bond" onClick={() => setIsOpen(true)} />
-      <BondMoreDepositModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-    </>
-  );
-}
-
-function UnbondRing() {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <>
-      <ActionButton action="unbond" onClick={() => setIsOpen(true)} />
-      <UnbondRingModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-    </>
-  );
-}
-
-function UnbondKton() {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <>
-      <ActionButton action="unbond" onClick={() => setIsOpen(true)} />
-      <UnbondKtonModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-    </>
-  );
-}
-
-function UnbondDeposit() {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <>
-      <ActionButton action="unbond" onClick={() => setIsOpen(true)} />
-      <UnbondDepositModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
-    </>
-  );
-}
-
-function SelectCollator({ text }: { text: string }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const { activeChain } = useApp();
-
-  const handleConfirm = useCallback(
-    async (collator: string) => {
-      setBusy(true);
-      setIsOpen(false);
-      const chainConfig = getChainConfig(activeChain);
-
-      try {
-        const contractAbi = (await import(`@/config/abi/${chainConfig.contract.staking.abiFile}`)).default;
-
-        const { hash } = await writeContract({
-          address: chainConfig.contract.staking.address,
-          abi: contractAbi,
-          functionName: "nominate",
-          args: [collator],
-        });
-        const receipt = await waitForTransaction({ hash });
-
-        notifyTransaction(receipt, chainConfig.explorer);
-      } catch (err) {
-        console.error(err);
-        notification.error({ description: (err as Error).message });
-      }
-
-      setBusy(false);
-    },
-    [activeChain]
-  );
-
-  return (
-    <>
-      <BaseButton busy={busy} onClick={() => setIsOpen(true)}>
-        {text}
-      </BaseButton>
-      <CollatorSelectModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleConfirm} />
-    </>
-  );
-}
-
-function MoreAction() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const { refs, context, floatingStyles } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    placement: "bottom-end",
-    middleware: [offset(10)],
-  });
-
-  const { styles, isMounted } = useTransitionStyles(context, {
-    initial: { transform: "translateY(-20px)", opacity: 0 },
-    open: { transform: "translateY(0)", opacity: 1 },
-    close: { transform: "translateY(-20px)", opacity: 0 },
-  });
-
-  const click = useClick(context);
-  const dismiss = useDismiss(context);
-  const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
-
-  return (
-    <>
-      <BaseButton ref={refs.setReference} {...getReferenceProps()}>
-        ...
-      </BaseButton>
-      {isMounted && (
-        <FloatingPortal>
-          <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
-            <div style={styles}>
-              <BaseButton onClick={() => setIsModalOpen(true)}>Undelegate</BaseButton>
-            </div>
-          </div>
-        </FloatingPortal>
-      )}
-
-      <UndelegateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </>
-  );
-}
-
-function ActionButton({ action, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { action: "bond" | "unbond" }) {
-  return (
-    <EnsureMatchNetworkButton
-      type="button"
-      {...rest}
-      className="inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center border border-white/40 transition-transform hover:scale-105 active:scale-95"
-    >
-      <span className="text-xs">{action === "bond" ? "+" : "-"}</span>
-    </EnsureMatchNetworkButton>
-  );
-}
-
-const BaseButton = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement> & { busy?: boolean }>(
-  function BaseButton({ children, ...rest }, ref) {
-    return (
-      <EnsureMatchNetworkButton
-        className={`w-fit border border-primary px-middle py-small text-sm font-light text-white`}
-        ref={ref}
-        {...rest}
-      >
-        {children}
-      </EnsureMatchNetworkButton>
-    );
-  }
-);

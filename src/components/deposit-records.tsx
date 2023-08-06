@@ -1,14 +1,14 @@
 import Table, { ColumnType } from "./table";
 import { formatBlanace, formatTime, getChainConfig } from "@/utils";
 import Progress from "./progress";
-import { Deposit } from "@/types";
+import { Deposit, DepositRecordsDataSource } from "@/types";
 import { useApp, useStaking } from "@/hooks";
-import { Key, useState } from "react";
+import { useState } from "react";
 import Tooltip from "./tooltip";
 import WithdrawModal, { WithdrawType } from "./withdraw-modal";
 import RecordsActionButton from "./records-action-button";
 
-type DataSource = Deposit & { key: Key };
+type DataSource = DepositRecordsDataSource;
 
 export default function DepositRecords() {
   const [openWithdraw, setOpenWithdraw] = useState<{ type: WithdrawType; deposit: Deposit } | null>(null);
