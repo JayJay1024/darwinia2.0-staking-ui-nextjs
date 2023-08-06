@@ -1,4 +1,4 @@
-import { getChainConfig, notifyTransaction, stakingToPower } from "@/utils";
+import { getChainConfig, notifyTransaction } from "@/utils";
 import ActiveDepositSelector from "./active-deposit-selector";
 import CollatorSelector from "./collator-selector";
 import BalanceInput, { ExtraPower } from "./balance-input";
@@ -11,7 +11,7 @@ import { ChainID } from "@/types";
 import { notification } from "./notification";
 
 export default function DoStake() {
-  const { deposits, ringPool, ktonPool, nominatorCollators } = useStaking();
+  const { deposits, nominatorCollators, calcExtraPower } = useStaking();
   const [delegateCollator, setDelegateCollator] = useState<string | undefined>(undefined);
   const [delegateRing, setDelegateRing] = useState(0n);
   const [delegateKton, setDelegateKton] = useState(0n);
@@ -26,13 +26,6 @@ export default function DoStake() {
   const { address } = useAccount();
   const { data: ringBalance } = useBalance({ address, watch: true });
   const { data: ktonBalance } = useBalance({ address, watch: true, token: ktonToken?.address });
-
-  const calcExtraPower = useCallback(
-    (stakingRing: bigint, stakingKton: bigint) =>
-      stakingToPower(stakingRing, stakingKton, ringPool + stakingRing, ktonPool + stakingKton) -
-      stakingToPower(0n, 0n, ringPool, ktonPool),
-    [ringPool, ktonPool]
-  );
 
   const ringExtraPower = useMemo(() => calcExtraPower(delegateRing, 0n), [delegateRing, calcExtraPower]);
   const ktonExtraPower = useMemo(() => calcExtraPower(0n, delegateKton), [delegateKton, calcExtraPower]);
