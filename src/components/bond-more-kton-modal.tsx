@@ -21,7 +21,7 @@ export default function BondMoreKtonModal({
   const [busy, setBusy] = useState(false);
 
   const { ktonToken, contract, explorer } = getChainConfig(activeChain);
-  const { data: ktonBalance } = useBalance({ address, token: ktonToken?.address });
+  const { data: ktonBalance } = useBalance({ address, token: ktonToken?.address, watch: true });
 
   const handleBond = useCallback(async () => {
     if ((ktonBalance?.value || 0n) < inputAmount) {
@@ -41,6 +41,7 @@ export default function BondMoreKtonModal({
         const receipt = await waitForTransaction({ hash });
 
         if (receipt.status === "success") {
+          setInputAmount(0n);
           onClose();
         }
         notifyTransaction(receipt, explorer);

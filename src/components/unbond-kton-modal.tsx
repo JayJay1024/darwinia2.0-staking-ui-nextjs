@@ -43,6 +43,7 @@ export default function UnbondKtonModal({
         const receipt = await waitForTransaction({ hash });
 
         if (receipt.status === "success") {
+          setInputAmount(0n);
           onClose();
         }
         notifyTransaction(receipt, explorer);

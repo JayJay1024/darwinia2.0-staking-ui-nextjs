@@ -15,7 +15,7 @@ export default function BondMoreRingModal({
 }) {
   const { activeChain } = useApp();
   const { address } = useAccount();
-  const { data: ringBalance } = useBalance({ address });
+  const { data: ringBalance } = useBalance({ address, watch: true });
   const { calcExtraPower } = useStaking();
 
   const [inputAmount, setInputAmount] = useState(0n);
@@ -41,6 +41,7 @@ export default function BondMoreRingModal({
         const receipt = await waitForTransaction({ hash });
 
         if (receipt.status === "success") {
+          setInputAmount(0n);
           onClose();
         }
         notifyTransaction(receipt, explorer);
