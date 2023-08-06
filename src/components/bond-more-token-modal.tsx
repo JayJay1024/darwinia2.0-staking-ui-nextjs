@@ -9,6 +9,7 @@ export default function BondMoreTokenModal({
   power,
   busy,
   disabled,
+  isReset,
   onCancel = () => undefined,
   onBond = () => undefined,
   onClose = () => undefined,
@@ -21,6 +22,7 @@ export default function BondMoreTokenModal({
   power: bigint;
   busy?: boolean;
   disabled?: boolean;
+  isReset?: boolean;
   onCancel?: () => void;
   onBond?: () => void;
   onClose?: () => void;
@@ -46,6 +48,7 @@ export default function BondMoreTokenModal({
         symbol={symbol}
         balance={balance}
         power={power}
+        isReset={isReset}
         onChange={onChange}
       />
     </Modal>
