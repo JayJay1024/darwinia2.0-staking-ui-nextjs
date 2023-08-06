@@ -12,6 +12,7 @@ import RecordsActionButton from "./records-action-button";
 import StakingMoreAction from "./staking-more-action";
 import RecordsSelectCollator from "./records-select-collator";
 import RecordsBondedTokens from "./records-bonded-tokens";
+import UnbondAllStaked from "./unbond-all-staked";
 
 type DataSource = StakingRecordsDataSource;
 
@@ -126,7 +127,7 @@ export default function StakingRecords() {
           );
         }
 
-        return <RecordsActionButton>Unbond all</RecordsActionButton>;
+        return <UnbondAllStaked />;
       },
     },
   ];
