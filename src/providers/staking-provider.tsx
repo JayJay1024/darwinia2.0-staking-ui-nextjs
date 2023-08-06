@@ -2,7 +2,7 @@
 
 import { useApi, useApp, useBlock } from "@/hooks";
 import { calcKtonReward, calcMonths, getChainConfig, stakingToPower } from "@/utils";
-import { PropsWithChildren, createContext, useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, createContext, useCallback, useEffect, useMemo, useState } from "react";
 import type { Balance } from "@polkadot/types/interfaces";
 import type { Option, Vec, StorageKey } from "@polkadot/types";
 import type { AnyTuple, Codec } from "@polkadot/types/types";
@@ -46,6 +46,8 @@ interface StakingCtx {
   isCollatorLastSessionBlocksInitialized: boolean;
   isCollatorNominatorsInitialized: boolean;
   isNominatorCollatorsInitialized: boolean;
+
+  calcExtraPower: (stakingRing: bigint, stakingKton: bigint) => bigint;
 }
 
 const defaultValue: StakingCtx = {
@@ -76,6 +78,8 @@ const defaultValue: StakingCtx = {
   isCollatorLastSessionBlocksInitialized: false,
   isCollatorNominatorsInitialized: false,
   isNominatorCollatorsInitialized: false,
+
+  calcExtraPower: () => 0n,
 };
 
 export const StakingContext = createContext(defaultValue);
@@ -126,6 +130,13 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
   const power = useMemo(
     () => stakingToPower(stakedRing + totalOfDepositsInStaking, stakedKton, ringPool, ktonPool),
     [stakedRing, stakedKton, ringPool, ktonPool, totalOfDepositsInStaking]
+  );
+
+  const calcExtraPower = useCallback(
+    (stakingRing: bigint, stakingKton: bigint) =>
+      stakingToPower(stakingRing, stakingKton, ringPool + stakingRing, ktonPool + stakingKton) -
+      stakingToPower(0n, 0n, ringPool, ktonPool),
+    [ringPool, ktonPool]
   );
 
   useEffect(() => {
@@ -451,6 +462,8 @@ export function StakingProvider({ children }: PropsWithChildren<unknown>) {
         isCollatorLastSessionBlocksInitialized,
         isCollatorNominatorsInitialized,
         isNominatorCollatorsInitialized,
+
+        calcExtraPower,
       }}
     >
       {children}
