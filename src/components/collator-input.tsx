@@ -6,11 +6,13 @@ export default function CollatorInput({
   tooltip,
   suffix,
   placeholder,
+  onChange = () => undefined,
 }: {
   label: string;
   tooltip?: string;
   suffix?: string;
   placeholder?: string;
+  onChange?: (value: string) => void;
 }) {
   return (
     <div className="flex flex-col gap-small lg:gap-middle">
@@ -28,6 +30,7 @@ export default function CollatorInput({
           className={`h-full bg-transparent text-sm font-bold focus-visible:outline-none ${
             suffix ? "w-11/12" : "w-full"
           }`}
+          onChange={(e) => onChange(e.target.value)}
         />
         {suffix && <span className="text-xs font-bold text-white">{suffix}</span>}
       </div>
