@@ -4,7 +4,7 @@ import Tabs from "./tabs";
 import CollatorInput from "./collator-input";
 import EnsureMatchNetworkButton from "./ensure-match-network-button";
 import { usePublicClient, useWalletClient } from "wagmi";
-import { useApp } from "@/hooks";
+import { useApp, useStaking } from "@/hooks";
 import { notification } from "./notification";
 import { getChainConfig, notifyTransaction } from "@/utils";
 import { ChainID } from "@/types";
@@ -17,10 +17,17 @@ enum TabKey {
   STOP_COLLATION,
 }
 
-export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; onClose?: () => void }) {
+export default function ManageCollator({
+  isOpen,
+  onClose = () => undefined,
+}: {
+  isOpen: boolean;
+  onClose?: () => void;
+}) {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { activeChain } = useApp();
+  const { updateCollatorCommission } = useStaking();
 
   const [activeKey, setActiveKey] = useState(TabKey.UPDATE_SESSION_KEY);
   const [sessionKey, setSessionKey] = useState("");
@@ -48,6 +55,7 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
 
         if (receipt.status === "success") {
           setSessionKey("");
+          onClose();
         }
         notifyTransaction(receipt, explorer);
       } catch (err) {
@@ -57,7 +65,7 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
 
       setBusy(false);
     }
-  }, [client.calls.session, explorer, sessionKey, walletClient]);
+  }, [client.calls.session, explorer, sessionKey, walletClient, onClose]);
 
   const handleUpdateCommission = useCallback(async () => {
     const commissionValue = Number(commission);
@@ -79,7 +87,9 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
         const receipt = await waitForTransaction({ hash });
 
         if (receipt.status === "success") {
+          updateCollatorCommission();
           setCommission("");
+          onClose();
         }
         notifyTransaction(receipt, explorer);
       } catch (err) {
@@ -89,7 +99,7 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
 
       setBusy(false);
     }
-  }, [commission, contract.staking, explorer]);
+  }, [commission, contract.staking, explorer, updateCollatorCommission, onClose]);
 
   const handleStopCollator = useCallback(async () => {
     setBusy(true);
@@ -105,6 +115,10 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
       });
       const receipt = await waitForTransaction({ hash });
 
+      if (receipt.status === "success") {
+        updateCollatorCommission();
+        onClose();
+      }
       notifyTransaction(receipt, explorer);
     } catch (err) {
       console.error(err);
@@ -112,7 +126,7 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
     }
 
     setBusy(false);
-  }, [contract.staking, explorer]);
+  }, [contract.staking, explorer, updateCollatorCommission, onClose]);
 
   return (
     <Modal
