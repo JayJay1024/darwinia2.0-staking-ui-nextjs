@@ -7,18 +7,26 @@ export default function UnbondTokenModal({
   decimals,
   balance,
   power,
+  busy,
+  disabled,
+  isReset,
   onCancel = () => undefined,
-  onBond = () => undefined,
+  onUnbond = () => undefined,
   onClose = () => undefined,
+  onChange = () => undefined,
 }: {
   isOpen: boolean;
   symbol: string;
   decimals: number;
   balance: bigint;
   power: bigint;
+  busy?: boolean;
+  disabled?: boolean;
+  isReset?: boolean;
   onCancel?: () => void;
-  onBond?: () => void;
+  onUnbond?: () => void;
   onClose?: () => void;
+  onChange?: (amount: bigint) => void;
 }) {
   return (
     <Modal
@@ -26,10 +34,12 @@ export default function UnbondTokenModal({
       isOpen={isOpen}
       onCancel={onCancel}
       onClose={onClose}
-      onOk={onBond}
+      onOk={onUnbond}
       maskClosable={false}
-      okText="Bond"
+      okText="Unbond"
       className="lg:w-[25rem]"
+      busy={busy}
+      disabled={disabled}
     >
       <>
         <p className="text-xs font-light text-white">This unbonding process will take 14 days to complete.</p>
@@ -41,7 +51,9 @@ export default function UnbondTokenModal({
           symbol={symbol}
           balance={balance}
           power={power}
+          isReset={isReset}
           powerChanges="less"
+          onChange={onChange}
         />
       </>
     </Modal>
