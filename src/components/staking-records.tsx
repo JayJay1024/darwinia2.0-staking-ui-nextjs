@@ -29,6 +29,7 @@ import {
 import EnsureMatchNetworkButton from "./ensure-match-network-button";
 import { notification } from "./notification";
 import { writeContract, waitForTransaction } from "@wagmi/core";
+import UndelegateModal from "./undelegate-modal";
 
 interface DataSource {
   key: Key;
@@ -380,6 +381,7 @@ function SelectCollator({ text }: { text: string }) {
 }
 
 function MoreAction() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, context, floatingStyles } = useFloating({
@@ -408,11 +410,13 @@ function MoreAction() {
         <FloatingPortal>
           <div style={floatingStyles} ref={refs.setFloating} {...getFloatingProps()} className="z-10">
             <div style={styles}>
-              <BaseButton>Undelegate</BaseButton>
+              <BaseButton onClick={() => setIsModalOpen(true)}>Undelegate</BaseButton>
             </div>
           </div>
         </FloatingPortal>
       )}
+
+      <UndelegateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }
