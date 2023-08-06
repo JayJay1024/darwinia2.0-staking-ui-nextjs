@@ -11,7 +11,8 @@ import { ChainID } from "@/types";
 import { notification } from "./notification";
 
 export default function DoStake() {
-  const { deposits, nominatorCollators, calcExtraPower } = useStaking();
+  const { deposits, nominatorCollators, isNominatorCollatorsLoading, calcExtraPower, updateNominatorCollators } =
+    useStaking();
   const [delegateCollator, setDelegateCollator] = useState<string | undefined>(undefined);
   const [delegateRing, setDelegateRing] = useState(0n);
   const [delegateKton, setDelegateKton] = useState(0n);
@@ -53,6 +54,7 @@ export default function DoStake() {
         const receipt = await client.calls.utility.batchAll(walletClient, [stakeCall, nominateCall]);
 
         if (receipt.status === "success") {
+          updateNominatorCollators();
           setDelegateRing(0n);
           setDelegateKton(0n);
           setDelegateDeposits([]);
@@ -74,6 +76,7 @@ export default function DoStake() {
     explorer,
     publicClient,
     walletClient,
+    updateNominatorCollators,
   ]);
 
   useEffect(() => {
@@ -134,7 +137,7 @@ export default function DoStake() {
       <div className="h-[1px] bg-white/20" />
 
       <EnsureMatchNetworkButton
-        busy={busy}
+        busy={busy || isNominatorCollatorsLoading}
         disabled={!delegateCollator || delegateDeposits.length <= 0}
         className="bg-primary px-large py-middle text-sm font-bold text-white lg:w-40"
         onClick={handleStake}
