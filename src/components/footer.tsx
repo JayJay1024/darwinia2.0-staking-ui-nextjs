@@ -56,7 +56,7 @@ export default function Footer({ className }: { className: string }) {
               href={url}
               rel="noopener"
               target="_blank"
-              className="transition-transform hover:scale-105 active:scale-95"
+              className="transition hover:scale-105 hover:opacity-80 active:scale-95 active:opacity-60"
             >
               <Image src={iconPath} width={20} height={20} alt={`Icon of ${name}`} />
             </a>
