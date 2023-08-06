@@ -7,6 +7,8 @@ export default function BondMoreTokenModal({
   decimals,
   balance,
   power,
+  busy,
+  disabled,
   onCancel = () => undefined,
   onBond = () => undefined,
   onClose = () => undefined,
@@ -17,6 +19,8 @@ export default function BondMoreTokenModal({
   decimals: number;
   balance: bigint;
   power: bigint;
+  busy?: boolean;
+  disabled?: boolean;
   onCancel?: () => void;
   onBond?: () => void;
   onClose?: () => void;
@@ -32,6 +36,8 @@ export default function BondMoreTokenModal({
       maskClosable={false}
       okText="Bond"
       className="lg:w-[25rem]"
+      busy={busy}
+      disabled={disabled}
     >
       <BalanceInput
         label="Amount"
