@@ -9,15 +9,19 @@ import ActionButton from "./action-button";
 import Jazzicon from "../jazzicon";
 import JoinCollatorModal from "../join-collator-modal";
 import ManageCollator from "../manage-collator-modal";
+import { useStaking } from "@/hooks";
 
 export default function User() {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [isJoinCollatorModalOpen, setIsJoinCollatorModalOpen] = useState(false);
   const [isManageCollatorModalOpen, setIsManageCollatorModalOpen] = useState(false);
 
+  const { collatorCommission } = useStaking();
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
+
+  const isCollator = address && collatorCommission[address] ? true : false;
 
   return address ? (
     <>
@@ -38,6 +42,7 @@ export default function User() {
             setIsSelectorOpen(false);
             setIsJoinCollatorModalOpen(true);
           }}
+          disabled={isCollator}
         >
           Join Collator
         </ActionButton>
@@ -46,7 +51,7 @@ export default function User() {
             setIsSelectorOpen(false);
             setIsManageCollatorModalOpen(true);
           }}
-          // disabled
+          disabled={!isCollator}
         >
           Manage Collator
         </ActionButton>
