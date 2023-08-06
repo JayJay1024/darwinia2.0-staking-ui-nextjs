@@ -11,7 +11,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
 
   return (
     <div className="error-boundary flex items-center justify-center">
-      <ErrorCatcher reset={reset} />
+      <ErrorCatcher action={reset} actionText="Try again" />
     </div>
   );
 }

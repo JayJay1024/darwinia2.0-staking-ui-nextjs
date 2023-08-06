@@ -3,13 +3,15 @@ import Image from "next/image";
 interface Props {
   title?: string;
   message?: string;
-  reset?: () => void;
+  actionText?: string;
+  action?: () => void;
 }
 
 export default function ErrorCatcher({
   title = "Oops!",
   message = "Sorry, an unexpected error has occurred.",
-  reset,
+  actionText,
+  action,
 }: Props) {
   return (
     <div className="flex flex-col items-center justify-center gap-5 lg:flex-row lg:gap-10">
@@ -24,12 +26,12 @@ export default function ErrorCatcher({
       <div className="flex flex-col items-center justify-start gap-middle text-center lg:items-start lg:gap-5">
         <h5 className="text-lg font-bold text-white">{title}</h5>
         <span className="text-sm font-bold text-white">{message}</span>
-        {reset && (
+        {actionText && action && (
           <button
-            onClick={reset}
-            className="border border-primary px-2 py-1 text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60"
+            onClick={action}
+            className="border border-primary px-large py-1 text-sm font-bold text-white transition-opacity hover:opacity-80 active:opacity-60"
           >
-            Try again
+            {actionText}
           </button>
         )}
       </div>
