@@ -83,7 +83,7 @@ export default function JoinCollatorModal({
           className="text-primary transition-all hover:underline"
           target="_blank"
           rel="noopener"
-          href="https://docs.darwinia.network/how-to-become-a-collator-679e363b68ab47189bde7826c8258c1d"
+          href="https://docs.darwinia.network/run-collator-node-af6bce360d5b49ddacc56e4587510210"
         >
           Run A Node
         </a>{" "}
@@ -92,7 +92,7 @@ export default function JoinCollatorModal({
           className="text-primary transition-all hover:underline"
           target="_blank"
           rel="noopener"
-          href="https://docs.darwinia.network/how-to-become-a-collator-679e363b68ab47189bde7826c8258c1d"
+          href="https://docs.darwinia.network/run-collator-node-af6bce360d5b49ddacc56e4587510210"
         >
           Tutorial
         </a>
