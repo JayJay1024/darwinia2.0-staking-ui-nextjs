@@ -19,7 +19,7 @@ export default function DoStake() {
   const [busy, setBusy] = useState(false);
 
   const { activeChain } = useApp();
-  const { nativeToken, ktonToken, chainId, explorer } = getChainConfig(activeChain);
+  const { nativeToken, ktonToken, explorer } = getChainConfig(activeChain);
 
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
@@ -44,7 +44,7 @@ export default function DoStake() {
 
       try {
         const client =
-          chainId === ChainID.CRAB
+          activeChain === ChainID.CRAB
             ? clientBuilder.buildCrabClient(publicClient)
             : clientBuilder.buildDarwiniaClient(publicClient);
 
@@ -65,7 +65,16 @@ export default function DoStake() {
 
       setBusy(false);
     }
-  }, [chainId, delegateCollator, delegateDeposits, delegateKton, delegateRing, explorer, publicClient, walletClient]);
+  }, [
+    activeChain,
+    delegateCollator,
+    delegateDeposits,
+    delegateKton,
+    delegateRing,
+    explorer,
+    publicClient,
+    walletClient,
+  ]);
 
   useEffect(() => {
     if (address && nominatorCollators[address]?.length) {
