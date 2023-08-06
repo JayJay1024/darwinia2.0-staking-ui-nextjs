@@ -3,9 +3,10 @@ import { formatBlanace, formatTime, getChainConfig } from "@/utils";
 import Progress from "./progress";
 import { Deposit } from "@/types";
 import { useApp, useStaking } from "@/hooks";
-import { ButtonHTMLAttributes, Key, forwardRef, useState } from "react";
+import { Key, useState } from "react";
 import Tooltip from "./tooltip";
 import WithdrawModal, { WithdrawType } from "./withdraw-modal";
+import RecordsActionButton from "./records-action-button";
 
 type DataSource = Deposit & { key: Key };
 
@@ -76,11 +77,15 @@ export default function DepositRecords() {
                 className="w-fit"
                 contentClassName="w-64"
               >
-                <Button disabled>Withdraw Earlier</Button>
+                <RecordsActionButton disabled>Withdraw Earlier</RecordsActionButton>
               </Tooltip>
             );
           }
-          return <Button onClick={() => setOpenWithdraw({ type: "early", deposit: row })}>Withdraw Earlier</Button>;
+          return (
+            <RecordsActionButton onClick={() => setOpenWithdraw({ type: "early", deposit: row })}>
+              Withdraw Earlier
+            </RecordsActionButton>
+          );
         } else if (row.inUse) {
           return (
             <Tooltip
@@ -92,11 +97,15 @@ export default function DepositRecords() {
               className="w-fit"
               contentClassName="w-64"
             >
-              <Button disabled>Withdraw</Button>
+              <RecordsActionButton disabled>Withdraw</RecordsActionButton>
             </Tooltip>
           );
         } else {
-          return <Button onClick={() => setOpenWithdraw({ type: "regular", deposit: row })}>Withdraw</Button>;
+          return (
+            <RecordsActionButton onClick={() => setOpenWithdraw({ type: "regular", deposit: row })}>
+              Withdraw
+            </RecordsActionButton>
+          );
         }
       },
     },
@@ -121,18 +130,3 @@ export default function DepositRecords() {
     </>
   );
 }
-
-const Button = forwardRef<HTMLButtonElement, ButtonHTMLAttributes<HTMLButtonElement>>(function Button(
-  { children, ...rest },
-  ref
-) {
-  return (
-    <button
-      className="w-fit border border-primary px-middle py-small transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
-      ref={ref}
-      {...rest}
-    >
-      <span className="text-sm font-light text-white">{children}</span>
-    </button>
-  );
-});
