@@ -21,7 +21,7 @@ export default function JoinCollatorModal({ isOpen, onClose }: { isOpen: boolean
     const commissionValue = Number(commission);
 
     if (Number.isNaN(commissionValue) || commissionValue < 0 || 100 < commissionValue) {
-      notification.error({ description: "Invalid commission, please enter 0~100" });
+      notification.error({ description: "Invalid commission, please enter 0~100." });
     } else if (walletClient) {
       const { explorer } = getChainConfig(activeChain);
       setBusy(true);

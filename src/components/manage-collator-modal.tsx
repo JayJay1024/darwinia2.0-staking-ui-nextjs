@@ -1,7 +1,15 @@
-import { ButtonHTMLAttributes, useState } from "react";
+import { ButtonHTMLAttributes, useCallback, useMemo, useState } from "react";
 import Modal from "./modal";
 import Tabs from "./tabs";
 import CollatorInput from "./collator-input";
+import EnsureMatchNetworkButton from "./ensure-match-network-button";
+import { usePublicClient, useWalletClient } from "wagmi";
+import { useApp } from "@/hooks";
+import { notification } from "./notification";
+import { getChainConfig, notifyTransaction } from "@/utils";
+import { ChainID } from "@/types";
+import { clientBuilder } from "@/libs";
+import { writeContract, waitForTransaction } from "@wagmi/core";
 
 enum TabKey {
   UPDATE_SESSION_KEY,
@@ -10,7 +18,101 @@ enum TabKey {
 }
 
 export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; onClose?: () => void }) {
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+  const { activeChain } = useApp();
+
   const [activeKey, setActiveKey] = useState(TabKey.UPDATE_SESSION_KEY);
+  const [sessionKey, setSessionKey] = useState("");
+  const [commission, setCommission] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const client = useMemo(
+    () =>
+      activeChain === ChainID.CRAB
+        ? clientBuilder.buildCrabClient(publicClient)
+        : clientBuilder.buildDarwiniaClient(publicClient),
+    [activeChain, publicClient]
+  );
+  const { explorer, contract } = getChainConfig(activeChain);
+
+  const handleUpdateSessionKey = useCallback(async () => {
+    if (walletClient) {
+      setBusy(true);
+
+      try {
+        // we appended 00 to the session key to represent that we don't need any proof. Originally the setKeys method
+        // required two params which are session key and proof but here we append both values into one param
+        const proof = `${sessionKey}00` as `0x${string}`;
+        const receipt = await client.calls.session.setKeysH(walletClient, proof);
+
+        if (receipt.status === "success") {
+          setSessionKey("");
+        }
+        notifyTransaction(receipt, explorer);
+      } catch (err) {
+        console.error(err);
+        notification.error({ description: (err as Error).message });
+      }
+
+      setBusy(false);
+    }
+  }, [client.calls.session, explorer, sessionKey, walletClient]);
+
+  const handleUpdateCommission = useCallback(async () => {
+    const commissionValue = Number(commission);
+
+    if (Number.isNaN(commissionValue) || commissionValue < 0 || 100 < commissionValue) {
+      notification.error({ description: "Invalid commission, please enter 0~100." });
+    } else {
+      setBusy(true);
+
+      try {
+        const contractAbi = (await import(`@/config/abi/${contract.staking.abiFile}`)).default;
+
+        const { hash } = await writeContract({
+          address: contract.staking.address,
+          abi: contractAbi,
+          functionName: "collect",
+          args: [commissionValue],
+        });
+        const receipt = await waitForTransaction({ hash });
+
+        if (receipt.status === "success") {
+          setCommission("");
+        }
+        notifyTransaction(receipt, explorer);
+      } catch (err) {
+        console.error(err);
+        notification.error({ description: (err as Error).message });
+      }
+
+      setBusy(false);
+    }
+  }, [commission, contract.staking, explorer]);
+
+  const handleStopCollator = useCallback(async () => {
+    setBusy(true);
+
+    try {
+      const contractAbi = (await import(`@/config/abi/${contract.staking.abiFile}`)).default;
+
+      const { hash } = await writeContract({
+        address: contract.staking.address,
+        abi: contractAbi,
+        functionName: "chill",
+        args: [],
+      });
+      const receipt = await waitForTransaction({ hash });
+
+      notifyTransaction(receipt, explorer);
+    } catch (err) {
+      console.error(err);
+      notification.error({ description: (err as Error).message });
+    }
+
+    setBusy(false);
+  }, [contract.staking, explorer]);
 
   return (
     <Modal
@@ -29,9 +131,9 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
             label: <span>Update Session Key</span>,
             children: (
               <div className="flex flex-col gap-large">
-                <CollatorInput label="Session Key" placeholder="Session key" />
+                <CollatorInput label="Session Key" placeholder="Session key" onChange={setSessionKey} />
                 <div className="h-[1px] bg-white/20" />
-                <Button>
+                <Button disabled={!sessionKey} busy={busy} onClick={handleUpdateSessionKey}>
                   <span>Update</span>
                 </Button>
               </div>
@@ -47,9 +149,10 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
                   placeholder="Commission"
                   suffix="%"
                   tooltip="The percent a collator takes off the top of the due staking rewards."
+                  onChange={setCommission}
                 />
                 <div className="h-[1px] bg-white/20" />
-                <Button>
+                <Button disabled={!commission} busy={busy} onClick={handleUpdateCommission}>
                   <span>Update</span>
                 </Button>
               </div>
@@ -65,7 +168,7 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
                   transition proofs for Relay Chain validators. Sure to stop collation now?
                 </p>
                 <div className="h-[1px] bg-white/20" />
-                <Button disabled>
+                <Button busy={busy} onClick={handleStopCollator}>
                   <span>Stop</span>
                 </Button>
               </div>
@@ -80,13 +183,10 @@ export default function ManageCollator({ isOpen, onClose }: { isOpen: boolean; o
   );
 }
 
-function Button({ children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
+function Button({ children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { busy?: boolean }) {
   return (
-    <button
-      className="h-10 w-full bg-primary text-xs font-bold text-white transition-opacity hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60 lg:w-40"
-      {...rest}
-    >
+    <EnsureMatchNetworkButton className="h-10 w-full bg-primary text-xs font-bold text-white lg:w-40" {...rest}>
       {children}
-    </button>
+    </EnsureMatchNetworkButton>
   );
 }
