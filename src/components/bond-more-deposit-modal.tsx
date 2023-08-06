@@ -29,7 +29,7 @@ export default function BondMoreDepositModal({
     [deposits, checkedDeposits, calcExtraPower]
   );
 
-  const activeDeposits = deposits.filter(({ id }) => !stakedDeposits.includes(id));
+  const availableDeposits = deposits.filter(({ id }) => !stakedDeposits.includes(id));
   const { nativeToken, contract, explorer } = getChainConfig(activeChain);
 
   const handleBond = useCallback(async () => {
@@ -72,10 +72,10 @@ export default function BondMoreDepositModal({
       disabled={checkedDeposits.length <= 0}
       busy={busy}
     >
-      {activeDeposits.length ? (
+      {availableDeposits.length ? (
         <>
           <CheckboxGroup
-            options={activeDeposits.map(({ id, value }) => ({
+            options={availableDeposits.map(({ id, value }) => ({
               value: id,
               label: (
                 <div key={id} className="flex w-full items-center justify-between">
